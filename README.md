@@ -1,6 +1,9 @@
 # UGEReveVue-Android
 
-
+PEREZ-LEFEUVRE VINCENT perezlefeuvre@edu.univ-eiffel.fr<br>
+BARDIN NICOLAS nicolas.bardin@edu.univ-eiffel.fr<br>
+DOS SANTOS LOÏC loic.dos-santos@edu.univ-eiffel.fr<br>
+AGONSÈ CÉSAIRE cesaire.agonse@edu.univ-eiffel.fr<br>
 
 ## Getting started
 
