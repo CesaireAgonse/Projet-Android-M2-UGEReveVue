@@ -1,6 +1,5 @@
 package fr.uge.ugerevevueandroid
 
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -31,12 +29,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-fun signup(username: String, password: String){
-    val url = "http://localhost:8080/api/v1/signup"
+data class LoginForm(val username: String, val password: String)
 
+fun login(username: String, password: String) {
+    val loginForm = LoginForm(username, password)
 }
 @Composable
-fun SignupPage(){
+fun LoginPage(){
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
@@ -45,7 +44,7 @@ fun SignupPage(){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text= " Sign Up", fontSize = 40.sp)
+        Text(text= " Log In", fontSize = 40.sp)
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
@@ -78,13 +77,10 @@ fun SignupPage(){
             )
         )
         Button(
-            onClick = { signup(username = username, password = password)},
+            onClick = { login(username = username, password = password)},
             modifier = Modifier
         ){
-            Text(text = "Signup")
+            Text(text = "Login")
         }
-
     }
 }
-
-
