@@ -7,4 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="navbar_color">#322F2F</color>
+    <color name="button_color">#192BAF</color>
+    <color name="button_color_2">#FFFFFF</color>
+
+    <color name="button_login_color">#0884E6</color>
+    <color name="nav_button_color">#A6A1A1</color>
 </resources>

@@ -117,7 +117,7 @@ fun SignupPage(){
             onClick = { signup(username = username, password = password, confirmPassword = confirmPassword)},
             modifier = Modifier
         ){
-            Text(text = "Signup")
+            Text(text = "Sign up")
         }
     }
 }

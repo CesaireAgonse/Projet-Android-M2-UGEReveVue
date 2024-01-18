@@ -80,7 +80,7 @@ fun LoginPage(){
             onClick = { login(username = username, password = password)},
             modifier = Modifier
         ){
-            Text(text = "Login")
+            Text(text = "Log in")
         }
     }
 }
