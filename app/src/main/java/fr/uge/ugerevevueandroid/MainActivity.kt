@@ -44,15 +44,17 @@ class MainActivity : ComponentActivity() {
 fun Application(){
     var page by remember { mutableStateOf(Page.HOME) }
     var userProfile by remember { mutableStateOf<SimpleUserInformation>(SimpleUserInformation()) }
+    var redirection: (Page) -> Unit = {page = it}
+    var setUser: (SimpleUserInformation) -> Unit = {userProfile = it}
     Column {
         Navbar(onClickButton = { page = it })
         when(page){
-            Page.HOME -> HomePage( redirection = {page = it}, setUser = {userProfile = it})
+            Page.HOME -> HomePage( redirection = redirection, setUser = setUser)
             Page.LOGIN -> LoginPage()
             Page.SIGNUP -> SignupPage()
-            Page.USER -> UserPage(userProfile)
-            Page.CODE -> CodePage(redirection = {page = it})
-            Page.CREATE -> CreatePage(redirection = {page = it})
+            Page.USER -> UserPage(userProfile, redirection = redirection, setUser = setUser)
+            Page.CODE -> CodePage(redirection = redirection)
+            Page.CREATE -> CreatePage(redirection = redirection)
         }
     }
 }

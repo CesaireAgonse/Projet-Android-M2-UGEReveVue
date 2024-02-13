@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.page
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,10 @@ fun loadPosts() : MutableList<CodeInformation> {
     var comments = HashSet<CommentInformation>();
     var reviews = HashSet<ReviewInformation>();
     var follows = HashSet<SimpleUserInformation>();
+    Log.i("size : ", follows.size.toString())
+    var admin = SimpleUserInformation(1, "admin", follows,true)
+    var czer = SimpleUserInformation(2, "czer", HashSet<SimpleUserInformation>(),false)
+    admin.followed.add(czer)
     var firstPost = CodeInformation(
         0,
         "Ceci est le titre du premier Post",
@@ -56,7 +61,7 @@ fun loadPosts() : MutableList<CodeInformation> {
         "",
         666,
         Date(),
-        SimpleUserInformation(1, "admin", follows,true),
+        admin,
         comments,
         reviews,
     )
@@ -69,7 +74,7 @@ fun loadPosts() : MutableList<CodeInformation> {
         "",
         666,
         Date(),
-        SimpleUserInformation(2, "czer", follows,false),
+        czer,
         comments,
         reviews,
     )
