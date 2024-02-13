@@ -42,6 +42,9 @@ public class SimpleUserInformation {
         isAdmin = admin;
     }
 
+    public SimpleUserInformation() {
+    }
+
     public SimpleUserInformation(long id, String username, Set<SimpleUserInformation> followed, boolean isAdmin) {
         this.id = id;
         this.username = username;

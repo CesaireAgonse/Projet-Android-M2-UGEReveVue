@@ -1,4 +1,4 @@
-package fr.uge.ugerevevueandroid
+package fr.uge.ugerevevueandroid.page
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -77,7 +77,7 @@ fun LoginPage(){
             )
         )
         Button(
-            onClick = { login(username = username, password = password)},
+            onClick = { login(username = username, password = password) },
             modifier = Modifier
         ){
             Text(text = "Log in")

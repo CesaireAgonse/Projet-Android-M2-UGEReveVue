@@ -1,4 +1,4 @@
-package fr.uge.ugerevevueandroid
+package fr.uge.ugerevevueandroid.page
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.uge.ugerevevueandroid.apiService
 import retrofit2.Call
 
 data class SignupForm(val username: String, val password: String)
@@ -114,7 +115,7 @@ fun SignupPage(){
             )
         )
         Button(
-            onClick = { signup(username = username, password = password, confirmPassword = confirmPassword)},
+            onClick = { signup(username = username, password = password, confirmPassword = confirmPassword) },
             modifier = Modifier
         ){
             Text(text = "Sign up")

@@ -1,6 +1,5 @@
-package fr.uge.ugerevevueandroid
+package fr.uge.ugerevevueandroid.page
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,15 +10,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
@@ -88,7 +85,7 @@ fun loadPosts() : MutableList<CodeInformation> {
 }
 
 @Composable
-fun HomePage(){
+fun HomePage(redirection : (Page) -> Unit, setUser : (SimpleUserInformation) -> Unit){
     var posts = loadPosts()
     val scrollState = rememberScrollState()
 
@@ -97,7 +94,7 @@ fun HomePage(){
             FistRow(isAdmin = true, 42)
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { /*TODO*/ }, contentColor = Color(R.color.button_color_2)) {
+            FloatingActionButton(onClick = { redirection(Page.CREATE) }, contentColor = Color(R.color.button_color_2)) {
                 Icon(Icons.Filled.Add, contentDescription = "Add a new Post")
             }
         }
@@ -111,7 +108,9 @@ fun HomePage(){
         ) {
             posts.forEach{
                 Post(code = it,
-                    modifier = Modifier.clickable { /* Code(it)*/ })
+                    modifier = Modifier.clickable { redirection(Page.CODE) },
+                    redirection,
+                    setUser)
             }
 
         }
@@ -186,7 +185,9 @@ fun FistRow(isAdmin : Boolean, numberResult: Int){
 }
 
 @Composable
-fun Post(code: CodeInformation, modifier: Modifier = Modifier){
+fun Post(code: CodeInformation, modifier: Modifier = Modifier,
+         redirection : (Page) -> Unit,
+         setUser : (SimpleUserInformation) -> Unit){
     Column (
         modifier = modifier.padding(2.dp)
         // mettre un petit background et delimiter chaque component
@@ -205,7 +206,10 @@ fun Post(code: CodeInformation, modifier: Modifier = Modifier){
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "${code.userInformation.username}",
-                modifier = Modifier.clickable { /*User(user = code.userInformation)*/ }
+                modifier = Modifier.clickable { /*User(user = code.userInformation)*/
+                redirection(Page.USER)
+                setUser(code.userInformation)
+                }
             )
         }
         Row {

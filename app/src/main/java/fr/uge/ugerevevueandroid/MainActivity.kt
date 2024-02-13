@@ -13,6 +13,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import fr.uge.ugerevevueandroid.information.SimpleUserInformation
+import fr.uge.ugerevevueandroid.page.CodePage
+import fr.uge.ugerevevueandroid.page.CreatePage
+import fr.uge.ugerevevueandroid.page.HomePage
+import fr.uge.ugerevevueandroid.page.LoginPage
+import fr.uge.ugerevevueandroid.page.Page
+import fr.uge.ugerevevueandroid.page.SignupPage
+import fr.uge.ugerevevueandroid.page.UserPage
 import fr.uge.ugerevevueandroid.ui.theme.UGEReveVueAndroidTheme
 
 class MainActivity : ComponentActivity() {
@@ -35,12 +43,16 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Application(){
     var page by remember { mutableStateOf(Page.HOME) }
+    var userProfile by remember { mutableStateOf<SimpleUserInformation>(SimpleUserInformation()) }
     Column {
         Navbar(onClickButton = { page = it })
         when(page){
-            Page.HOME -> HomePage()
+            Page.HOME -> HomePage( redirection = {page = it}, setUser = {userProfile = it})
             Page.LOGIN -> LoginPage()
             Page.SIGNUP -> SignupPage()
+            Page.USER -> UserPage(userProfile)
+            Page.CODE -> CodePage(redirection = {page = it})
+            Page.CREATE -> CreatePage(redirection = {page = it})
         }
     }
 }

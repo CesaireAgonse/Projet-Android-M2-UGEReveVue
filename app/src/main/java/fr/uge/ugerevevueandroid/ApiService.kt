@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid
 
+import fr.uge.ugerevevueandroid.page.SignupForm
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
