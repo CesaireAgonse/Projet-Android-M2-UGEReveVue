@@ -109,7 +109,7 @@ fun HomePage(redirection : (Page) -> Unit, setUser : (SimpleUserInformation) -> 
 
     Scaffold(
         topBar = {
-            FistRow(isAdmin = true, 42)
+            FistRow(isAdmin = true, 42, redirection)
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { redirection(Page.CREATE) }, contentColor = Color(R.color.button_color_2)) {
@@ -141,7 +141,7 @@ fun HomePage(redirection : (Page) -> Unit, setUser : (SimpleUserInformation) -> 
 }
 
 @Composable
-fun FistRow(isAdmin : Boolean, numberResult: Int){
+fun FistRow(isAdmin : Boolean, numberResult: Int, redirection : (Page) -> Unit){
 
     Column {
         Row(
@@ -156,7 +156,7 @@ fun FistRow(isAdmin : Boolean, numberResult: Int){
 
             // Bouton Admin
             if (isAdmin) {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = { redirection(Page.ADMIN) }) {
                     Text(text = "Admin page")
                 }
             }

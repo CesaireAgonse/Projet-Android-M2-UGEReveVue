@@ -6,5 +6,6 @@ enum class Page {
     LOGIN,
     USER,
     CODE,
-    CREATE
+    CREATE,
+    ADMIN
 }

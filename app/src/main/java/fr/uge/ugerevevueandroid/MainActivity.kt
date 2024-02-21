@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid
 
+import AdminPage
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -58,6 +59,9 @@ fun Application(){
             Page.USER -> UserPage(userProfile, redirection = redirection, setUser = setUser)
             Page.CODE -> CodePage(code)
             Page.CREATE -> CreatePage(redirection = redirection)
+            Page.ADMIN -> AdminPage()
         }
     }
 }
+
+
