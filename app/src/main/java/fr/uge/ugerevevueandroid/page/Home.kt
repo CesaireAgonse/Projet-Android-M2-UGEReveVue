@@ -46,6 +46,19 @@ fun loadPosts() : MutableList<CodeInformation> {
     var admin = SimpleUserInformation(1, "admin", follows,true)
     var czer = SimpleUserInformation(2, "czer", HashSet<SimpleUserInformation>(),false)
     admin.followed.add(czer)
+
+    comments.add(CommentInformation(666, czer, "Trop bien ce code !", null ,Date()))
+    reviews.add(
+        ReviewInformation(999,
+            czer,
+            "askip ya un titre",
+            "effectivement ceci est un bon code j'approuve",
+            42,
+            Date(),
+            mutableListOf(),
+            mutableListOf())
+    )
+
     var firstPost = CodeInformation(
         0,
         "Ceci est le titre du premier Post",
@@ -90,7 +103,7 @@ fun loadPosts() : MutableList<CodeInformation> {
 }
 
 @Composable
-fun HomePage(redirection : (Page) -> Unit, setUser : (SimpleUserInformation) -> Unit){
+fun HomePage(redirection : (Page) -> Unit, setUser : (SimpleUserInformation) -> Unit, setCode : (CodeInformation) -> Unit){
     var posts = loadPosts()
     val scrollState = rememberScrollState()
 
@@ -113,7 +126,10 @@ fun HomePage(redirection : (Page) -> Unit, setUser : (SimpleUserInformation) -> 
         ) {
             posts.forEach{
                 Post(code = it,
-                    modifier = Modifier.clickable { redirection(Page.CODE) },
+                    modifier = Modifier.clickable {
+                        setCode(it)
+                        redirection(Page.CODE)
+                    },
                     redirection,
                     setUser)
             }

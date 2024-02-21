@@ -117,6 +117,9 @@ public class CodeInformation {
         this.review = review;
     }
 
+    public CodeInformation(){
+    }
+
     /*
     public static CodeInformation from(Code code){
         Objects.requireNonNull(code, "[CodeInformation] code is null");
