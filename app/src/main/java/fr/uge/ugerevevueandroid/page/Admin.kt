@@ -1,3 +1,4 @@
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,10 +19,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import fr.uge.ugerevevueandroid.information.SimpleUserInformation
+import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.page.Page
 
 @Composable
-fun AdminPage() {
+fun AdminPage(viewModel : MainViewModel) {
     val users = mutableListOf<SimpleUserInformation>()
     var admin = SimpleUserInformation(1, "admin", null,true)
     var czer = SimpleUserInformation(2, "czer", HashSet<SimpleUserInformation>(),false)
@@ -51,7 +55,7 @@ fun AdminPage() {
             .padding(vertical = 4.dp))
 
         users.forEach{
-            UserAdmin(it)
+            UserAdmin(viewModel, it)
         }
 
 
@@ -60,7 +64,7 @@ fun AdminPage() {
 }
 
 @Composable
-fun UserAdmin(user : SimpleUserInformation){
+fun UserAdmin(viewModel : MainViewModel, user : SimpleUserInformation){
 
     Column {
         Row(
@@ -68,7 +72,13 @@ fun UserAdmin(user : SimpleUserInformation){
         ) {
             Text(text = "${user.username}",
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold)
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable {
+                    /*
+                    viewModel.changeCurrentUserToDisplay(user)
+                    viewModel.changeCurrentPage(Page.USER)
+                    */
+                })
             Spacer(modifier = Modifier.weight(1f))
             Button(onClick = { /*TODO*/ }) {
                 Icon(Icons.Filled.Delete, contentDescription = "DeleteUser")

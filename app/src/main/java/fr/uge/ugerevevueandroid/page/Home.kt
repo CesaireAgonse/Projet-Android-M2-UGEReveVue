@@ -30,11 +30,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.SimpleUserInformation
+import fr.uge.ugerevevueandroid.model.MainViewModel
 import java.util.Date
 
 fun loadPosts() : MutableList<CodeInformation> {
@@ -103,16 +105,16 @@ fun loadPosts() : MutableList<CodeInformation> {
 }
 
 @Composable
-fun HomePage(redirection : (Page) -> Unit, setUser : (SimpleUserInformation) -> Unit, setCode : (CodeInformation) -> Unit){
+fun HomePage(viewModel: MainViewModel){
     var posts = loadPosts()
     val scrollState = rememberScrollState()
 
     Scaffold(
         topBar = {
-            FistRow(isAdmin = true, 42, redirection)
+            FistRow(viewModel, posts.size)
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { redirection(Page.CREATE) }, contentColor = Color(R.color.button_color_2)) {
+            FloatingActionButton(onClick = { viewModel.changeCurrentPage(Page.CREATE) }, contentColor = Color(R.color.button_color_2)) {
                 Icon(Icons.Filled.Add, contentDescription = "Add a new Post")
             }
         }
@@ -125,13 +127,12 @@ fun HomePage(redirection : (Page) -> Unit, setUser : (SimpleUserInformation) -> 
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             posts.forEach{
-                Post(code = it,
+                Post(viewModel = viewModel,
+                    code = it,
                     modifier = Modifier.clickable {
-                        setCode(it)
-                        redirection(Page.CODE)
-                    },
-                    redirection,
-                    setUser)
+                        viewModel.changeCurrentCodeToDisplay(it)
+                        viewModel.changeCurrentPage(Page.CODE)
+                    })
             }
 
         }
@@ -141,7 +142,7 @@ fun HomePage(redirection : (Page) -> Unit, setUser : (SimpleUserInformation) -> 
 }
 
 @Composable
-fun FistRow(isAdmin : Boolean, numberResult: Int, redirection : (Page) -> Unit){
+fun FistRow(viewModel: MainViewModel, numberResult: Int){
 
     Column {
         Row(
@@ -155,8 +156,8 @@ fun FistRow(isAdmin : Boolean, numberResult: Int, redirection : (Page) -> Unit){
             )
 
             // Bouton Admin
-            if (isAdmin) {
-                Button(onClick = { redirection(Page.ADMIN) }) {
+            if (viewModel.adminAccess()) {
+                Button(onClick = {viewModel.changeCurrentPage(Page.ADMIN) }) {
                     Text(text = "Admin page")
                 }
             }
@@ -206,9 +207,7 @@ fun FistRow(isAdmin : Boolean, numberResult: Int, redirection : (Page) -> Unit){
 }
 
 @Composable
-fun Post(code: CodeInformation, modifier: Modifier = Modifier,
-         redirection : (Page) -> Unit,
-         setUser : (SimpleUserInformation) -> Unit){
+fun Post(viewModel: MainViewModel, code: CodeInformation, modifier: Modifier = Modifier){
     Column (
         modifier = modifier.padding(2.dp)
         // mettre un petit background et delimiter chaque component
@@ -228,8 +227,8 @@ fun Post(code: CodeInformation, modifier: Modifier = Modifier,
             Text(
                 text = "${code.userInformation.username}",
                 modifier = Modifier.clickable { /*User(user = code.userInformation)*/
-                redirection(Page.USER)
-                setUser(code.userInformation)
+                    viewModel.changeCurrentPage(Page.USER)
+                    viewModel.changeCurrentUserToDisplay(code.userInformation)
                 }
             )
         }

@@ -45,13 +45,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
+import fr.uge.ugerevevueandroid.model.MainViewModel
 
 @Composable
-fun CodePage(code: CodeInformation, modifier: Modifier = Modifier){
+fun CodePage(viewModel : MainViewModel, modifier: Modifier = Modifier){
     val scrollState = rememberScrollState()
 
     var contentNewComment by remember { mutableStateOf("") }
@@ -63,9 +65,9 @@ fun CodePage(code: CodeInformation, modifier: Modifier = Modifier){
             .padding(8.dp)
     ) {
         
-        Code(code = code)
+        Code(code = viewModel.currentCodeToDisplay)
 
-        code.comments.forEach{
+        viewModel.currentCodeToDisplay.comments.forEach{
             Comment(it)
         }
 
@@ -89,9 +91,9 @@ fun CodePage(code: CodeInformation, modifier: Modifier = Modifier){
                 .fillMaxWidth()
                 .padding(vertical = 4.dp))
 
-        Text(text = "Reviews about this post : ${code.review.size}")
+        Text(text = "Reviews about this post : ${viewModel.currentCodeToDisplay.review.size}")
 
-        code.review.forEach{
+        viewModel.currentCodeToDisplay.review.forEach{
             Review(review = it)
         }
 

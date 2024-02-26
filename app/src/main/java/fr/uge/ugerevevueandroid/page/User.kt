@@ -35,30 +35,32 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.SimpleUserInformation
+import fr.uge.ugerevevueandroid.model.MainViewModel
 
 // Définir une interface pour la gestion de la sélection d'image
 
 
 @Composable
-fun UserPage(user : SimpleUserInformation, redirection : (Page) -> Unit, setUser : (SimpleUserInformation) -> Unit) {
+fun UserPage(viewModel : MainViewModel) {
     val scrollState = rememberScrollState()
     Column (
         modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max)
     ){
-        UserDisplayer(user = user, Modifier.weight(4f))
+        UserDisplayer(viewModel = viewModel, user = viewModel.currentUserToDisplay, Modifier.weight(4f))
         Column(
             modifier = Modifier.weight(6f)
                 .verticalScroll(scrollState)
         ) {
             Text(text = "Follower")
-            user.followed.forEach{
+            viewModel.currentUserToDisplay.followed.forEach{
                 Text(
                     text = "${it.username}",
-                    modifier = Modifier.clickable { /*User(user = code.userInformation)*/
-                        redirection(Page.USER)
-                        setUser(it)
+                    modifier = Modifier.clickable {
+                        viewModel.changeCurrentPage(Page.USER)
+                        viewModel.changeCurrentUserToDisplay(it)
                     }
                 )
             }
@@ -68,7 +70,7 @@ fun UserPage(user : SimpleUserInformation, redirection : (Page) -> Unit, setUser
 }
 
 @Composable
-fun UserDisplayer(user : SimpleUserInformation, modifier : Modifier = Modifier){
+fun UserDisplayer(viewModel : MainViewModel, user : SimpleUserInformation, modifier : Modifier = Modifier){
 
     var uriUser: Uri? = null
 
@@ -112,7 +114,8 @@ fun UserDisplayer(user : SimpleUserInformation, modifier : Modifier = Modifier){
             }
             if (user.isAdmin) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { viewModel.changeCurrentPage(Page.ADMIN)
+                    },
                     modifier = Modifier
                         .padding(top = 160.dp)
                         .align(Alignment.BottomCenter)
