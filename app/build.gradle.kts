@@ -52,6 +52,7 @@ android {
 dependencies {
     // dependance du viewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // Demande sur le forum pour le droit d'utiliser
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

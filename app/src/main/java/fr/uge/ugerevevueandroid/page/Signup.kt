@@ -1,5 +1,7 @@
 package fr.uge.ugerevevueandroid.page
 
+import TokenManager
+import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,29 +31,34 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.uge.ugerevevueandroid.apiService
+import fr.uge.ugerevevueandroid.form.SignupForm
+import fr.uge.ugerevevueandroid.form.TokenForm
+import fr.uge.ugerevevueandroid.service.authenticationService
 import retrofit2.Call
 
-data class SignupForm(val username: String, val password: String)
-fun signup(username: String, password: String, confirmPassword:String) {
+fun signup(application: Application, username: String, password: String, confirmPassword:String) {
     val signupForm = SignupForm(username, password)
-    val call = apiService.signup(signupForm)
-    call.enqueue(object : retrofit2.Callback<SignupForm> {
-        override fun onResponse(call: Call<SignupForm>, response: retrofit2.Response<SignupForm>) {
+    val call = authenticationService.signup(signupForm)
+    call.enqueue(object : retrofit2.Callback<TokenForm> {
+        override fun onResponse(call: Call<TokenForm>, response: retrofit2.Response<TokenForm>) {
             if (response.isSuccessful){
                 val userResponse = response.body()
-                Log.i("test", userResponse.toString())
+                val tokenManager = TokenManager(application)
+                if (userResponse != null) {
+                    tokenManager.saveToken("bearer", userResponse.bearer)
+                    tokenManager.saveToken("refresh", userResponse.refresh)
+                }
             } else {
                 Log.i("test", "test2")
             }
         }
-        override fun onFailure(call: Call<SignupForm>, t: Throwable) {
+        override fun onFailure(call: Call<TokenForm>, t: Throwable) {
             Log.i("test3", t.message.orEmpty())
         }
     })
 }
 @Composable
-fun SignupPage(){
+fun SignupPage(application: Application){
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -115,7 +122,7 @@ fun SignupPage(){
             )
         )
         Button(
-            onClick = { signup(username = username, password = password, confirmPassword = confirmPassword) },
+            onClick = { signup(application = application, username = username, password = password, confirmPassword = confirmPassword) },
             modifier = Modifier
         ){
             Text(text = "Sign up")

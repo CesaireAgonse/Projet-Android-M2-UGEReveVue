@@ -81,5 +81,4 @@ fun Navbar(onClickButton: (Page) -> Unit){
                 Text(text = "Log in", modifier = Modifier.padding(1.dp))
             }
         }
-
 }
