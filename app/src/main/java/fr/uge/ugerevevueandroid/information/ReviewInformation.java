@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ReviewInformation {
     private long id;
-    private SimpleUserInformation userInformation;
+    private UserInformation userInformation;
     //private Vote.VoteType voteType;
     private String title;
     private String content;
@@ -14,7 +14,7 @@ public class ReviewInformation {
     private List<CommentInformation> comments;
     private List<ReviewInformation> reviews;
 
-    public ReviewInformation(long id, SimpleUserInformation userInformation, String title, String content, int score, Date date, List<CommentInformation> comments, List<ReviewInformation> reviews) {
+    public ReviewInformation(long id, UserInformation userInformation, String title, String content, int score, Date date, List<CommentInformation> comments, List<ReviewInformation> reviews) {
         this.id = id;
         this.userInformation = userInformation;
         //this.voteType = voteType;
@@ -49,9 +49,9 @@ public class ReviewInformation {
 
     public void setId(long id) {this.id = id;}
 
-    public SimpleUserInformation getUserInformation() {return userInformation;}
+    public UserInformation getUserInformation() {return userInformation;}
 
-    public void setUserInformation(SimpleUserInformation userInformation) {this.userInformation = userInformation;}
+    public void setUserInformation(UserInformation userInformation) {this.userInformation = userInformation;}
 
     public String getTitle() {return title;}
 

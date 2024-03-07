@@ -36,6 +36,7 @@ import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.SimpleUserInformation
+import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import java.util.Date
 
@@ -45,9 +46,9 @@ fun loadPosts() : MutableList<CodeInformation> {
     var reviews = HashSet<ReviewInformation>();
     var follows = HashSet<SimpleUserInformation>();
     Log.i("size : ", follows.size.toString())
-    var admin = SimpleUserInformation(1, "admin", follows,true)
-    var czer = SimpleUserInformation(2, "czer", HashSet<SimpleUserInformation>(),false)
-    admin.followed.add(czer)
+    var admin = UserInformation(1, "admin", null,true)
+    var czer = UserInformation(2, "czer", null, false)
+    //admin.followed.add(czer)
 
     comments.add(CommentInformation(666, czer, "Trop bien ce code !", null ,Date()))
     reviews.add(

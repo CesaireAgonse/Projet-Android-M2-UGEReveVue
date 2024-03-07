@@ -1,6 +1,7 @@
 package fr.uge.ugerevevueandroid
 
 import AdminPage
+import TokenManager
 import android.R
 import android.app.Application
 import android.os.Bundle
@@ -48,13 +49,14 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Application(viewModel : MainViewModel, application: Application){
+    //TokenManager(application).getAuth()
     Column {
-        Navbar(onClickButton = { viewModel.changeCurrentPage(it)})
+        Navbar(application = application, viewModel = viewModel)
         when(viewModel.currentPage){
             Page.HOME -> HomePage(viewModel = viewModel)
-            Page.LOGIN -> LoginPage(application=application)
-            Page.SIGNUP -> SignupPage(application=application)
-            Page.USER -> UserPage(viewModel = viewModel)
+            Page.LOGIN -> LoginPage(application=application, viewModel = viewModel)
+            Page.SIGNUP -> SignupPage(application=application, viewModel = viewModel)
+            Page.USER -> UserPage(viewModel = viewModel, application=application)
             Page.CODE -> CodePage(viewModel = viewModel)
             Page.CREATE -> CreatePage(viewModel = viewModel)
             Page.ADMIN -> AdminPage(viewModel = viewModel)

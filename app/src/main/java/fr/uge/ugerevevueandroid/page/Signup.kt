@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.form.SignupForm
 import fr.uge.ugerevevueandroid.form.TokenForm
+import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.authenticationService
 import retrofit2.Call
 
@@ -58,7 +59,7 @@ fun signup(application: Application, username: String, password: String, confirm
     })
 }
 @Composable
-fun SignupPage(application: Application){
+fun SignupPage(application: Application, viewModel: MainViewModel){
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -122,7 +123,10 @@ fun SignupPage(application: Application){
             )
         )
         Button(
-            onClick = { signup(application = application, username = username, password = password, confirmPassword = confirmPassword) },
+            onClick = {
+                signup(application = application, username = username, password = password, confirmPassword = confirmPassword)
+                viewModel.changeCurrentPage(Page.HOME)
+                },
             modifier = Modifier
         ){
             Text(text = "Sign up")

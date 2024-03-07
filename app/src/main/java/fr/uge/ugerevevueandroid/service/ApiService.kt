@@ -16,20 +16,6 @@ val retrofit: Retrofit = Retrofit.Builder()
 
 val authenticationService: AuthenticationService = retrofit.create(AuthenticationService::class.java)
 
-fun getBearerRetrofit(application: Application): Retrofit {
-    val manager = TokenManager(application)
-    val authToken = manager.getToken("bearer")
-    val authInterceptor = authToken?.let { AuthInterceptor(it) }
-    val client = OkHttpClient.Builder()
-        .addInterceptor(authInterceptor)
-        .build()
-    return Retrofit.Builder()
-        .baseUrl(url)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-}
-
 class ApiService(application: Application){
     val manager = TokenManager(application)
     val authToken = manager.getToken("bearer")

@@ -19,16 +19,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import fr.uge.ugerevevueandroid.information.SimpleUserInformation
+import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.page.Page
 
 @Composable
 fun AdminPage(viewModel : MainViewModel) {
-    val users = mutableListOf<SimpleUserInformation>()
-    var admin = SimpleUserInformation(1, "admin", null,true)
-    var czer = SimpleUserInformation(2, "czer", HashSet<SimpleUserInformation>(),false)
+    val users = mutableListOf<UserInformation>()
+    var admin = UserInformation(1, "admin", null,true)
+    var czer = UserInformation(2, "czer", HashSet<UserInformation>(),false)
 
     users.add(admin)
     users.add(czer)
@@ -64,7 +63,7 @@ fun AdminPage(viewModel : MainViewModel) {
 }
 
 @Composable
-fun UserAdmin(viewModel : MainViewModel, user : SimpleUserInformation){
+fun UserAdmin(viewModel : MainViewModel, user : UserInformation){
 
     Column {
         Row(

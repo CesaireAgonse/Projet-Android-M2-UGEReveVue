@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.page
 
+import android.app.Application
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.util.Log
@@ -24,6 +25,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,40 +39,66 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import fr.uge.ugerevevueandroid.R
+import fr.uge.ugerevevueandroid.form.SignupForm
+import fr.uge.ugerevevueandroid.form.TokenForm
 import fr.uge.ugerevevueandroid.information.SimpleUserInformation
+import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.service.authenticationService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.Call
 
 // Définir une interface pour la gestion de la sélection d'image
-
-
+suspend fun profile(application: Application, username: String): UserInformation? {
+    return withContext(Dispatchers.IO) {
+        val response = ApiService(application).getUserService().getUserInformation(username).execute()
+        if (response.isSuccessful) {
+            response.body()
+        } else {
+            null
+        }
+    }
+}
 @Composable
-fun UserPage(viewModel : MainViewModel) {
-    val scrollState = rememberScrollState()
+fun UserPage(viewModel : MainViewModel, application: Application) {
+    //val scrollState = rememberScrollState()
+    var username = "a"
     Column (
         modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max)
     ){
-        UserDisplayer(viewModel = viewModel, user = viewModel.currentUserToDisplay, Modifier.weight(4f))
-        Column(
-            modifier = Modifier.weight(6f)
-                .verticalScroll(scrollState)
-        ) {
-            Text(text = "Follower")
-            viewModel.currentUserToDisplay.followed.forEach{
-                Text(
-                    text = "${it.username}",
-                    modifier = Modifier.clickable {
-                        viewModel.changeCurrentPage(Page.USER)
-                        viewModel.changeCurrentUserToDisplay(it)
-                    }
-                )
-            }
+        val userState = remember { mutableStateOf<UserInformation?>(null) }
+
+        LaunchedEffect(username) {
+            val user = profile(application, username)
+            userState.value = user
         }
+        val user = userState.value
+        if (user != null){
+            UserDisplayer(viewModel = viewModel, user = user, Modifier.weight(4f))
+        }
+//        Column(
+//            modifier = Modifier.weight(6f)
+//                .verticalScroll(scrollState)
+//        ) {
+//            Text(text = "Follower")
+//            viewModel.currentUserToDisplay.followed?.forEach{
+//                Text(
+//                    text = "${it.username}",
+//                    modifier = Modifier.clickable {
+//                        viewModel.changeCurrentPage(Page.USER)
+//                        viewModel.changeCurrentUserToDisplay(it)
+//                    }
+//                )
+//            }
+//        }
     }
 
 }
 
 @Composable
-fun UserDisplayer(viewModel : MainViewModel, user : SimpleUserInformation, modifier : Modifier = Modifier){
+fun UserDisplayer(viewModel : MainViewModel, user : UserInformation, modifier : Modifier = Modifier){
 
     var uriUser: Uri? = null
 
@@ -107,9 +135,9 @@ fun UserDisplayer(viewModel : MainViewModel, user : SimpleUserInformation, modif
                     fontSize = 30.sp
                 )
                 Text(
-                    text = "${user.followed.size} follows",
+                    text = "${user.followed?.size} follows",
                     modifier = Modifier.padding(bottom = 8.dp),
-                    fontSize = 10.sp
+                    fontSize = 18.sp
                 )
             }
             if (user.isAdmin) {

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class CodeInformation {
 
     long id;
-    SimpleUserInformation userInformation;
+    UserInformation userInformation;
     //Vote.VoteType voteType;
     String title;
     String description;
@@ -76,11 +76,11 @@ public class CodeInformation {
         this.date = date;
     }
 
-    public SimpleUserInformation getUserInformation() {
+    public UserInformation getUserInformation() {
         return userInformation;
     }
 
-    public void setUserInformation(SimpleUserInformation userInformation) {
+    public void setUserInformation(UserInformation userInformation) {
         this.userInformation = userInformation;
     }
 
@@ -102,7 +102,7 @@ public class CodeInformation {
 
     public CodeInformation(long id, String title, String description, String javaContent,
                            String unitContent, int score, Date date,
-                           SimpleUserInformation userInformation,
+                           UserInformation userInformation,
                            Set<CommentInformation> comments,
                            Set<ReviewInformation> review) {
         this.id = id;

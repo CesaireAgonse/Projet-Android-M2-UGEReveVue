@@ -17,4 +17,7 @@ interface AuthenticationService {
 
     @POST("refresh")
     fun refresh(@Header("Authorization") token: String): Call<TokenForm>
+
+    @POST("logout")
+    fun logout(): Call<String>
 }

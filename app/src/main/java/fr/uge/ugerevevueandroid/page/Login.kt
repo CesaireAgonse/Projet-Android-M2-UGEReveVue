@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.form.LoginForm
 import fr.uge.ugerevevueandroid.form.TokenForm
+import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.authenticationService
 import retrofit2.Call
 
@@ -58,7 +59,7 @@ fun login(application: Application, username: String, password: String) {
     })
 }
 @Composable
-fun LoginPage(application: Application){
+fun LoginPage(application: Application, viewModel: MainViewModel){
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
@@ -100,7 +101,10 @@ fun LoginPage(application: Application){
             )
         )
         Button(
-            onClick = { login(application = application, username = username, password = password) },
+            onClick = {
+                login(application = application, username = username, password = password)
+                viewModel.changeCurrentPage(Page.HOME)
+            },
             modifier = Modifier
         ){
             Text(text = "Log in")

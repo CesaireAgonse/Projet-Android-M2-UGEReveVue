@@ -5,12 +5,12 @@ import java.util.Objects;
 
 public class CommentInformation {
     private long id;
-    private SimpleUserInformation userInformation;
+    private UserInformation userInformation;
     private String content;
     private String codeSelection;
     private Date date;
 
-    public CommentInformation(long id, SimpleUserInformation userInformation, String content, String codeSelection, Date date) {
+    public CommentInformation(long id, UserInformation userInformation, String content, String codeSelection, Date date) {
         this.id = id;
         this.userInformation = userInformation;
         this.content = content;
@@ -35,9 +35,9 @@ public class CommentInformation {
 
     public void setId(long id) {this.id = id;}
 
-    public SimpleUserInformation getUserInformation() {return userInformation;}
+    public UserInformation getUserInformation() {return userInformation;}
 
-    public void setUserInformation(SimpleUserInformation userInformation) {
+    public void setUserInformation(UserInformation userInformation) {
         this.userInformation = userInformation;
     }
 
