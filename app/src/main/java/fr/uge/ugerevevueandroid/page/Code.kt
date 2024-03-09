@@ -55,26 +55,22 @@ import fr.uge.ugerevevueandroid.model.MainViewModel
 @Composable
 fun CodePage(viewModel : MainViewModel, modifier: Modifier = Modifier){
     val scrollState = rememberScrollState()
-
     var contentNewComment by remember { mutableStateOf("") }
     var contentNewReview by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .verticalScroll(scrollState)
             .padding(8.dp)
     ) {
-        
         Code(code = viewModel.currentCodeToDisplay)
-
-        viewModel.currentCodeToDisplay.comments.forEach{
-            Comment(it)
+        if (viewModel.currentCodeToDisplay.comments != null){
+            viewModel.currentCodeToDisplay.comments.forEach{
+                Comment(it)
+            }
         }
-
         Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp))
-
         OutlinedTextField(
             value = contentNewComment,
             onValueChange = { contentNewComment = it },
@@ -90,13 +86,13 @@ fun CodePage(viewModel : MainViewModel, modifier: Modifier = Modifier){
         Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp))
+        if (viewModel.currentCodeToDisplay.review != null){
+            Text(text = "Reviews about this post : ${viewModel.currentCodeToDisplay.review.size}")
 
-        Text(text = "Reviews about this post : ${viewModel.currentCodeToDisplay.review.size}")
-
-        viewModel.currentCodeToDisplay.review.forEach{
-            Review(review = it)
+            viewModel.currentCodeToDisplay.review.forEach{
+                Review(review = it)
+            }
         }
-
         OutlinedTextField(
             value = contentNewReview,
             onValueChange = { contentNewReview = it },
@@ -108,16 +104,12 @@ fun CodePage(viewModel : MainViewModel, modifier: Modifier = Modifier){
         Button(onClick = { /*TODO*/ }) {
             Text(text = "Post")
         }
-
-
     }
-
 }
 
 @Composable
 fun Code(code : CodeInformation){
     var voteButtonClicked : Boolean by remember { mutableStateOf(false) }
-
     Text(
         text = "${code.title}",
         fontSize = 30.sp
@@ -161,11 +153,13 @@ fun Code(code : CodeInformation){
             }
         }
         Column {
-            Text(text = "${code.description}",
+            Text(text = code.description,
                 textAlign = TextAlign.Justify)
 
-            Text(text = "${code.javaContent}")
-            Text(text = "${code.unitContent}")
+            Text(text = code.javaContent)
+            if (code.unitContent != null){
+                Text(text = code.unitContent)
+            }
         }
     }
 }
@@ -185,14 +179,14 @@ fun Comment(comment: CommentInformation){
                 .widthIn(max = 300.dp)
         ) {
             Text(
-                text = "${comment.userInformation.username}",
+                text = comment.userInformation.username,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable { /*TODO*/}
             )
             Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp))
-            Text(text = "${comment.content}")
+            Text(text = comment.content)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
@@ -266,13 +260,13 @@ fun Review(review: ReviewInformation){
             Column {
                 Row {
                     Text(
-                        text = "${review.title}",
+                        text = review.title,
                         fontSize = 20.sp
                     )
                 }
                 Row {
                     Text(
-                        text = "${review.content}",
+                        text = review.content,
                         fontSize = 10.sp,
                         textAlign = TextAlign.Justify,
                         lineHeight = 15.sp
@@ -280,7 +274,5 @@ fun Review(review: ReviewInformation){
                 }
             }
         }
-
-
     }
 }

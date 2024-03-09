@@ -1,11 +1,8 @@
 package fr.uge.ugerevevueandroid.service
 
-import fr.uge.ugerevevueandroid.form.SignupForm
-import fr.uge.ugerevevueandroid.form.TokenForm
 import fr.uge.ugerevevueandroid.form.UpdatePasswordForm
 import fr.uge.ugerevevueandroid.information.UserInformation
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

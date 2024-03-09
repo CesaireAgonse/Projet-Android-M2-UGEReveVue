@@ -10,12 +10,15 @@ public class CodeInformation {
 
     long id;
     UserInformation userInformation;
-    //Vote.VoteType voteType;
+
+    String voteType;
     String title;
     String description;
     String javaContent;
     String unitContent;
-    int score;
+
+    UnitTestResultInformation unitTestResultInformation;
+    long score;
     Date date;
     Set<CommentInformation> comments;
     Set<ReviewInformation> review;
@@ -60,7 +63,7 @@ public class CodeInformation {
         this.unitContent = unitContent;
     }
 
-    public int getScore() {
+    public long getScore() {
         return score;
     }
 
@@ -116,6 +119,20 @@ public class CodeInformation {
         this.comments = comments;
         this.review = review;
     }
+    public CodeInformation(long id, UserInformation userInformation, String voteType, String title, String description, String javaContent, String unitContent, UnitTestResultInformation unitTestResultInformation, long score, Date date, Set<CommentInformation> comments, Set<ReviewInformation> review) {
+        this.id = id;
+        this.userInformation = userInformation;
+        this.voteType = voteType;
+        this.title = title;
+        this.description = description;
+        this.javaContent = javaContent;
+        this.unitContent = unitContent;
+        this.unitTestResultInformation = unitTestResultInformation;
+        this.score = score;
+        this.date = date;
+        this.comments = comments;
+        this.review = review;
+    }
 
     public CodeInformation(){
     }
@@ -138,5 +155,6 @@ public class CodeInformation {
         );
     }
     */
+
 }
 

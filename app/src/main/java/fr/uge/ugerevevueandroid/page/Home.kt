@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.page
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +20,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,12 +35,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import fr.uge.ugerevevueandroid.R
+import fr.uge.ugerevevueandroid.form.LoginForm
+import fr.uge.ugerevevueandroid.form.TokenForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentInformation
+import fr.uge.ugerevevueandroid.information.FilterInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.SimpleUserInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.service.authenticationService
+import fr.uge.ugerevevueandroid.service.filterService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.http.Query
 import java.util.Date
 
 fun loadPosts() : MutableList<CodeInformation> {
@@ -105,41 +118,68 @@ fun loadPosts() : MutableList<CodeInformation> {
     return posts.value
 }
 
-@Composable
-fun HomePage(viewModel: MainViewModel){
-    var posts = loadPosts()
-    val scrollState = rememberScrollState()
-
-    Scaffold(
-        topBar = {
-            FistRow(viewModel, posts.size)
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.changeCurrentPage(Page.CREATE) }, contentColor = Color(R.color.button_color_2)) {
-                Icon(Icons.Filled.Add, contentDescription = "Add a new Post")
-            }
-        }
-    ) {
-        innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            posts.forEach{
-                Post(viewModel = viewModel,
-                    code = it,
-                    modifier = Modifier.clickable {
-                        viewModel.changeCurrentCodeToDisplay(it)
-                        viewModel.changeCurrentPage(Page.CODE)
-                    })
-            }
-
+suspend fun filter(sortBy: String, query: String, pageNumber:Int):FilterInformation ?{
+    return withContext(Dispatchers.IO) {
+        val response = filterService.filter(sortBy, query, pageNumber).execute()
+        if (response.isSuccessful) {
+            response.body()
+        } else {
+            null
         }
     }
+}
 
 
+
+
+@Composable
+fun HomePage(viewModel: MainViewModel){
+    var sortBy by remember {mutableStateOf("")}
+    var query by remember {mutableStateOf("")}
+    var pageNumber by remember { mutableIntStateOf(0) }
+
+
+    var posts:FilterInformation? by remember {mutableStateOf( null)}
+    LaunchedEffect(true, posts, pageNumber, query, sortBy) {
+        posts = filter("newest", "", 0)
+        if (posts != null){
+            sortBy = posts!!.sortBy
+            query = posts!!.q
+            pageNumber = posts!!.pageNumber
+        }
+    }
+    val scrollState = rememberScrollState()
+    if (posts != null){
+        Log.i("test", posts!!.codes.size.toString())
+        Scaffold(
+            topBar = {
+                FistRow(viewModel, posts!!.codes.size)
+            },
+            floatingActionButton = {
+                FloatingActionButton(onClick = { viewModel.changeCurrentPage(Page.CREATE) }, contentColor = Color(R.color.button_color_2)) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add a new Post")
+                }
+            }
+        ) {
+                innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                posts!!.codes.forEach{
+                    Post(viewModel = viewModel,
+                        code = it,
+                        modifier = Modifier.clickable {
+                            viewModel.changeCurrentCodeToDisplay(it)
+                            viewModel.changeCurrentPage(Page.CODE)
+                        })
+                }
+
+            }
+        }
+    }
 }
 
 @Composable
@@ -219,12 +259,12 @@ fun Post(viewModel: MainViewModel, code: CodeInformation, modifier: Modifier = M
             Text(text = "score: ${code.score}",
                 fontSize = 10.sp)
             Spacer(modifier = Modifier.padding(start = 4.dp))
-            Text(text = "reviews: ${code.review.size}",
-                fontSize = 10.sp)
-            Spacer(modifier = Modifier.padding(start = 4.dp))
-            Text(text = "comments: ${code.comments.size}",
-                fontSize = 10.sp)
-            Spacer(modifier = Modifier.weight(1f))
+//            Text(text = "reviews: ${code.review.size}",
+//                fontSize = 10.sp)
+//            Spacer(modifier = Modifier.padding(start = 4.dp))
+//            Text(text = "comments: ${code.comments.size}",
+//                fontSize = 10.sp)
+//            Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "${code.userInformation.username}",
                 modifier = Modifier.clickable { /*User(user = code.userInformation)*/
