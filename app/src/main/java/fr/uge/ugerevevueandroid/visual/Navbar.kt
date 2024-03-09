@@ -1,4 +1,4 @@
-package fr.uge.ugerevevueandroid
+package fr.uge.ugerevevueandroid.visual
 
 import TokenManager
 import android.app.Application
@@ -28,10 +28,9 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
+import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
-import fr.uge.ugerevevueandroid.service.ApiService
 import fr.uge.ugerevevueandroid.service.authenticationService
 
 @Composable

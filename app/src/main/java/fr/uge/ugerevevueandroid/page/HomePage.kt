@@ -1,6 +1,5 @@
 package fr.uge.ugerevevueandroid.page
 
-import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,10 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import fr.uge.ugerevevueandroid.R
-import fr.uge.ugerevevueandroid.form.LoginForm
-import fr.uge.ugerevevueandroid.form.TokenForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentInformation
 import fr.uge.ugerevevueandroid.information.FilterInformation
@@ -44,79 +40,75 @@ import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.SimpleUserInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.service.ApiService
-import fr.uge.ugerevevueandroid.service.authenticationService
 import fr.uge.ugerevevueandroid.service.filterService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.http.Query
 import java.util.Date
 
-fun loadPosts() : MutableList<CodeInformation> {
-    val posts = mutableStateOf(mutableListOf<CodeInformation>())
-    var comments = HashSet<CommentInformation>();
-    var reviews = HashSet<ReviewInformation>();
-    var follows = HashSet<SimpleUserInformation>();
-    Log.i("size : ", follows.size.toString())
-    var admin = UserInformation(1, "admin", null,true)
-    var czer = UserInformation(2, "czer", null, false)
-    //admin.followed.add(czer)
-
-    comments.add(CommentInformation(666, czer, "Trop bien ce code !", null ,Date()))
-    reviews.add(
-        ReviewInformation(999,
-            czer,
-            "askip ya un titre",
-            "effectivement ceci est un bon code j'approuve",
-            42,
-            Date(),
-            mutableListOf(),
-            mutableListOf())
-    )
-
-    var firstPost = CodeInformation(
-        0,
-        "Ceci est le titre du premier Post",
-        "Et cela la description du même post, Lorem ipsum dolor sit amet, consectetur " +
-                "adipiscing elit. Proin et mauris feugiat, ullamcorper odio non, hendrerit mauris." +
-                " Pellentesque congue tincidunt ex nec auctor. Morbi suscipit et neque sed blandit." +
-                " Praesent eu enim id lacus placerat tempor. Quisque arcu elit, sodales et hendrerit" +
-                " eget, efficitur in massa. Proin consequat a magna tristique posuere. Nunc tristique" +
-                " dui at ante posuere, eu cursus magna finibus. Integer suscipit sagittis urna," +
-                " vitae efficitur ipsum molestie ac. Nunc hendrerit velit arcu, ut finibus turpis" +
-                " congue ut.",
-        "",
-        "",
-        666,
-        Date(),
-        admin,
-        comments,
-        reviews,
-    )
-
-    var secondPost = CodeInformation(
-        0,
-        "Et cela le titre d'un autre Post",
-        "Avec une description minuscule.",
-        "",
-        "",
-        666,
-        Date(),
-        czer,
-        comments,
-        reviews,
-    )
-    posts.value.add(firstPost)
-    posts.value.add(secondPost)
-    posts.value.add(firstPost)
-    posts.value.add(firstPost)
-    posts.value.add(secondPost)
-    posts.value.add(firstPost)
-    posts.value.add(firstPost)
-
-    return posts.value
-}
+//fun loadPosts() : MutableList<CodeInformation> {
+//    val posts = mutableStateOf(mutableListOf<CodeInformation>())
+//    var comments = HashSet<CommentInformation>();
+//    var reviews = HashSet<ReviewInformation>();
+//    var follows = HashSet<SimpleUserInformation>();
+//    Log.i("size : ", follows.size.toString())
+//    var admin = UserInformation(1, "admin", null,true)
+//    var czer = UserInformation(2, "czer", null, false)
+//    //admin.followed.add(czer)
+//
+//    comments.add(CommentInformation(666, czer, "Trop bien ce code !", null ,Date()))
+//    reviews.add(
+//        ReviewInformation(999,
+//            czer,
+//            "askip ya un titre",
+//            "effectivement ceci est un bon code j'approuve",
+//            42,
+//            Date(),
+//            mutableListOf(),
+//            mutableListOf())
+//    )
+//
+//    var firstPost = CodeInformation(
+//        0,
+//        "Ceci est le titre du premier Post",
+//        "Et cela la description du même post, Lorem ipsum dolor sit amet, consectetur " +
+//                "adipiscing elit. Proin et mauris feugiat, ullamcorper odio non, hendrerit mauris." +
+//                " Pellentesque congue tincidunt ex nec auctor. Morbi suscipit et neque sed blandit." +
+//                " Praesent eu enim id lacus placerat tempor. Quisque arcu elit, sodales et hendrerit" +
+//                " eget, efficitur in massa. Proin consequat a magna tristique posuere. Nunc tristique" +
+//                " dui at ante posuere, eu cursus magna finibus. Integer suscipit sagittis urna," +
+//                " vitae efficitur ipsum molestie ac. Nunc hendrerit velit arcu, ut finibus turpis" +
+//                " congue ut.",
+//        "",
+//        "",
+//        666,
+//        Date(),
+//        admin,
+//        comments,
+//        reviews,
+//    )
+//
+//    var secondPost = CodeInformation(
+//        0,
+//        "Et cela le titre d'un autre Post",
+//        "Avec une description minuscule.",
+//        "",
+//        "",
+//        666,
+//        Date(),
+//        czer,
+//        comments,
+//        reviews,
+//    )
+//    posts.value.add(firstPost)
+//    posts.value.add(secondPost)
+//    posts.value.add(firstPost)
+//    posts.value.add(firstPost)
+//    posts.value.add(secondPost)
+//    posts.value.add(firstPost)
+//    posts.value.add(firstPost)
+//
+//    return posts.value
+//}
 
 suspend fun filter(sortBy: String, query: String, pageNumber:Int):FilterInformation ?{
     return withContext(Dispatchers.IO) {
@@ -128,9 +120,6 @@ suspend fun filter(sortBy: String, query: String, pageNumber:Int):FilterInformat
         }
     }
 }
-
-
-
 
 @Composable
 fun HomePage(viewModel: MainViewModel){
@@ -172,11 +161,10 @@ fun HomePage(viewModel: MainViewModel){
                     Post(viewModel = viewModel,
                         code = it,
                         modifier = Modifier.clickable {
-                            viewModel.changeCurrentCodeToDisplay(it)
+                            viewModel.changeCurrentCodeToDisplay(it.id)
                             viewModel.changeCurrentPage(Page.CODE)
                         })
                 }
-
             }
         }
     }

@@ -1,8 +1,6 @@
 package fr.uge.ugerevevueandroid
 
 import AdminPage
-import TokenManager
-import android.R
 import android.app.Application
 import android.os.Bundle
 import android.widget.TextView
@@ -22,9 +20,11 @@ import fr.uge.ugerevevueandroid.page.CreatePage
 import fr.uge.ugerevevueandroid.page.HomePage
 import fr.uge.ugerevevueandroid.page.LoginPage
 import fr.uge.ugerevevueandroid.page.Page
+import fr.uge.ugerevevueandroid.page.ReviewPage
 import fr.uge.ugerevevueandroid.page.SignupPage
 import fr.uge.ugerevevueandroid.page.UserPage
 import fr.uge.ugerevevueandroid.ui.theme.UGEReveVueAndroidTheme
+import fr.uge.ugerevevueandroid.visual.Navbar
 
 
 class MainActivity : ComponentActivity() {
@@ -55,6 +55,7 @@ fun Application(viewModel : MainViewModel, application: Application){
         when(viewModel.currentPage){
             Page.HOME -> HomePage(viewModel = viewModel)
             Page.LOGIN -> LoginPage(application=application, viewModel = viewModel)
+            Page.REVIEW -> ReviewPage(viewModel = viewModel)
             Page.SIGNUP -> SignupPage(application=application, viewModel = viewModel)
             Page.USER -> UserPage(viewModel = viewModel, application=application)
             Page.CODE -> CodePage(viewModel = viewModel)

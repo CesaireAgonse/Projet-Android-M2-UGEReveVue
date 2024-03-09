@@ -1,6 +1,7 @@
 package fr.uge.ugerevevueandroid.model
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -16,14 +17,14 @@ class MainViewModel : ViewModel() {
     private var currentUserLogged by mutableStateOf<UserInformation>(UserInformation(0, "", null,false))
     var currentUserToDisplay by mutableStateOf<UserInformation>(UserInformation(0, "", null, false))
         private set
-    var currentCodeToDisplay by mutableStateOf<CodeInformation>(CodeInformation())
+    var currentCodeToDisplay by mutableLongStateOf(0)
         private set
 
     fun changeCurrentPage(page : Page){currentPage = page }
 
     fun changeCurrentUserToDisplay(user : UserInformation){ currentUserToDisplay = user }
 
-    fun changeCurrentCodeToDisplay(code : CodeInformation){ currentCodeToDisplay = code }
+    fun changeCurrentCodeToDisplay(codeId : Long){ currentCodeToDisplay = codeId }
 
     fun adminAccess() : Boolean {
         if (currentUserLogged != null && currentUserLogged.isAdmin){

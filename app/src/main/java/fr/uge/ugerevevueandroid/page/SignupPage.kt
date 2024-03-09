@@ -31,15 +31,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.uge.ugerevevueandroid.form.LoginForm
+import fr.uge.ugerevevueandroid.form.SignupForm
 import fr.uge.ugerevevueandroid.form.TokenForm
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.authenticationService
 import retrofit2.Call
 
-fun login(application: Application, username: String, password: String) {
-    val loginForm = LoginForm(username, password)
-    val call = authenticationService.login(loginForm)
+fun signup(application: Application, username: String, password: String, confirmPassword:String) {
+    val signupForm = SignupForm(username, password)
+    val call = authenticationService.signup(signupForm)
     call.enqueue(object : retrofit2.Callback<TokenForm> {
         override fun onResponse(call: Call<TokenForm>, response: retrofit2.Response<TokenForm>) {
             if (response.isSuccessful){
@@ -50,25 +50,28 @@ fun login(application: Application, username: String, password: String) {
                     tokenManager.saveToken("refresh", userResponse.refresh)
                 }
             } else {
-                Log.i("test", "test2")
+                Log.i("isNotSuccessful", "isNotSuccessful")
             }
         }
         override fun onFailure(call: Call<TokenForm>, t: Throwable) {
-            Log.i("test3", t.message.orEmpty())
+            Log.i("onFailure", t.message.orEmpty())
         }
     })
 }
+
 @Composable
-fun LoginPage(application: Application, viewModel: MainViewModel){
+fun SignupPage(application: Application, viewModel: MainViewModel){
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var isComfirmPasswordVisible by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text= " Log In", fontSize = 40.sp)
+        Text(text= " Sign Up", fontSize = 40.sp)
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
@@ -100,14 +103,34 @@ fun LoginPage(application: Application, viewModel: MainViewModel){
                 imeAction = ImeAction.Done
             )
         )
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(25.dp),
+            label = { Text(text = "Comfirm Passsword", color = Color.LightGray) },
+            leadingIcon = {
+                Icon(Icons.Default.Lock, contentDescription = "password icon")
+            },
+            trailingIcon = {
+                IconButton(onClick = { isComfirmPasswordVisible = !isComfirmPasswordVisible }) {
+                    Icon(Icons.Default.Face, contentDescription = "")
+                }
+            },
+            visualTransformation = if (isComfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done
+            )
+        )
         Button(
             onClick = {
-                login(application = application, username = username, password = password)
+                signup(application = application, username = username, password = password, confirmPassword = confirmPassword)
                 viewModel.changeCurrentPage(Page.HOME)
-            },
+                },
             modifier = Modifier
         ){
-            Text(text = "Log in")
+            Text(text = "Sign up")
         }
     }
 }
