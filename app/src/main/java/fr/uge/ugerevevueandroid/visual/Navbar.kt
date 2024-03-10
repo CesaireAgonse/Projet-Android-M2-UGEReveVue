@@ -103,7 +103,6 @@ fun Navbar(application: Application, viewModel: MainViewModel){
                         manager.getAuth()?.let { viewModel.changeCurrentUserToDisplay(it.username) }
                     }
                     .size(75.dp)
-                    .clip(CircleShape)
             )
             Button(
                 onClick = {

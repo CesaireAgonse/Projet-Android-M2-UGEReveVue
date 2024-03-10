@@ -8,5 +8,6 @@ enum class Page {
     USER,
     CODE,
     CREATE,
-    ADMIN
+    ADMIN,
+    PASSWORD
 }

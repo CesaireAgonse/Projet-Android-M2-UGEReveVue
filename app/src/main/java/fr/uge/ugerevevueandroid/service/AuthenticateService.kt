@@ -1,6 +1,7 @@
 package fr.uge.ugerevevueandroid.service
 
 import fr.uge.ugerevevueandroid.form.CommentForm
+import fr.uge.ugerevevueandroid.form.UpdatePasswordInformation
 import fr.uge.ugerevevueandroid.form.ReviewForm
 import retrofit2.Call
 import retrofit2.http.Body
@@ -25,5 +26,7 @@ interface AuthenticateService {
     // ReviewController
 
     // UserController
+    @POST("users/password")
+    fun password(@Body updatePasswordInformation: UpdatePasswordInformation): Call<Void>
 
 }

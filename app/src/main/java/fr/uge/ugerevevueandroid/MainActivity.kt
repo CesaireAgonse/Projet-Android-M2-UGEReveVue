@@ -8,7 +8,6 @@ import android.util.Log
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +21,7 @@ import fr.uge.ugerevevueandroid.page.CreatePage
 import fr.uge.ugerevevueandroid.page.HomePage
 import fr.uge.ugerevevueandroid.page.LoginPage
 import fr.uge.ugerevevueandroid.page.Page
+import fr.uge.ugerevevueandroid.page.PasswordPage
 import fr.uge.ugerevevueandroid.page.ReviewPage
 import fr.uge.ugerevevueandroid.page.SignupPage
 import fr.uge.ugerevevueandroid.page.UserPage
@@ -62,6 +62,7 @@ fun Application(viewModel : MainViewModel, application: Application){
             Page.CODE -> CodePage(application= application, viewModel = viewModel)
             Page.CREATE -> CreatePage(viewModel = viewModel)
             Page.ADMIN -> AdminPage(viewModel = viewModel)
+            Page.PASSWORD -> PasswordPage(application=application, viewModel=viewModel)
         }
     }
 }

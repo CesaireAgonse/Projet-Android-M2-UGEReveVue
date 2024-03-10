@@ -146,7 +146,7 @@ fun UserDisplayer(viewModel : MainViewModel, user : UserInformation, modifier : 
             }) {
                 Text(text = "Change your profile image")
             }
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {  viewModel.changeCurrentPage(Page.PASSWORD) }) {
                 Text(text = "Change your password")
             }
         }

@@ -1,6 +1,5 @@
 package fr.uge.ugerevevueandroid.page
 
-import TokenManager
 import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +11,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,39 +29,33 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.uge.ugerevevueandroid.form.SignupForm
-import fr.uge.ugerevevueandroid.form.TokenForm
+import fr.uge.ugerevevueandroid.form.UpdatePasswordInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.service.allPermitService
+import fr.uge.ugerevevueandroid.service.ApiService
 import retrofit2.Call
 
-fun signup(application: Application, username: String, password: String, confirmPassword:String) {
-    val signupForm = SignupForm(username, password)
-    val call = allPermitService.signup(signupForm)
-    call.enqueue(object : retrofit2.Callback<TokenForm> {
-        override fun onResponse(call: Call<TokenForm>, response: retrofit2.Response<TokenForm>) {
+fun password(application: Application, currentPassword: String, newPassword: String, confirmPassword:String) {
+    val call = ApiService(application).authenticateService()
+        .password(UpdatePasswordInformation(currentPassword, newPassword))
+    call.enqueue(object : retrofit2.Callback<Void> {
+        override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
             if (response.isSuccessful){
-                val userResponse = response.body()
-                val tokenManager = TokenManager(application)
-                if (userResponse != null) {
-                    tokenManager.saveToken("bearer", userResponse.bearer)
-                    tokenManager.saveToken("refresh", userResponse.refresh)
-                }
+                Log.i("isSuccessful", "isSuccessful")
             } else {
                 Log.i("isNotSuccessful", "isNotSuccessful")
             }
         }
-        override fun onFailure(call: Call<TokenForm>, t: Throwable) {
+        override fun onFailure(call: Call<Void>, t: Throwable) {
             Log.i("onFailure", t.message.orEmpty())
         }
     })
 }
-
 @Composable
-fun SignupPage(application: Application, viewModel: MainViewModel){
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun PasswordPage(application: Application, viewModel: MainViewModel){
+    var currentPassword by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var isCurrentPasswordVisible by remember { mutableStateOf(false) }
     var isPasswordVisible by remember { mutableStateOf(false) }
     var isComfirmPasswordVisible by remember { mutableStateOf(false) }
     Column(
@@ -71,25 +63,30 @@ fun SignupPage(application: Application, viewModel: MainViewModel){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text= " Sign Up", fontSize = 40.sp)
+        Text(text= "Update Password", fontSize = 40.sp)
         OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
+            value = currentPassword,
+            onValueChange = { currentPassword = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(25.dp),
-            label = { Text(text = "Username", color = Color.LightGray) },
+            label = { Text(text = "Current Password", color = Color.LightGray) },
             leadingIcon = {
-                Icon(Icons.Default.Person, contentDescription = "username icon")
+                Icon(Icons.Default.Lock, contentDescription = "password icon")
+            },
+            trailingIcon = {
+                IconButton(onClick = { isCurrentPasswordVisible = !isCurrentPasswordVisible }) {
+                    Icon(Icons.Default.Face, contentDescription = "")
+                }
             }
         )
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = newPassword,
+            onValueChange = { newPassword = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(25.dp),
-            label = { Text(text = "Password", color = Color.LightGray) },
+            label = { Text(text = "New Password", color = Color.LightGray) },
             leadingIcon = {
                 Icon(Icons.Default.Lock, contentDescription = "password icon")
             },
@@ -125,12 +122,12 @@ fun SignupPage(application: Application, viewModel: MainViewModel){
         )
         Button(
             onClick = {
-                signup(application = application, username = username, password = password, confirmPassword = confirmPassword)
-                viewModel.changeCurrentPage(Page.HOME)
-                },
+                password(application = application, currentPassword, newPassword, confirmPassword)
+                viewModel.changeCurrentPage(Page.USER)
+            },
             modifier = Modifier
         ){
-            Text(text = "Sign up")
+            Text(text = "Update Password")
         }
     }
 }

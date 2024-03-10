@@ -103,7 +103,6 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             contentNewComment = ""
         }
     }
-
     LaunchedEffect(reviewed) {
         if (reviewed){
             postReviewed(application, viewModel.currentCodeToDisplay, ReviewForm(contentNewReview))
@@ -111,7 +110,6 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             contentNewReview = ""
         }
     }
-
     LaunchedEffect(true, commented) {
         code = code(viewModel.currentCodeToDisplay)
         commentPageInformation = comments(viewModel.currentCodeToDisplay, 0)
@@ -146,18 +144,15 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             }) {
                 Text(text = "Comment")
             }
-
             Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp))
             Text(text = "Reviews about this post : ${code!!.reviews.size}")
-
             reviewPageInformation!!.reviews.forEach{
                 Review(application=application, review = it, modifier = Modifier.clickable {
                     viewModel.changeCurrentCodeToDisplay(it.id)
                     viewModel.changeCurrentPage(Page.REVIEW)
                 })
-
             }
             OutlinedTextField(
                 value = contentNewReview,
