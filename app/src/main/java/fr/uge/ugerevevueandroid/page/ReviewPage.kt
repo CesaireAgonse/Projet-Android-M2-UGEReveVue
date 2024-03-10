@@ -83,7 +83,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                 .verticalScroll(scrollState)
                 .padding(8.dp)
         ) {
-            Review(review = review!!)
+            Review(application=application, review = review!!)
             commentPageInformation!!.comments.forEach{
                 Comment(it)
             }
@@ -111,7 +111,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             Text(text = "Reviews about this post : ${review!!.reviews.size}")
 
             reviewPageInformation!!.reviews.forEach{
-                Review(review = it, modifier = Modifier.clickable {
+                Review(application=application, review = it, modifier = Modifier.clickable {
                     viewModel.changeCurrentCodeToDisplay(it.id)
                     id = it.id
                     viewModel.changeCurrentPage(Page.REVIEW)

@@ -6,12 +6,16 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface AuthenticateService {
 
     // CodeController
 
     // PostController
+    @POST("posts/vote/{postId}")
+    fun postVoted(@Path("postId") postId: Long, @Query("voteType") voteType:String): Call<Long>
+
     @POST("posts/comment/{postId}")
     fun postCommented(@Path("postId") postId:Long, @Body commentForm: CommentForm): Call<Void>
 

@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.visual
 
+import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +17,9 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,13 +31,37 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.R
+import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
+import fr.uge.ugerevevueandroid.page.postCommented
+import fr.uge.ugerevevueandroid.service.ApiService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+
+suspend fun postVoted(application: Application, postId: Long, voteType: String):Long {
+    return withContext(Dispatchers.IO) {
+        var response = ApiService(application).authenticateService()
+            .postVoted(postId, voteType)
+            .execute()
+        if (response.isSuccessful){
+            response.body()
+        }
+        0
+    }
+}
 
 @Composable
-fun Code(code : CodeInformation){
-    var voteButtonClicked : Boolean by remember { mutableStateOf(false) }
+fun Code(application: Application, code : CodeInformation){
+    var voteButtonClicked by remember { mutableStateOf("NotVoted") }
+    var score by remember { mutableLongStateOf(code.score) }
+    LaunchedEffect(voteButtonClicked) {
+        if (voteButtonClicked != "NotVoted"){
+            score = postVoted(application, code.id, voteButtonClicked)
+        }
+    }
     Text(
-        text = "${code.title}",
+        text = code.title,
         fontSize = 30.sp
     )
     Row {
@@ -53,7 +80,7 @@ fun Code(code : CodeInformation){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(onClick = { /*TODO*/ voteButtonClicked = !voteButtonClicked},
+            Button(onClick = { voteButtonClicked = "UpVote"},
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.button_color),
                     contentColor = Color.Black,
                     disabledContentColor = Color.Black,
@@ -63,8 +90,8 @@ fun Code(code : CodeInformation){
             ) {
                 Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "UpVote")
             }
-            Text(text = "${code.score}")
-            Button(onClick = { /*TODO*/ voteButtonClicked = !voteButtonClicked},
+            Text(text = "$score")
+            Button(onClick = { voteButtonClicked = "DownVote"},
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.button_color),
                     contentColor = Color.Black,
                     disabledContentColor = Color.Black,

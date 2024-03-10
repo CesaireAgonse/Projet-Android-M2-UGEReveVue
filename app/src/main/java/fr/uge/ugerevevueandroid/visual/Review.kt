@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.visual
 
+import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,8 +32,14 @@ import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.ReviewInformation
 
 @Composable
-fun Review(review: ReviewInformation, modifier: Modifier = Modifier){
-    var voteButtonClicked : Boolean by remember { mutableStateOf(false) }
+fun Review(application: Application, review: ReviewInformation, modifier: Modifier = Modifier){
+    var voteButtonClicked by remember { mutableStateOf("NotVoted") }
+    var score by remember { mutableLongStateOf(review.score) }
+    LaunchedEffect(voteButtonClicked) {
+        if (voteButtonClicked != "NotVoted"){
+            score = postVoted(application, review.id, voteButtonClicked)
+        }
+    }
     Column (
         modifier = modifier.padding(2.dp)
         // mettre un petit background et delimiter chaque component
@@ -62,7 +71,7 @@ fun Review(review: ReviewInformation, modifier: Modifier = Modifier){
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(onClick = { /*TODO*/ voteButtonClicked = !voteButtonClicked},
+                Button(onClick = { voteButtonClicked = "UpVote" },
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.button_color),
                         contentColor = Color.Black,
                         disabledContentColor = Color.Black,
@@ -72,8 +81,8 @@ fun Review(review: ReviewInformation, modifier: Modifier = Modifier){
                 ) {
                     Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "UpVote")
                 }
-                Text(text = "${review.score}")
-                Button(onClick = { /*TODO*/ voteButtonClicked = !voteButtonClicked},
+                Text(text = "$score")
+                Button(onClick = { voteButtonClicked = "DownVote" },
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.button_color),
                         contentColor = Color.Black,
                         disabledContentColor = Color.Black,
