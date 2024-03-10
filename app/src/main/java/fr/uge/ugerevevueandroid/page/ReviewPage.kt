@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.page
 
+import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
@@ -45,7 +47,7 @@ suspend fun review(reviewId: Long): ReviewInformation? {
     }
 }
 @Composable
-fun ReviewPage(viewModel : MainViewModel){
+fun ReviewPage(application: Application, viewModel : MainViewModel){
     val scrollState = rememberScrollState()
     var contentNewComment by remember { mutableStateOf("") }
     var contentNewReview by remember { mutableStateOf("") }
@@ -53,6 +55,14 @@ fun ReviewPage(viewModel : MainViewModel){
     var commentPageInformation: CommentPageInformation? by remember { mutableStateOf( null) }
     var reviewPageInformation: ReviewPageInformation? by remember { mutableStateOf( null) }
     var id = viewModel.currentCodeToDisplay
+    var commented by remember { mutableStateOf(false) }
+    LaunchedEffect(commented) {
+        if (commented){
+            postCommented(application, viewModel.currentCodeToDisplay, CommentForm(contentNewComment))
+            commented = false;
+            contentNewComment = ""
+        }
+    }
     LaunchedEffect(true, id) {
         review = review(id)
         commentPageInformation = comments(id, 0)
@@ -82,7 +92,7 @@ fun ReviewPage(viewModel : MainViewModel){
                     imeAction = ImeAction.Done
                 )
             )
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { commented=true }) {
                 Text(text = "Comment")
             }
 

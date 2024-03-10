@@ -182,7 +182,7 @@ fun Post(viewModel: MainViewModel, code: CodeInformation, modifier: Modifier = M
                 fontSize = 10.sp)
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = "${code.userInformation.username}",
+                text = code.userInformation.username,
                 modifier = Modifier.clickable { /*User(user = code.userInformation)*/
                     viewModel.changeCurrentPage(Page.USER)
                     viewModel.changeCurrentUserToDisplay(code.userInformation.username)

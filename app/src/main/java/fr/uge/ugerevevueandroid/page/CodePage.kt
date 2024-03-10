@@ -1,5 +1,7 @@
 package fr.uge.ugerevevueandroid.page
 
+import TokenManager
+import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,10 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.ReviewPageInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.service.ApiService
 import fr.uge.ugerevevueandroid.service.allPermitService
 import fr.uge.ugerevevueandroid.visual.Code
 import fr.uge.ugerevevueandroid.visual.Comment
@@ -65,15 +69,32 @@ suspend fun reviews(postId: Long, pageNumber: Int): ReviewPageInformation? {
     }
 }
 
+suspend fun postCommented(application:Application, postId: Long, commentForm: CommentForm) {
+    return withContext(Dispatchers.IO) {
+        ApiService(application).authenticateService()
+            .postCommented(postId, commentForm)
+            .execute()
+    }
+}
+
 @Composable
-fun CodePage(viewModel : MainViewModel){
+fun CodePage(application: Application, viewModel : MainViewModel){
     val scrollState = rememberScrollState()
     var contentNewComment by remember { mutableStateOf("") }
     var contentNewReview by remember { mutableStateOf("") }
     var code:CodeInformation? by remember {mutableStateOf( null)}
     var commentPageInformation:CommentPageInformation? by remember {mutableStateOf( null)}
     var reviewPageInformation: ReviewPageInformation? by remember {mutableStateOf( null)}
-    LaunchedEffect(true) {
+    var commented by remember { mutableStateOf(false) }
+    LaunchedEffect(commented) {
+        if (commented){
+            postCommented(application, viewModel.currentCodeToDisplay, CommentForm(contentNewComment))
+            commented = false;
+            contentNewComment = ""
+        }
+    }
+
+    LaunchedEffect(true, commented) {
         code = code(viewModel.currentCodeToDisplay)
         commentPageInformation = comments(viewModel.currentCodeToDisplay, 0)
         reviewPageInformation = reviews(viewModel.currentCodeToDisplay, 0)
@@ -102,7 +123,9 @@ fun CodePage(viewModel : MainViewModel){
                     imeAction = ImeAction.Done
                 )
             )
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = {
+                commented = true
+            }) {
                 Text(text = "Comment")
             }
 

@@ -29,7 +29,7 @@ class ApiService(application: Application){
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    fun AuthenticateService() :AuthenticateService{
+    fun authenticateService() :AuthenticateService{
         return retrofitBearer.create(AuthenticateService::class.java)
     }
 }
