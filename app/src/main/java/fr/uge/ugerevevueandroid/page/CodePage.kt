@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import fr.uge.ugerevevueandroid.form.CommentForm
+import fr.uge.ugerevevueandroid.form.ReviewForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.ReviewPageInformation
@@ -77,6 +78,14 @@ suspend fun postCommented(application:Application, postId: Long, commentForm: Co
     }
 }
 
+suspend fun postReviewed(application:Application, postId: Long, reviewForm: ReviewForm) {
+    return withContext(Dispatchers.IO) {
+        ApiService(application).authenticateService()
+            .postReviewed(postId, reviewForm)
+            .execute()
+    }
+}
+
 @Composable
 fun CodePage(application: Application, viewModel : MainViewModel){
     val scrollState = rememberScrollState()
@@ -86,11 +95,20 @@ fun CodePage(application: Application, viewModel : MainViewModel){
     var commentPageInformation:CommentPageInformation? by remember {mutableStateOf( null)}
     var reviewPageInformation: ReviewPageInformation? by remember {mutableStateOf( null)}
     var commented by remember { mutableStateOf(false) }
+    var reviewed by remember { mutableStateOf(false) }
     LaunchedEffect(commented) {
         if (commented){
             postCommented(application, viewModel.currentCodeToDisplay, CommentForm(contentNewComment))
             commented = false;
             contentNewComment = ""
+        }
+    }
+
+    LaunchedEffect(reviewed) {
+        if (reviewed){
+            postReviewed(application, viewModel.currentCodeToDisplay, ReviewForm(contentNewReview))
+            reviewed = false;
+            contentNewReview = ""
         }
     }
 
@@ -152,7 +170,7 @@ fun CodePage(application: Application, viewModel : MainViewModel){
                     imeAction = ImeAction.Done
                 )
             )
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { reviewed=true }) {
                 Text(text = "Post")
             }
         }

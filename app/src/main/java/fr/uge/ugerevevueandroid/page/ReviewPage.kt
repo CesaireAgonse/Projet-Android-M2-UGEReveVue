@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import fr.uge.ugerevevueandroid.form.CommentForm
+import fr.uge.ugerevevueandroid.form.ReviewForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
@@ -56,11 +57,19 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
     var reviewPageInformation: ReviewPageInformation? by remember { mutableStateOf( null) }
     var id = viewModel.currentCodeToDisplay
     var commented by remember { mutableStateOf(false) }
+    var reviewed by remember { mutableStateOf(false) }
     LaunchedEffect(commented) {
         if (commented){
             postCommented(application, viewModel.currentCodeToDisplay, CommentForm(contentNewComment))
             commented = false;
             contentNewComment = ""
+        }
+    }
+    LaunchedEffect(reviewed) {
+        if (reviewed){
+            postReviewed(application, viewModel.currentCodeToDisplay, ReviewForm(contentNewReview))
+            reviewed = false;
+            contentNewReview = ""
         }
     }
     LaunchedEffect(true, id) {
@@ -119,7 +128,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                     imeAction = ImeAction.Done
                 )
             )
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { reviewed=true }) {
                 Text(text = "Post")
             }
         }
