@@ -29,4 +29,9 @@ interface AuthenticateService {
     @POST("users/password")
     fun password(@Body updatePasswordInformation: UpdatePasswordInformation): Call<Void>
 
+    @POST("users/follow/{username}")
+    fun follow(@Path("username") username: String): Call<Void>
+
+    @POST("users/unfollow/{username}")
+    fun unfollow(@Path("username") username: String): Call<Void>
 }

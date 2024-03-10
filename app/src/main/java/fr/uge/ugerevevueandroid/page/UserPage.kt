@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.page
 
+import TokenManager
 import android.app.Application
 import android.net.Uri
 import android.util.Log
@@ -32,13 +33,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.R
+import fr.uge.ugerevevueandroid.form.UpdatePasswordInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.service.AllPermitService
 import fr.uge.ugerevevueandroid.service.ApiService
 import fr.uge.ugerevevueandroid.service.allPermitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.Call
 
 // Définir une interface pour la gestion de la sélection d'image
 suspend fun profile(username: String): UserInformation? {
@@ -51,8 +53,43 @@ suspend fun profile(username: String): UserInformation? {
         }
     }
 }
+
+fun follow(application: Application, username: String) {
+    val call = ApiService(application).authenticateService()
+        .follow(username)
+    call.enqueue(object : retrofit2.Callback<Void> {
+        override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
+            if (response.isSuccessful){
+                Log.i("isSuccessful", "isSuccessful")
+            } else {
+                Log.i("isNotSuccessful", "isNotSuccessful")
+            }
+        }
+        override fun onFailure(call: Call<Void>, t: Throwable) {
+            Log.i("onFailure", t.message.orEmpty())
+        }
+    })
+}
+
+fun unfollow(application: Application, username: String) {
+    val call = ApiService(application).authenticateService()
+        .unfollow(username)
+    call.enqueue(object : retrofit2.Callback<Void> {
+        override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
+            if (response.isSuccessful){
+                Log.i("isSuccessful", "isSuccessful")
+            } else {
+                Log.i("isNotSuccessful", "isNotSuccessful")
+            }
+        }
+        override fun onFailure(call: Call<Void>, t: Throwable) {
+            Log.i("onFailure", t.message.orEmpty())
+        }
+    })
+}
+
 @Composable
-fun UserPage(viewModel : MainViewModel) {
+fun UserPage(application: Application, viewModel : MainViewModel) {
     val scrollState = rememberScrollState()
     var username = viewModel.currentUserToDisplay
     Column (
@@ -66,7 +103,7 @@ fun UserPage(viewModel : MainViewModel) {
         }
         val user = userState.value
         if (user != null){
-            UserDisplayer(viewModel = viewModel, user = user, Modifier.weight(4f))
+            UserDisplayer(application = application, viewModel = viewModel, user = user, Modifier.weight(4f))
             Column(
                 modifier = Modifier.weight(6f)
                     .verticalScroll(scrollState)
@@ -88,7 +125,7 @@ fun UserPage(viewModel : MainViewModel) {
 }
 
 @Composable
-fun UserDisplayer(viewModel : MainViewModel, user : UserInformation, modifier : Modifier = Modifier){
+fun UserDisplayer(application: Application, viewModel : MainViewModel, user : UserInformation, modifier : Modifier = Modifier){
     var uriUser: Uri? = null
     val selectImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
@@ -139,15 +176,28 @@ fun UserDisplayer(viewModel : MainViewModel, user : UserInformation, modifier : 
                 }
             }
         }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Button(onClick = {
-                selectImageLauncher.launch("image/*")
-            }) {
-                Text(text = "Change your profile image")
-            }
-            Button(onClick = {  viewModel.changeCurrentPage(Page.PASSWORD) }) {
-                Text(text = "Change your password")
+        val auth = TokenManager(application).getAuth()
+        if (auth != null) {
+            if (auth.username == user.username) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Button(onClick = {
+                        selectImageLauncher.launch("image/*")
+                    }) {
+                        Text(text = "Change your profile image")
+                    }
+                    Button(onClick = {  viewModel.changeCurrentPage(Page.PASSWORD) }) {
+                        Text(text = "Change your password")
+                    }
+                }
+            } else {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Button(onClick = { follow(application = application, user.username) }) {
+                        Text(text = "Follow")
+                    }
+                    Button(onClick = { unfollow(application = application, user.username) }) {
+                        Text(text = "Unfollow")
+                    }
+                }
             }
         }
     }
