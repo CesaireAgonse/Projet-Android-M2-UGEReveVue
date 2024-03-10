@@ -76,9 +76,7 @@ fun Code(code : CodeInformation){
             }
         }
         Column {
-            Text(text = code.description,
-                textAlign = TextAlign.Justify)
-
+            Text(text = code.description, textAlign = TextAlign.Justify)
             Text(text = code.javaContent)
             if (code.unitContent != null){
                 Text(text = code.unitContent)

@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
-import fr.uge.ugerevevueandroid.service.authenticationService
+import fr.uge.ugerevevueandroid.service.allPermitService
 
 @Composable
 fun Navbar(application: Application, viewModel: MainViewModel){
@@ -98,13 +98,16 @@ fun Navbar(application: Application, viewModel: MainViewModel){
                 painter = painterResource(id = R.drawable.default_profile_image),
                 contentDescription = "Profile Image",
                 modifier = Modifier
-                    .clickable { viewModel.changeCurrentPage(Page.USER) }
+                    .clickable {
+                        viewModel.changeCurrentPage(Page.USER)
+                        manager.getAuth()?.let { viewModel.changeCurrentUserToDisplay(it.username) }
+                    }
                     .size(75.dp)
                     .clip(CircleShape)
             )
             Button(
                 onClick = {
-                    authenticationService.logout()
+                    allPermitService.logout()
                     manager.clearToken("bearer")
                     manager.clearToken("refresh")
                     viewModel.changeCurrentPage(Page.HOME)

@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,14 +34,16 @@ import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.service.AllPermitService
 import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.service.allPermitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 // Définir une interface pour la gestion de la sélection d'image
-suspend fun profile(application: Application, username: String): UserInformation? {
+suspend fun profile(username: String): UserInformation? {
     return withContext(Dispatchers.IO) {
-        val response = ApiService(application).getUserService().getUserInformation(username).execute()
+        val response = allPermitService.information(username).execute()
         if (response.isSuccessful) {
             response.body()
         } else {
@@ -47,37 +52,37 @@ suspend fun profile(application: Application, username: String): UserInformation
     }
 }
 @Composable
-fun UserPage(viewModel : MainViewModel, application: Application) {
-    //val scrollState = rememberScrollState()
-    var username = "a"
+fun UserPage(viewModel : MainViewModel) {
+    val scrollState = rememberScrollState()
+    var username = viewModel.currentUserToDisplay
     Column (
         modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max)
     ){
         val userState = remember { mutableStateOf<UserInformation?>(null) }
 
         LaunchedEffect(username) {
-            val user = profile(application, username)
+            val user = profile(username)
             userState.value = user
         }
         val user = userState.value
         if (user != null){
             UserDisplayer(viewModel = viewModel, user = user, Modifier.weight(4f))
+            Column(
+                modifier = Modifier.weight(6f)
+                    .verticalScroll(scrollState)
+            ) {
+                Text(text = "Followed")
+                user.followed?.forEach{
+                    Text(
+                        text = it.username,
+                        modifier = Modifier.clickable {
+                            viewModel.changeCurrentPage(Page.USER)
+                            viewModel.changeCurrentUserToDisplay(it.username)
+                        }
+                    )
+                }
+            }
         }
-//        Column(
-//            modifier = Modifier.weight(6f)
-//                .verticalScroll(scrollState)
-//        ) {
-//            Text(text = "Follower")
-//            viewModel.currentUserToDisplay.followed?.forEach{
-//                Text(
-//                    text = "${it.username}",
-//                    modifier = Modifier.clickable {
-//                        viewModel.changeCurrentPage(Page.USER)
-//                        viewModel.changeCurrentUserToDisplay(it)
-//                    }
-//                )
-//            }
-//        }
     }
 
 }
@@ -112,7 +117,7 @@ fun UserDisplayer(viewModel : MainViewModel, user : UserInformation, modifier : 
                         .clip(CircleShape) // Forme ronde
                 )
                 Text(
-                    text = "${user.username}",
+                    text = user.username,
                     modifier = Modifier.padding(top = 8.dp),
                     fontSize = 30.sp
                 )
@@ -134,9 +139,8 @@ fun UserDisplayer(viewModel : MainViewModel, user : UserInformation, modifier : 
                 }
             }
         }
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Button(onClick = {
                 selectImageLauncher.launch("image/*")
             }) {

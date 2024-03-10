@@ -1,8 +1,10 @@
 package fr.uge.ugerevevueandroid
 
 import AdminPage
+import TokenManager
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,7 +34,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             // Initialisation du ViewModel
-            var viewModel = viewModel<MainViewModel>()
+            val viewModel = viewModel<MainViewModel>()
 
             UGEReveVueAndroidTheme {
                 // A surface container using the 'background' color from the theme
@@ -49,7 +51,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Application(viewModel : MainViewModel, application: Application){
-    //TokenManager(application).getAuth()
     Column {
         Navbar(application = application, viewModel = viewModel)
         when(viewModel.currentPage){
@@ -57,7 +58,7 @@ fun Application(viewModel : MainViewModel, application: Application){
             Page.LOGIN -> LoginPage(application=application, viewModel = viewModel)
             Page.REVIEW -> ReviewPage(viewModel = viewModel)
             Page.SIGNUP -> SignupPage(application=application, viewModel = viewModel)
-            Page.USER -> UserPage(viewModel = viewModel, application=application)
+            Page.USER -> UserPage(viewModel = viewModel)
             Page.CODE -> CodePage(viewModel = viewModel)
             Page.CREATE -> CreatePage(viewModel = viewModel)
             Page.ADMIN -> AdminPage(viewModel = viewModel)

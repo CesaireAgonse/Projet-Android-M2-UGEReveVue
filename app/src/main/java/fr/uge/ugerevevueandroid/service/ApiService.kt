@@ -14,8 +14,7 @@ val retrofit: Retrofit = Retrofit.Builder()
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
-val authenticationService: AuthenticationService = retrofit.create(AuthenticationService::class.java)
-val filterService: FilterService = retrofit.create(FilterService::class.java)
+val allPermitService: AllPermitService = retrofit.create(AllPermitService::class.java)
 
 class ApiService(application: Application){
     val manager = TokenManager(application)
@@ -30,8 +29,8 @@ class ApiService(application: Application){
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    fun getUserService() :UserService{
-        return retrofitBearer.create(UserService::class.java)
+    fun AuthenticateService() :AuthenticateService{
+        return retrofitBearer.create(AuthenticateService::class.java)
     }
 }
 

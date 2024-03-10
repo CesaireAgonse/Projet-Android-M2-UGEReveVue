@@ -15,14 +15,14 @@ class MainViewModel : ViewModel() {
         private set
 
     private var currentUserLogged by mutableStateOf<UserInformation>(UserInformation(0, "", null,false))
-    var currentUserToDisplay by mutableStateOf<UserInformation>(UserInformation(0, "", null, false))
-        private set
+    var currentUserToDisplay by mutableStateOf<String>("")
+
     var currentCodeToDisplay by mutableLongStateOf(0)
         private set
 
     fun changeCurrentPage(page : Page){currentPage = page }
 
-    fun changeCurrentUserToDisplay(user : UserInformation){ currentUserToDisplay = user }
+    fun changeCurrentUserToDisplay(username : String){ currentUserToDisplay = username }
 
     fun changeCurrentCodeToDisplay(codeId : Long){ currentCodeToDisplay = codeId }
 

@@ -34,12 +34,12 @@ import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.form.LoginForm
 import fr.uge.ugerevevueandroid.form.TokenForm
 import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.service.authenticationService
+import fr.uge.ugerevevueandroid.service.allPermitService
 import retrofit2.Call
 
 fun login(application: Application, username: String, password: String) {
     val loginForm = LoginForm(username, password)
-    val call = authenticationService.login(loginForm)
+    val call = allPermitService.login(loginForm)
     call.enqueue(object : retrofit2.Callback<TokenForm> {
         override fun onResponse(call: Call<TokenForm>, response: retrofit2.Response<TokenForm>) {
             if (response.isSuccessful){
@@ -79,7 +79,8 @@ fun LoginPage(application: Application, viewModel: MainViewModel){
             label = { Text(text = "Username", color = Color.LightGray) },
             leadingIcon = {
                 Icon(Icons.Default.Person, contentDescription = "username icon")
-            }
+            },
+
         )
         OutlinedTextField(
             value = password,

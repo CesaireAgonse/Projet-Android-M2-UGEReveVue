@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -18,13 +19,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.ReviewPageInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.service.filterService
+import fr.uge.ugerevevueandroid.service.allPermitService
 import fr.uge.ugerevevueandroid.visual.Code
 import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
@@ -34,7 +36,7 @@ import kotlinx.coroutines.withContext
 
 suspend fun review(reviewId: Long): ReviewInformation? {
     return withContext(Dispatchers.IO) {
-        val response = filterService.review(reviewId).execute()
+        val response = allPermitService.review(reviewId).execute()
         if (response.isSuccessful) {
             response.body()
         } else {
@@ -75,7 +77,10 @@ fun ReviewPage(viewModel : MainViewModel){
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(25.dp),
-                label = { Text(text = "Your comment here", color = Color.LightGray) }
+                label = { Text(text = "Your comment here", color = Color.LightGray) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
             )
             Button(onClick = { /*TODO*/ }) {
                 Text(text = "Comment")
@@ -99,7 +104,10 @@ fun ReviewPage(viewModel : MainViewModel){
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(25.dp),
-                label = { Text(text = "Your review here", color = Color.LightGray) }
+                label = { Text(text = "Your review here", color = Color.LightGray) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
             )
             Button(onClick = { /*TODO*/ }) {
                 Text(text = "Post")

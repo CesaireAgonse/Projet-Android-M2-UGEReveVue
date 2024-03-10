@@ -34,12 +34,12 @@ import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.form.SignupForm
 import fr.uge.ugerevevueandroid.form.TokenForm
 import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.service.authenticationService
+import fr.uge.ugerevevueandroid.service.allPermitService
 import retrofit2.Call
 
 fun signup(application: Application, username: String, password: String, confirmPassword:String) {
     val signupForm = SignupForm(username, password)
-    val call = authenticationService.signup(signupForm)
+    val call = allPermitService.signup(signupForm)
     call.enqueue(object : retrofit2.Callback<TokenForm> {
         override fun onResponse(call: Call<TokenForm>, response: retrofit2.Response<TokenForm>) {
             if (response.isSuccessful){
