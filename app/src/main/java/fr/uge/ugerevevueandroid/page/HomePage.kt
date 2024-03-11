@@ -59,7 +59,7 @@ fun HomePage(viewModel: MainViewModel){
 
     var posts:FilterInformation? by remember {mutableStateOf( null)}
     LaunchedEffect(true, posts, pageNumber, query, sortBy) {
-        posts = filter("newest", "", 0)
+        posts = filter("newest", "", pageNumber)
         if (posts != null){
             sortBy = posts!!.sortBy
             query = posts!!.q
@@ -93,9 +93,21 @@ fun HomePage(viewModel: MainViewModel){
                             viewModel.changeCurrentPage(Page.CODE)
                         })
                 }
+                Row{
+                    if(pageNumber >= 1){
+                        Button(onClick = {pageNumber--}) {
+                            Text(text = "Previews")
+                        }
+                    }
+                    Button(onClick = {pageNumber++}) {
+                        Text(text = "Next")
+                    }
+                }
+
             }
         }
     }
+
 }
 
 @Composable

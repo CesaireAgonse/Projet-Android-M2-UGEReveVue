@@ -3,6 +3,7 @@ package fr.uge.ugerevevueandroid.page
 import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -58,6 +60,12 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
     var id = viewModel.currentCodeToDisplay
     var commented by remember { mutableStateOf(false) }
     var reviewed by remember { mutableStateOf(false) }
+    var pageNumberComments by remember {
+        mutableIntStateOf(0)
+    }
+    var pageNumberReviews by remember {
+        mutableIntStateOf(0)
+    }
     LaunchedEffect(commented) {
         if (commented){
             postCommented(application, viewModel.currentCodeToDisplay, CommentForm(contentNewComment))
@@ -72,10 +80,10 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             contentNewReview = ""
         }
     }
-    LaunchedEffect(true, id) {
+    LaunchedEffect(true, pageNumberComments,pageNumberReviews,commented,reviewed) {
         review = review(id)
-        commentPageInformation = comments(id, 0)
-        reviewPageInformation = reviews(id, 0)
+        commentPageInformation = comments(id, pageNumberComments)
+        reviewPageInformation = reviews(id, pageNumberReviews)
     }
     if (review != null && commentPageInformation != null && reviewPageInformation != null){
         Column(
@@ -86,6 +94,16 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             Review(application=application, review = review!!)
             commentPageInformation!!.comments.forEach{
                 Comment(it)
+            }
+            Row{
+                if(pageNumberComments >= 1){
+                    Button(onClick = {pageNumberComments--}) {
+                        Text(text = "Previews")
+                    }
+                }
+                Button(onClick = {pageNumberComments++}) {
+                    Text(text = "Next")
+                }
             }
             Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
                 .fillMaxWidth()
@@ -116,6 +134,16 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                     id = it.id
                     viewModel.changeCurrentPage(Page.REVIEW)
                 })
+            }
+            Row{
+                if(pageNumberReviews >= 1){
+                    Button(onClick = {pageNumberReviews--}) {
+                        Text(text = "Previews")
+                    }
+                }
+                Button(onClick = {pageNumberReviews++}) {
+                    Text(text = "Next")
+                }
             }
             OutlinedTextField(
                 value = contentNewReview,
