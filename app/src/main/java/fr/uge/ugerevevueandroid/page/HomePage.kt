@@ -55,15 +55,16 @@ fun HomePage(viewModel: MainViewModel){
     var sortBy by remember {mutableStateOf("")}
     var query by remember {mutableStateOf("")}
     var pageNumber by remember { mutableIntStateOf(0) }
-
+    var maxPageNumber by remember { mutableIntStateOf(0) }
 
     var posts:FilterInformation? by remember {mutableStateOf( null)}
-    LaunchedEffect(true, posts, pageNumber, query, sortBy) {
+    LaunchedEffect(true, posts, maxPageNumber, pageNumber, query, sortBy) {
         posts = filter("newest", "", pageNumber)
         if (posts != null){
             sortBy = posts!!.sortBy
             query = posts!!.q
             pageNumber = posts!!.pageNumber
+            maxPageNumber = posts!!.maxPageNumber
         }
     }
     val scrollState = rememberScrollState()
@@ -99,8 +100,10 @@ fun HomePage(viewModel: MainViewModel){
                             Text(text = "Previews")
                         }
                     }
-                    Button(onClick = {pageNumber++}) {
-                        Text(text = "Next")
+                    if(pageNumber < maxPageNumber) {
+                        Button(onClick = { pageNumber++ }) {
+                            Text(text = "Next")
+                        }
                     }
                 }
 
