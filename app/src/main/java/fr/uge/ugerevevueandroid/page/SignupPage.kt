@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,32 +32,27 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.uge.ugerevevueandroid.form.LoginForm
 import fr.uge.ugerevevueandroid.form.SignupForm
 import fr.uge.ugerevevueandroid.form.TokenForm
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.allPermitService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 
-fun signup(application: Application, username: String, password: String, confirmPassword:String) {
-    val signupForm = SignupForm(username, password)
-    val call = allPermitService.signup(signupForm)
-    call.enqueue(object : retrofit2.Callback<TokenForm> {
-        override fun onResponse(call: Call<TokenForm>, response: retrofit2.Response<TokenForm>) {
-            if (response.isSuccessful){
-                val userResponse = response.body()
-                val tokenManager = TokenManager(application)
-                if (userResponse != null) {
-                    tokenManager.saveToken("bearer", userResponse.bearer)
-                    tokenManager.saveToken("refresh", userResponse.refresh)
-                }
-            } else {
-                Log.i("isNotSuccessful", "isNotSuccessful")
+suspend fun signup(application: Application, username: String, password: String, confirmPassword:String) {
+    return withContext(Dispatchers.IO){
+        val response = allPermitService.signup(SignupForm(username,password)).execute()
+        if(response.isSuccessful){
+            val userResponse = response.body()
+            val manager = TokenManager(application)
+            if(userResponse != null){
+                manager.saveToken("bearer",userResponse.bearer)
+                manager.saveToken("refresh",userResponse.refresh)
             }
         }
-        override fun onFailure(call: Call<TokenForm>, t: Throwable) {
-            Log.i("onFailure", t.message.orEmpty())
-        }
-    })
+    }
 }
 
 @Composable
@@ -66,6 +62,14 @@ fun SignupPage(application: Application, viewModel: MainViewModel){
     var confirmPassword by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
     var isComfirmPasswordVisible by remember { mutableStateOf(false) }
+    var logged by remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = logged ){
+        if(logged){
+            signup(application,username,password,confirmPassword)
+            logged = false
+            viewModel.changeCurrentPage(Page.HOME)
+        }
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -125,8 +129,7 @@ fun SignupPage(application: Application, viewModel: MainViewModel){
         )
         Button(
             onClick = {
-                signup(application = application, username = username, password = password, confirmPassword = confirmPassword)
-                viewModel.changeCurrentPage(Page.HOME)
+                logged = true
                 },
             modifier = Modifier
         ){

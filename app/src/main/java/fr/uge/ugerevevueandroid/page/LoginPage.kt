@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,28 +36,22 @@ import fr.uge.ugerevevueandroid.form.LoginForm
 import fr.uge.ugerevevueandroid.form.TokenForm
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.allPermitService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 
-fun login(application: Application, username: String, password: String) {
-    val loginForm = LoginForm(username, password)
-    val call = allPermitService.login(loginForm)
-    call.enqueue(object : retrofit2.Callback<TokenForm> {
-        override fun onResponse(call: Call<TokenForm>, response: retrofit2.Response<TokenForm>) {
-            if (response.isSuccessful){
-                val userResponse = response.body()
-                val tokenManager = TokenManager(application)
-                if (userResponse != null) {
-                    tokenManager.saveToken("bearer", userResponse.bearer)
-                    tokenManager.saveToken("refresh", userResponse.refresh)
-                }
-            } else {
-                Log.i("isNotSuccessful", "isNotSuccessful")
+suspend fun login(application: Application, username: String, password: String) {
+    return withContext(Dispatchers.IO){
+        val response = allPermitService.login(LoginForm(username,password)).execute()
+        if(response.isSuccessful){
+            val userResponse = response.body()
+            val manager = TokenManager(application)
+            if(userResponse != null){
+                manager.saveToken("bearer",userResponse.bearer)
+                manager.saveToken("refresh",userResponse.refresh)
             }
         }
-        override fun onFailure(call: Call<TokenForm>, t: Throwable) {
-            Log.i("onFailure", t.message.orEmpty())
-        }
-    })
+    }
 }
 
 @Composable
@@ -64,6 +59,14 @@ fun LoginPage(application: Application, viewModel: MainViewModel){
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var logged by remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = logged ){
+        if(logged){
+            login(application,username,password)
+            logged = false
+            viewModel.changeCurrentPage(Page.HOME)
+        }
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -104,8 +107,7 @@ fun LoginPage(application: Application, viewModel: MainViewModel){
         )
         Button(
             onClick = {
-                login(application = application, username = username, password = password)
-                viewModel.changeCurrentPage(Page.HOME)
+                logged = true
             },
             modifier = Modifier
         ){
