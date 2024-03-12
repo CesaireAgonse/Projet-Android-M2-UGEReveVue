@@ -91,7 +91,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                 .verticalScroll(scrollState)
                 .padding(8.dp)
         ) {
-            Review(application=application, review = review!!)
+            Review(application=application, review = review!!, viewModel = viewModel)
             commentPageInformation!!.comments.forEach{
                 Comment(it)
             }
@@ -133,7 +133,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                     viewModel.changeCurrentCodeToDisplay(it.id)
                     id = it.id
                     viewModel.changeCurrentPage(Page.REVIEW)
-                })
+                }, viewModel )
             }
             Row{
                 if(pageNumberReviews >= 1){

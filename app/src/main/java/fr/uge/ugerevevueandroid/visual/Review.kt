@@ -30,9 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.ReviewInformation
+import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.page.Page
 
 @Composable
-fun Review(application: Application, review: ReviewInformation, modifier: Modifier = Modifier){
+fun Review(application: Application, review: ReviewInformation, modifier: Modifier = Modifier,viewModel: MainViewModel){
     var voteButtonClicked by remember { mutableStateOf("NotVoted") }
     var score by remember { mutableLongStateOf(review.score) }
     LaunchedEffect(voteButtonClicked) {
@@ -57,11 +59,9 @@ fun Review(application: Application, review: ReviewInformation, modifier: Modifi
         Row {
             Text(
                 text = "from : ${review.userInformation.username}",
-                modifier = Modifier.clickable { /*User(user = code.userInformation)*/
-                    /*
-                    redirection(Page.USER)
-                    setUser(code.userInformation)
-                    */
+                modifier = Modifier.clickable {
+                    viewModel.changeCurrentPage(Page.USER)
+                    viewModel.changeCurrentUserToDisplay(review.userInformation.username)
                 }
             )
             Spacer(modifier = Modifier.weight(1f))

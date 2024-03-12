@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
+import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.page.Page
 import fr.uge.ugerevevueandroid.page.postCommented
 import fr.uge.ugerevevueandroid.service.ApiService
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +54,7 @@ suspend fun postVoted(application: Application, postId: Long, voteType: String):
 }
 
 @Composable
-fun Code(application: Application, code : CodeInformation){
+fun Code(application: Application, code : CodeInformation,viewModel: MainViewModel){
     var voteButtonClicked by remember { mutableStateOf("NotVoted") }
     var score by remember { mutableLongStateOf(code.score) }
     LaunchedEffect(voteButtonClicked) {
@@ -67,7 +69,9 @@ fun Code(application: Application, code : CodeInformation){
     Row {
         Text(
             text = "from : ${code.userInformation.username}",
-            modifier = Modifier.clickable {  }
+            modifier = Modifier.clickable { viewModel.changeCurrentPage(Page.USER)
+            viewModel.changeCurrentUserToDisplay(code.userInformation.username)
+            }
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(text = "${code.date}")
