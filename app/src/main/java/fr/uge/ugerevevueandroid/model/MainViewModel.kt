@@ -20,11 +20,16 @@ class MainViewModel : ViewModel() {
     var currentCodeToDisplay by mutableLongStateOf(0)
         private set
 
+    var currentQuery by mutableStateOf("")
+        private set
+
     fun changeCurrentPage(page : Page){currentPage = page }
 
     fun changeCurrentUserToDisplay(username : String){ currentUserToDisplay = username }
 
     fun changeCurrentCodeToDisplay(codeId : Long){ currentCodeToDisplay = codeId }
+
+    fun changeCurrentQuery(query : String){ currentQuery = query }
 
     fun adminAccess() : Boolean {
         if (currentUserLogged != null && currentUserLogged.isAdmin){
