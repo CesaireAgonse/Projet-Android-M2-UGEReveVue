@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.page
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,13 +54,13 @@ suspend fun filter(sortBy: String, query: String, pageNumber:Int):FilterInformat
 @Composable
 fun HomePage(viewModel: MainViewModel){
     var sortBy by remember {mutableStateOf("")}
-    var query by remember {mutableStateOf("")}
+    var query by remember {mutableStateOf(viewModel.currentQuery)}
     var pageNumber by remember { mutableIntStateOf(0) }
     var maxPageNumber by remember { mutableIntStateOf(0) }
 
     var posts:FilterInformation? by remember {mutableStateOf( null)}
-    LaunchedEffect(true, posts, maxPageNumber, pageNumber, query, sortBy) {
-        posts = filter("newest", "", pageNumber)
+    LaunchedEffect(true, posts, maxPageNumber, pageNumber, query, sortBy, viewModel.currentQuery) {
+        posts = filter("newest", viewModel.currentQuery, pageNumber)
         if (posts != null){
             sortBy = posts!!.sortBy
             query = posts!!.q
