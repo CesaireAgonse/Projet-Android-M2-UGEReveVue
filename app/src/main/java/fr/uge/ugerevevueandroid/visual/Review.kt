@@ -101,12 +101,22 @@ fun Review(application: Application, review: ReviewInformation, modifier: Modifi
                     )
                 }
                 Row {
-                    Text(
-                        text = review.content,
-                        fontSize = 10.sp,
-                        textAlign = TextAlign.Justify,
-                        lineHeight = 15.sp
-                    )
+                    for (content in review.content){
+                        if (content.codeSelection != "" && content.codeSelection != null){
+                            Text(
+                                text = content.codeSelection,
+                                fontSize = 10.sp,
+                                textAlign = TextAlign.Justify,
+                                lineHeight = 15.sp
+                            )
+                        }
+                        Text(
+                            text = content.content,
+                            fontSize = 10.sp,
+                            textAlign = TextAlign.Justify,
+                            lineHeight = 15.sp
+                        )
+                    }
                 }
             }
         }

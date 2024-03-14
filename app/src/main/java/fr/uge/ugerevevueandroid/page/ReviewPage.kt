@@ -68,14 +68,15 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
     }
     LaunchedEffect(commented) {
         if (commented){
-            postCommented(application, viewModel.currentCodeToDisplay, CommentForm(contentNewComment))
+            postCommented(application, viewModel.currentCodeToDisplay, CommentForm(contentNewComment, ""))
             commented = false;
             contentNewComment = ""
         }
     }
     LaunchedEffect(reviewed) {
         if (reviewed){
-            postReviewed(application, viewModel.currentCodeToDisplay, ReviewForm(contentNewReview))
+            postReviewed(application, viewModel.currentCodeToDisplay, ReviewForm("title", listOf(
+                CommentForm(contentNewReview, ""))))
             reviewed = false;
             contentNewReview = ""
         }
@@ -98,7 +99,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             Row{
                 if(pageNumberComments >= 1){
                     Button(onClick = {pageNumberComments--}) {
-                        Text(text = "Previews")
+                        Text(text = "Previous")
                     }
                 }
                 Button(onClick = {pageNumberComments++}) {

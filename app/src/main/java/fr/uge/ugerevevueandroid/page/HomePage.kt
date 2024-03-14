@@ -98,7 +98,7 @@ fun HomePage(viewModel: MainViewModel){
                 Row{
                     if(pageNumber >= 1){
                         Button(onClick = {pageNumber--}) {
-                            Text(text = "Previews")
+                            Text(text = "Previous")
                         }
                     }
                     if(pageNumber < maxPageNumber) {
