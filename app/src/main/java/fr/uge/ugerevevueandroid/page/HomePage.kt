@@ -53,20 +53,21 @@ suspend fun filter(sortBy: String, query: String, pageNumber:Int):FilterInformat
 
 @Composable
 fun HomePage(viewModel: MainViewModel){
-    var sortBy by remember {mutableStateOf("")}
+    var sortBy by remember {mutableStateOf(viewModel.currentSortBy)}
     var query by remember {mutableStateOf(viewModel.currentQuery)}
     var pageNumber by remember { mutableIntStateOf(0) }
     var maxPageNumber by remember { mutableIntStateOf(0) }
 
     var posts:FilterInformation? by remember {mutableStateOf( null)}
-    LaunchedEffect(true, posts, maxPageNumber, pageNumber, query, sortBy, viewModel.currentQuery) {
-        posts = filter("newest", viewModel.currentQuery, pageNumber)
+    LaunchedEffect(true, posts, maxPageNumber, pageNumber, query, sortBy, viewModel.currentQuery, viewModel.currentSortBy) {
+        posts = filter(viewModel.currentSortBy, viewModel.currentQuery, pageNumber)
         if (posts != null){
             sortBy = posts!!.sortBy
             query = posts!!.q
             pageNumber = posts!!.pageNumber
             maxPageNumber = posts!!.maxPageNumber
         }
+        Log.i("RIKUDAX", viewModel.currentSortBy)
     }
     val scrollState = rememberScrollState()
     if (posts != null){
@@ -142,7 +143,7 @@ fun FistRow(viewModel: MainViewModel, numberResult: Int){
         ) {
             // Nombre de résultats et menu déroulant
             var expanded by remember { mutableStateOf(false) }
-            var selectedOption by remember { mutableStateOf("Newest") }
+            var selectedOption by remember { mutableStateOf("newest") }
 
             Text(
                 text = "${numberResult} results",
@@ -160,23 +161,20 @@ fun FistRow(viewModel: MainViewModel, numberResult: Int){
                     DropdownMenuItem(
                         text = {
                             Text(text = "Newest",
-                                modifier = Modifier.clickable{ expanded = false})
+                                modifier = Modifier.clickable{ expanded = false; viewModel.changeCurrentSortBy("relevance") })
                         },
-                        onClick = { /*TODO*/ })
+                        onClick = { expanded = false; viewModel.changeCurrentSortBy("newest") })
                     DropdownMenuItem(
                         text = {
-                            Text(text = "Revelance",
-                                modifier = Modifier.clickable{ expanded = false})
+                            Text(text = "Relevance",
+                                modifier = Modifier.clickable{ expanded = false; viewModel.changeCurrentSortBy("relevance") })
                         },
-                        onClick = { /*TODO*/ })
+                        onClick = { expanded = false; viewModel.changeCurrentSortBy("relevance") }
+                    )
                 }
             }
-
         }
     }
-
-
-
 }
 
 @Composable

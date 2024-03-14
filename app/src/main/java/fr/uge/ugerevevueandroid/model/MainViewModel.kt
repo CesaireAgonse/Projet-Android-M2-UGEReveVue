@@ -23,6 +23,9 @@ class MainViewModel : ViewModel() {
     var currentQuery by mutableStateOf("")
         private set
 
+    var currentSortBy by mutableStateOf("")
+        private set
+
     fun changeCurrentPage(page : Page){currentPage = page }
 
     fun changeCurrentUserToDisplay(username : String){ currentUserToDisplay = username }
@@ -30,6 +33,8 @@ class MainViewModel : ViewModel() {
     fun changeCurrentCodeToDisplay(codeId : Long){ currentCodeToDisplay = codeId }
 
     fun changeCurrentQuery(query : String){ currentQuery = query }
+
+    fun changeCurrentSortBy(sortBy : String){ currentSortBy = sortBy }
 
     fun adminAccess() : Boolean {
         if (currentUserLogged != null && currentUserLogged.isAdmin){
