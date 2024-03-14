@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +42,10 @@ import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
+import fr.uge.ugerevevueandroid.service.ApiService
 import fr.uge.ugerevevueandroid.service.allPermitService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun SearchBar(viewModel: MainViewModel) {
@@ -57,12 +61,28 @@ fun SearchBar(viewModel: MainViewModel) {
     )
 }
 
+fun logout(application: Application) {
+    //allPermitService.logout().execute()
+}
+
+
+
 @Composable
 fun Navbar(application: Application, viewModel: MainViewModel){
     val manager =  TokenManager(application)
     val isConnected = manager.hasBearer()
     var searchBarOn by remember { mutableStateOf(false) }
     var height by remember { mutableStateOf(60.dp) }
+    var logged by remember { mutableStateOf(false) }
+    LaunchedEffect(key1 = logged){
+        if(logged){
+            logout(application)
+            logged = false
+            manager.clearToken("bearer")
+            manager.clearToken("refresh")
+            viewModel.changeCurrentPage(Page.HOME)
+        }
+    }
     Column(modifier = Modifier
         .height(height)
         .fillMaxWidth()
@@ -134,10 +154,7 @@ fun Navbar(application: Application, viewModel: MainViewModel){
                 )
                 Button(
                     onClick = {
-                        allPermitService.logout()
-                        manager.clearToken("bearer")
-                        manager.clearToken("refresh")
-                        viewModel.changeCurrentPage(Page.HOME)
+                        logged = true
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.button_color),
