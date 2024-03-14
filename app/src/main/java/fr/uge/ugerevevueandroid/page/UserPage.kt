@@ -2,6 +2,7 @@ package fr.uge.ugerevevueandroid.page
 
 import TokenManager
 import android.app.Application
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -29,6 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,12 +40,13 @@ import fr.uge.ugerevevueandroid.form.UpdatePasswordInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.service.ImageManager
 import fr.uge.ugerevevueandroid.service.allPermitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 
-// Définir une interface pour la gestion de la sélection d'image
+
 suspend fun profile(username: String): UserInformation? {
     return withContext(Dispatchers.IO) {
         val response = allPermitService.information(username).execute()
@@ -146,13 +150,24 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, user : Us
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(16.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.default_profile_image),
-                    contentDescription = "Profile Image",
-                    modifier = Modifier
-                        .size(75.dp)
-                        .clip(CircleShape) // Forme ronde
-                )
+                if (user.profilePhoto != null) {
+                    Image(
+                        bitmap = ImageManager().byteArrayToImageBitMap(user.profilePhoto),
+                        contentDescription = "Profile Image",
+                        modifier = Modifier
+                            .size(75.dp)
+                            .clip(CircleShape) // Forme ronde
+                    )
+                } else {
+                    // Afficher une image par défaut si le profilePhoto est null ou vide
+                    Image(
+                        painter = painterResource(id = R.drawable.default_profile_image),
+                        contentDescription = "Default Profile Image",
+                        modifier = Modifier
+                            .size(75.dp)
+                            .clip(CircleShape) // Forme ronde
+                    )
+                }
                 Text(
                     text = user.username,
                     modifier = Modifier.padding(top = 8.dp),
