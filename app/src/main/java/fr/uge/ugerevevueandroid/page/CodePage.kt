@@ -5,6 +5,7 @@ import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -21,10 +22,14 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.form.ReviewForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
@@ -197,6 +202,58 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             Button(onClick = { reviewed=true }) {
                 Text(text = "Post")
             }
+        }
+    }
+}
+
+@Composable
+fun CodePreview(viewModel: MainViewModel, code: CodeInformation, modifier: Modifier = Modifier){
+    Column (
+        modifier = modifier.padding(2.dp)
+        // mettre un petit background et delimiter chaque component
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "score: ${code.score}",
+                fontSize = 10.sp)
+            Spacer(modifier = Modifier.padding(start = 4.dp))
+            Text(text = "reviews: ${code.reviews.size}",
+                fontSize = 10.sp)
+            Spacer(modifier = Modifier.padding(start = 4.dp))
+            Text(text = "comments: ${code.comments.size}",
+                fontSize = 10.sp)
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = code.userInformation.username,
+                modifier = Modifier.clickable {
+                    viewModel.changeCurrentPage(Page.USER)
+                    viewModel.changeCurrentUserToDisplay(code.userInformation.username)
+                }
+            )
+        }
+        Row {
+            Text(
+                text = "${code.title}",
+                fontSize = 20.sp
+            )
+        }
+        Row {
+            Text(
+                text = "${code.description}",
+                fontSize = 10.sp,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Justify,
+                lineHeight = 15.sp
+            )
+        }
+        Row {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "${code.date}",
+                fontSize = 10.sp
+            )
         }
     }
 }

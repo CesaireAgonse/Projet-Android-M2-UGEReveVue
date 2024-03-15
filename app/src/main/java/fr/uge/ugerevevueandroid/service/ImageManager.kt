@@ -1,8 +1,12 @@
 package fr.uge.ugerevevueandroid.service
 
+import android.content.ContentResolver
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import java.io.IOException
+import java.io.InputStream
 
 class ImageManager {
 
@@ -14,5 +18,11 @@ class ImageManager {
 
     //ImageBitMapToByteArray
 
-    //URIToByteArray
+    /*
+    fun URIToByteArray(uri: Uri): ByteArray {
+        val contentResolver = ContentResolver
+        val inputStream: InputStream? = contentResolver.openInputStream(uri)
+        return inputStream?.use { it.readBytes() } ?: throw IOException("Unable to read image from URI")
+    }
+    */
 }

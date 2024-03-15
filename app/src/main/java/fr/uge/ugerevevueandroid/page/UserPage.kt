@@ -37,11 +37,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.form.UpdatePasswordInformation
+import fr.uge.ugerevevueandroid.information.CodeInformation
+import fr.uge.ugerevevueandroid.information.CommentInformation
+import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.ApiService
 import fr.uge.ugerevevueandroid.service.ImageManager
 import fr.uge.ugerevevueandroid.service.allPermitService
+import fr.uge.ugerevevueandroid.visual.Comment
+import fr.uge.ugerevevueandroid.visual.Review
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Call
@@ -96,6 +101,9 @@ fun unfollow(application: Application, username: String) {
 fun UserPage(application: Application, viewModel : MainViewModel) {
     val scrollState = rememberScrollState()
     var username = viewModel.currentUserToDisplay
+    var codesFromUsers: ArrayList<CodeInformation> = ArrayList<CodeInformation>()
+    var reviewsFromUsers: ArrayList<ReviewInformation> = ArrayList<ReviewInformation>()
+    var commentsFromUsers: ArrayList<CommentInformation> = ArrayList<CommentInformation>()
     Column (
         modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max)
     ){
@@ -109,10 +117,11 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
         if (user != null){
             UserDisplayer(application = application, viewModel = viewModel, user = user, Modifier.weight(4f))
             Column(
-                modifier = Modifier.weight(6f)
+                modifier = Modifier
+                    .weight(6f)
                     .verticalScroll(scrollState)
             ) {
-                Text(text = "Followed")
+                Text(text = "Followed:")
                 user.followed?.forEach{
                     Text(
                         text = it.username,
@@ -121,6 +130,31 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
                             viewModel.changeCurrentUserToDisplay(it.username)
                         }
                     )
+                }
+                Text(text = "Codes:")
+                codesFromUsers.forEach {
+                    CodePreview(viewModel = viewModel,
+                                code = it,
+                                modifier = Modifier.clickable {
+                                    viewModel.changeCurrentCodeToDisplay(it.id)
+                                    viewModel.changeCurrentPage(Page.CODE)
+                                })
+                }
+
+                Text(text = "Reviews:")
+                reviewsFromUsers.forEach {
+                    Review(application = application,
+                        viewModel = viewModel,
+                        review = it,
+                        modifier = Modifier.clickable {
+                            viewModel.changeCurrentCodeToDisplay(it.id)
+                            viewModel.changeCurrentPage(Page.REVIEW)
+                        })
+                }
+
+                Text(text = "Comments:")
+                commentsFromUsers.forEach {
+                    Comment(comment = it)
                 }
             }
         }
@@ -150,6 +184,7 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, user : Us
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(16.dp)
             ) {
+                /*
                 if (user.profilePhoto != null) {
                     Image(
                         bitmap = ImageManager().byteArrayToImageBitMap(user.profilePhoto),
@@ -168,6 +203,14 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, user : Us
                             .clip(CircleShape) // Forme ronde
                     )
                 }
+                 */
+                Image(
+                    bitmap = ImageManager().byteArrayToImageBitMap(user.profilePhoto),
+                    contentDescription = "Profile Image",
+                    modifier = Modifier
+                        .size(75.dp)
+                        .clip(CircleShape) // Forme ronde
+                )
                 Text(
                     text = user.username,
                     modifier = Modifier.padding(top = 8.dp),

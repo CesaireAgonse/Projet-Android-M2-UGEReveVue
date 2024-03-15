@@ -1,3 +1,4 @@
+import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,9 +22,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.page.Page
+import fr.uge.ugerevevueandroid.page.follow
+
+fun delete(username : String){
+
+}
 
 @Composable
-fun AdminPage(viewModel : MainViewModel) {
+fun AdminPage(application: Application, viewModel : MainViewModel) {
     val users = mutableListOf<UserInformation>()
     var admin = UserInformation(1, "admin", null,true)
     var czer = UserInformation(2, "czer", HashSet<UserInformation>(),false)
@@ -53,7 +60,7 @@ fun AdminPage(viewModel : MainViewModel) {
             .padding(vertical = 4.dp))
 
         users.forEach{
-            UserAdmin(viewModel, it)
+            UserAdmin(application, viewModel, it)
         }
 
 
@@ -62,7 +69,7 @@ fun AdminPage(viewModel : MainViewModel) {
 }
 
 @Composable
-fun UserAdmin(viewModel : MainViewModel, user : UserInformation){
+fun UserAdmin(application: Application, viewModel : MainViewModel, user : UserInformation){
 
     Column {
         Row(
@@ -72,18 +79,14 @@ fun UserAdmin(viewModel : MainViewModel, user : UserInformation){
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable {
-                    /*
-                    viewModel.changeCurrentUserToDisplay(user)
+                    viewModel.changeCurrentUserToDisplay(user.username)
                     viewModel.changeCurrentPage(Page.USER)
-                    */
                 })
             Spacer(modifier = Modifier.weight(1f))
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { /* deleteUser(application = application, user.username) */ }) {
                 Icon(Icons.Filled.Delete, contentDescription = "DeleteUser")
             }
         }
-        
-        Text(text = "Liste de tout ses posts ...")
     }
 
 
