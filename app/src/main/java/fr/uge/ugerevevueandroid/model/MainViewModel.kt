@@ -14,7 +14,8 @@ class MainViewModel : ViewModel() {
     var currentPage by mutableStateOf(Page.HOME)
         private set
 
-   // private var currentUserLogged by mutableStateOf<UserInformation>(UserInformation(0, "",   [0], 0,0))
+    var currentUserLogged by mutableStateOf<UserInformation>(UserInformation("", "",   0, 0,0, 0,false))
+        private set
     var currentUserToDisplay by mutableStateOf<String>("")
 
     var currentCodeToDisplay by mutableLongStateOf(0)
@@ -29,6 +30,8 @@ class MainViewModel : ViewModel() {
     fun changeCurrentPage(page : Page){currentPage = page }
 
     fun changeCurrentUserToDisplay(username : String){ currentUserToDisplay = username }
+
+    fun changeCurrentUserLogged(user : UserInformation){ currentUserLogged = user }
 
     fun changeCurrentCodeToDisplay(codeId : Long){ currentCodeToDisplay = codeId }
 

@@ -10,20 +10,7 @@ data class UserInformation(
     val isFollowed:Boolean
 ) {
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
 
-        other as UserInformation
-
-        if (username != other.username) return false
-        if (!profilePhoto.contentEquals(other.profilePhoto)) return false
-        if (nbFollowed != other.nbFollowed) return false
-        if (nbCode != other.nbCode) return false
-        if (nbReview != other.nbReview) return false
-        if (nbComment != other.nbComment) return false
-        return isFollowed == other.isFollowed
-    }
 
     override fun hashCode(): Int {
         var result = username.hashCode()

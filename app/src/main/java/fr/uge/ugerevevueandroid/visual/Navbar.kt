@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
@@ -43,6 +44,7 @@ import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
 import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.service.ImageManager
 import fr.uge.ugerevevueandroid.service.allPermitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -74,6 +76,7 @@ fun Navbar(application: Application, viewModel: MainViewModel){
     var searchBarOn by remember { mutableStateOf(false) }
     var height by remember { mutableStateOf(60.dp) }
     var logged by remember { mutableStateOf(false) }
+    var userPhoto by remember {mutableStateOf("")}
     LaunchedEffect(key1 = logged){
         if(logged){
             logout(application)
@@ -82,6 +85,9 @@ fun Navbar(application: Application, viewModel: MainViewModel){
             manager.clearToken("refresh")
             viewModel.changeCurrentPage(Page.HOME)
         }
+    }
+    LaunchedEffect(key1 = viewModel.currentUserLogged.profilePhoto){
+        userPhoto = viewModel.currentUserLogged.profilePhoto
     }
     Column(modifier = Modifier
         .height(height)
@@ -140,18 +146,33 @@ fun Navbar(application: Application, viewModel: MainViewModel){
                 }
             }
             else {
-                Image(
-                    painter = painterResource(id = R.drawable.default_profile_image),
-                    contentDescription = "Profile Image",
-                    modifier = Modifier
-                        .clickable {
-                            viewModel.changeCurrentPage(Page.USER)
-                            manager
-                                .getAuth()
-                                ?.let { viewModel.changeCurrentUserToDisplay(it.username) }
-                        }
-                        .size(75.dp)
-                )
+                if (userPhoto != null && userPhoto != "") {
+                    Image(
+                        bitmap = ImageManager().base64ToImageBitMap(userPhoto),
+                        contentDescription = "Profile Image",
+                        modifier = Modifier
+                            .clickable {
+                                viewModel.changeCurrentPage(Page.USER)
+                                manager
+                                    .getAuth()
+                                    ?.let { viewModel.changeCurrentUserToDisplay(it.username) }
+                            }
+                            .size(75.dp)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.default_profile_image),
+                        contentDescription = "Default Profile Image",
+                        modifier = Modifier
+                            .clickable {
+                                viewModel.changeCurrentPage(Page.USER)
+                                manager
+                                    .getAuth()
+                                    ?.let { viewModel.changeCurrentUserToDisplay(it.username) }
+                            }
+                            .size(75.dp)
+                    )
+                }
                 Button(
                     onClick = {
                         logged = true
