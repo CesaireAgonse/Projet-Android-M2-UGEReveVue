@@ -1,5 +1,7 @@
 package fr.uge.ugerevevueandroid.page
 
+import TokenManager
+import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -52,7 +54,7 @@ suspend fun filter(sortBy: String, query: String, pageNumber:Int):FilterInformat
 }
 
 @Composable
-fun HomePage(viewModel: MainViewModel){
+fun HomePage(application: Application, viewModel: MainViewModel){
     var sortBy by remember {mutableStateOf(viewModel.currentSortBy)}
     var query by remember {mutableStateOf(viewModel.currentQuery)}
     var pageNumber by remember { mutableIntStateOf(0) }
@@ -73,7 +75,7 @@ fun HomePage(viewModel: MainViewModel){
     if (posts != null){
         Scaffold(
             topBar = {
-                FistRow(viewModel, posts!!.codes.size)
+                FistRow(viewModel, 0, application)
             },
             floatingActionButton = {
                 FloatingActionButton(onClick = { viewModel.changeCurrentPage(Page.CREATE) }, contentColor = Color(R.color.button_color_2)) {
@@ -116,7 +118,7 @@ fun HomePage(viewModel: MainViewModel){
 }
 
 @Composable
-fun FistRow(viewModel: MainViewModel, numberResult: Int){
+fun FistRow(viewModel: MainViewModel, numberResult: Int, application: Application){
 
     Column {
         Row(
@@ -130,11 +132,11 @@ fun FistRow(viewModel: MainViewModel, numberResult: Int){
             )
 
             // Bouton Admin
-//            if (viewModel.adminAccess()) {
-//                Button(onClick = {viewModel.changeCurrentPage(Page.ADMIN) }) {
-//                    Text(text = "Admin page")
-//                }
-//            }
+            if (TokenManager(application).getAuth()?.role.equals("ADMIN")) {
+                Button(onClick = {viewModel.changeCurrentPage(Page.ADMIN) }) {
+                    Text(text = "Admin page")
+                }
+            }
 
         }
 

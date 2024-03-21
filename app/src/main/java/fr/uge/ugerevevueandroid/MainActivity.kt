@@ -54,7 +54,7 @@ fun Application(viewModel : MainViewModel, application: Application){
     Column {
         Navbar(application = application, viewModel = viewModel)
         when(viewModel.currentPage){
-            Page.HOME -> HomePage(viewModel = viewModel)
+            Page.HOME -> HomePage(application=application, viewModel = viewModel)
             Page.LOGIN -> LoginPage(application=application, viewModel = viewModel)
             Page.REVIEW -> ReviewPage(application=application, viewModel = viewModel)
             Page.SIGNUP -> SignupPage(application=application, viewModel = viewModel)

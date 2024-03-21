@@ -13,6 +13,6 @@ data class CodeInformation(
     val unitTestResultInformation: UnitTestResultInformation,
     val score: Long,
     val date: Date,
-    val comments: List<CommentInformation>,
-    val reviews: List<ReviewInformation>
+    val comments: Int,
+    val reviews: Int
 )

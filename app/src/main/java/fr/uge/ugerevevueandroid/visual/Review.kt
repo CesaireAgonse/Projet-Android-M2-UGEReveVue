@@ -50,10 +50,10 @@ fun Review(application: Application, review: ReviewInformation, modifier: Modifi
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.padding(start = 4.dp))
-            Text(text = "reviews: ${review.reviews.size}",
+            Text(text = "reviews: ${review.reviews}",
                 fontSize = 10.sp)
             Spacer(modifier = Modifier.padding(start = 4.dp))
-            Text(text = "comments: ${review.comments.size}",
+            Text(text = "comments: ${review.comments}",
                 fontSize = 10.sp)
         }
         Row {

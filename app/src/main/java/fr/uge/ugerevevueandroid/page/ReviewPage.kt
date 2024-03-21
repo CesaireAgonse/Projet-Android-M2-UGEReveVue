@@ -127,7 +127,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp))
-            Text(text = "Reviews about this post : ${review!!.reviews.size}")
+            Text(text = "Reviews about this post : ${review!!.reviews}")
 
             reviewPageInformation!!.reviews.forEach{
                 Review(application=application, review = it, modifier = Modifier.clickable {

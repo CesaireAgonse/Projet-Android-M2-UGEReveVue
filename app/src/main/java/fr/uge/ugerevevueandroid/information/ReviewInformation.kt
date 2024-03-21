@@ -9,6 +9,6 @@ data class ReviewInformation(
     val content: List<CommentInformation>,
     val score: Long,
     val date: Date,
-    val comments: List<CommentInformation>,
-    val reviews: List<ReviewInformation>
+    val comments: Int,
+    val reviews: Int
 )

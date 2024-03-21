@@ -171,7 +171,7 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp))
-            Text(text = "Reviews about this post : ${code!!.reviews.size}")
+            Text(text = "Reviews about this post : ${code!!.reviews}")
             reviewPageInformation!!.reviews.forEach{
                 Review(application=application, review = it, modifier = Modifier.clickable {
                     viewModel.changeCurrentCodeToDisplay(it.id)
@@ -218,10 +218,10 @@ fun CodePreview(viewModel: MainViewModel, code: CodeInformation, modifier: Modif
             Text(text = "score: ${code.score}",
                 fontSize = 10.sp)
             Spacer(modifier = Modifier.padding(start = 4.dp))
-            Text(text = "reviews: ${code.reviews.size}",
+            Text(text = "reviews: ${code.reviews}",
                 fontSize = 10.sp)
             Spacer(modifier = Modifier.padding(start = 4.dp))
-            Text(text = "comments: ${code.comments.size}",
+            Text(text = "comments: ${code.comments}",
                 fontSize = 10.sp)
             Spacer(modifier = Modifier.weight(1f))
             Text(
