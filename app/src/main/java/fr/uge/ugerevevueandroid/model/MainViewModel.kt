@@ -14,7 +14,7 @@ class MainViewModel : ViewModel() {
     var currentPage by mutableStateOf(Page.HOME)
         private set
 
-    private var currentUserLogged by mutableStateOf<UserInformation>(UserInformation(0, "", null,false))
+   // private var currentUserLogged by mutableStateOf<UserInformation>(UserInformation(0, "",   [0], 0,0))
     var currentUserToDisplay by mutableStateOf<String>("")
 
     var currentCodeToDisplay by mutableLongStateOf(0)
@@ -36,10 +36,4 @@ class MainViewModel : ViewModel() {
 
     fun changeCurrentSortBy(sortBy : String){ currentSortBy = sortBy }
 
-    fun adminAccess() : Boolean {
-        if (currentUserLogged != null && currentUserLogged.isAdmin){
-            return true
-        }
-        return false
-    }
 }

@@ -2,6 +2,7 @@ package fr.uge.ugerevevueandroid.page
 
 import TokenManager
 import android.app.Application
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
@@ -25,8 +26,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,8 +53,15 @@ import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
 import retrofit2.Call
 
+
+suspend fun photo(application: Application, photo: MultipartBody.Part) {
+    return withContext(Dispatchers.IO) {
+        ApiService(application).authenticateService().photo(photo).execute();
+    }
+}
 
 suspend fun profile(username: String): UserInformation? {
     return withContext(Dispatchers.IO) {
@@ -121,41 +132,10 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
                     .weight(6f)
                     .verticalScroll(scrollState)
             ) {
-                Text(text = "Followed:")
-                user.followed?.forEach{
-                    Text(
-                        text = it.username,
-                        modifier = Modifier.clickable {
-                            viewModel.changeCurrentPage(Page.USER)
-                            viewModel.changeCurrentUserToDisplay(it.username)
-                        }
-                    )
-                }
-                Text(text = "Codes:")
-                codesFromUsers.forEach {
-                    CodePreview(viewModel = viewModel,
-                                code = it,
-                                modifier = Modifier.clickable {
-                                    viewModel.changeCurrentCodeToDisplay(it.id)
-                                    viewModel.changeCurrentPage(Page.CODE)
-                                })
-                }
-
-                Text(text = "Reviews:")
-                reviewsFromUsers.forEach {
-                    Review(application = application,
-                        viewModel = viewModel,
-                        review = it,
-                        modifier = Modifier.clickable {
-                            viewModel.changeCurrentCodeToDisplay(it.id)
-                            viewModel.changeCurrentPage(Page.REVIEW)
-                        })
-                }
-
-                Text(text = "Comments:")
-                commentsFromUsers.forEach {
-                    Comment(comment = it)
-                }
+                Text(text = "Followed:" + user.nbFollowed)
+                Text(text = "Codes:" + user.nbCode)
+                Text(text = "Reviews:" + user.nbReview)
+                Text(text = "Comments:" + user.nbComment)
             }
         }
     }
@@ -164,7 +144,15 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
 
 @Composable
 fun UserDisplayer(application: Application, viewModel : MainViewModel, user : UserInformation, modifier : Modifier = Modifier){
-    var uriUser: Uri? = null
+    var uriUser: Uri? by remember { mutableStateOf(null) }
+    var imageManager = ImageManager();
+    LaunchedEffect(uriUser){
+        if (uriUser != null){
+            imageManager.createMultipartFromUri(uriUser!!, application.contentResolver)
+                ?.let { photo(application, it) }
+        }
+    }
+
     val selectImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
             Log.i("image", "l'uri de la nouvelle image est : ${uri}")
@@ -184,10 +172,10 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, user : Us
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(16.dp)
             ) {
-                /*
+
                 if (user.profilePhoto != null) {
                     Image(
-                        bitmap = ImageManager().byteArrayToImageBitMap(user.profilePhoto),
+                        bitmap = ImageManager().base64ToImageBitMap(user.profilePhoto),
                         contentDescription = "Profile Image",
                         modifier = Modifier
                             .size(75.dp)
@@ -203,26 +191,18 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, user : Us
                             .clip(CircleShape) // Forme ronde
                     )
                 }
-                 */
-                Image(
-                    bitmap = ImageManager().byteArrayToImageBitMap(user.profilePhoto),
-                    contentDescription = "Profile Image",
-                    modifier = Modifier
-                        .size(75.dp)
-                        .clip(CircleShape) // Forme ronde
-                )
                 Text(
                     text = user.username,
                     modifier = Modifier.padding(top = 8.dp),
                     fontSize = 30.sp
                 )
                 Text(
-                    text = "${user.followed?.size} follows",
+                    text = "${user.nbFollowed} follows",
                     modifier = Modifier.padding(bottom = 8.dp),
                     fontSize = 18.sp
                 )
             }
-            if (user.isAdmin) {
+            if (TokenManager(application).getAuth()?.role.equals("ADMIN")) {
                 Button(
                     onClick = { viewModel.changeCurrentPage(Page.ADMIN)
                     },

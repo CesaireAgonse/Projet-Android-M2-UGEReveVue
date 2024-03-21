@@ -20,9 +20,11 @@ class ApiService(application: Application){
     val manager = TokenManager(application)
     val authToken = manager.getToken("bearer")
     val authInterceptor = authToken?.let { AuthInterceptor(it) }
-    val client = OkHttpClient.Builder()
-        .addInterceptor(authInterceptor)
+    val client = authInterceptor?.let {
+        OkHttpClient.Builder()
+        .addInterceptor(it)
         .build()
+    }
     val retrofitBearer = Retrofit.Builder()
         .baseUrl(url)
         .client(client)

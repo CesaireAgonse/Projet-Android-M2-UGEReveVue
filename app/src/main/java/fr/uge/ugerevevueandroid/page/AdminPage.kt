@@ -31,12 +31,12 @@ fun delete(username : String){
 
 @Composable
 fun AdminPage(application: Application, viewModel : MainViewModel) {
-    val users = mutableListOf<UserInformation>()
-    var admin = UserInformation(1, "admin", null,true)
-    var czer = UserInformation(2, "czer", HashSet<UserInformation>(),false)
-
-    users.add(admin)
-    users.add(czer)
+//    val users = mutableListOf<UserInformation>()
+//    var admin = UserInformation(1, "admin", null,true)
+//    var czer = UserInformation(2, "czer", HashSet<UserInformation>(),false)
+//
+//    users.add(admin)
+//    users.add(czer)
 
     val scrollState = rememberScrollState()
 
@@ -59,9 +59,9 @@ fun AdminPage(application: Application, viewModel : MainViewModel) {
             .fillMaxWidth()
             .padding(vertical = 4.dp))
 
-        users.forEach{
-            UserAdmin(application, viewModel, it)
-        }
+//        users.forEach{
+//            UserAdmin(application, viewModel, it)
+//        }
 
 
     }

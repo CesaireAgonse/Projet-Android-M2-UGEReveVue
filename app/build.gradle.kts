@@ -59,6 +59,7 @@ dependencies {
 
     // dependance du viewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // Demande sur le forum pour le droit d'utiliser

@@ -130,11 +130,11 @@ fun FistRow(viewModel: MainViewModel, numberResult: Int){
             )
 
             // Bouton Admin
-            if (viewModel.adminAccess()) {
-                Button(onClick = {viewModel.changeCurrentPage(Page.ADMIN) }) {
-                    Text(text = "Admin page")
-                }
-            }
+//            if (viewModel.adminAccess()) {
+//                Button(onClick = {viewModel.changeCurrentPage(Page.ADMIN) }) {
+//                    Text(text = "Admin page")
+//                }
+//            }
 
         }
 
