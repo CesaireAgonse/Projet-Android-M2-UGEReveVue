@@ -1,6 +1,7 @@
 package fr.uge.ugerevevueandroid.page
 
 import android.app.Application
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -22,6 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import fr.uge.ugerevevueandroid.form.CommentForm
@@ -54,6 +58,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
     val scrollState = rememberScrollState()
     var contentNewComment by remember { mutableStateOf("") }
     var contentNewReview by remember { mutableStateOf("") }
+    var titleNewReview by remember { mutableStateOf("") }
     var review: ReviewInformation? by remember { mutableStateOf( null) }
     var commentPageInformation: CommentPageInformation? by remember { mutableStateOf( null) }
     var reviewPageInformation: ReviewPageInformation? by remember { mutableStateOf( null) }
@@ -93,17 +98,39 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                 .padding(8.dp)
         ) {
             Review(application=application, review = review!!, viewModel = viewModel)
+            Text(text = "Comments about this post : ${review!!.comments}", fontWeight = FontWeight.Bold)
+
             commentPageInformation!!.comments.forEach{
                 Comment(it)
             }
             Row{
                 if(pageNumberComments >= 1){
-                    Button(onClick = {pageNumberComments--}) {
+                    Button(
+                        onClick = {pageNumberComments--},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        border = BorderStroke(1.dp, Color.Black),
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        shape = RectangleShape,
+                    ) {
                         Text(text = "Previous")
                     }
                 }
-                Button(onClick = {pageNumberComments++}) {
-                    Text(text = "Next")
+                if(pageNumberComments < commentPageInformation!!.maxPageNumber) {
+                    Button(
+                        onClick = { pageNumberComments++ },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        border = BorderStroke(1.dp, Color.Black),
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        shape = RectangleShape,
+                    ) {
+                        Text(text = "Next")
+                    }
                 }
             }
             Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
@@ -120,7 +147,14 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                     imeAction = ImeAction.Done
                 )
             )
-            Button(onClick = { commented=true }) {
+            Button(onClick = {commented = true },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(52, 152, 219),
+                    contentColor = Color.White
+                ),
+                modifier = Modifier.padding(horizontal = 4.dp),
+                shape = RectangleShape,
+            ) {
                 Text(text = "Comment")
             }
 
@@ -138,14 +172,44 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             }
             Row{
                 if(pageNumberReviews >= 1){
-                    Button(onClick = {pageNumberReviews--}) {
+                    Button(onClick = {pageNumberReviews--},
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        border = BorderStroke(1.dp, Color.Black),
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        shape = RectangleShape,
+                    ) {
                         Text(text = "Previews")
                     }
                 }
-                Button(onClick = {pageNumberReviews++}) {
-                    Text(text = "Next")
+                if(pageNumberReviews < reviewPageInformation!!.maxPageNumber) {
+                    Button(
+                        onClick = { pageNumberReviews++ },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ),
+                        border = BorderStroke(1.dp, Color.Black),
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        shape = RectangleShape,
+                    ) {
+                        Text(text = "Next")
+                    }
                 }
             }
+            OutlinedTextField(
+                value = titleNewReview,
+                onValueChange = { titleNewReview = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(25.dp),
+                label = { Text(text = "Your title here", color = Color.LightGray) },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                )
+            )
             OutlinedTextField(
                 value = contentNewReview,
                 onValueChange = { contentNewReview = it },
@@ -157,7 +221,13 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                     imeAction = ImeAction.Done
                 )
             )
-            Button(onClick = { reviewed=true }) {
+            Button(onClick = { reviewed=true },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(52, 152, 219),
+                    contentColor = Color.White
+                ),
+                modifier = Modifier.padding(horizontal = 4.dp),
+                shape = RectangleShape,) {
                 Text(text = "Review")
             }
         }

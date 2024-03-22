@@ -51,7 +51,7 @@ fun Review(application: Application, review: ReviewInformation, modifier: Modifi
         shape = RoundedCornerShape(16.dp),
         color = Color.White,
         contentColor = Color.Black,
-        modifier = Modifier.padding(4.dp)
+        modifier = modifier.padding(4.dp)
     ) {
         Column(Modifier.padding(5.dp)) {
             Row(
