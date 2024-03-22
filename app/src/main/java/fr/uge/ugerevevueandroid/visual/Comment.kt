@@ -7,16 +7,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.information.CommentInformation
 
 @Composable
@@ -25,13 +28,14 @@ fun Comment(comment: CommentInformation){
         shadowElevation = 8.dp,
         border = BorderStroke(0.dp, Color.Gray),
         shape = RoundedCornerShape(16.dp),
-        color = Color.LightGray,
-        contentColor = Color.Black
+        color = Color(230, 229, 229, 255),
+        contentColor = Color.Black,
+        modifier = Modifier.padding(4.dp)
     ) {
         Column(
             modifier = Modifier
                 .padding(8.dp)
-                .widthIn(max = 300.dp)
+                .widthIn(max = 300.dp),
         ) {
             Text(
                 text = comment.userInformation.username,
@@ -46,7 +50,7 @@ fun Comment(comment: CommentInformation){
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                Text(text = "${comment.date}")
+                Text(text = "${comment.date}", fontSize = 10.sp)
             }
         }
     }

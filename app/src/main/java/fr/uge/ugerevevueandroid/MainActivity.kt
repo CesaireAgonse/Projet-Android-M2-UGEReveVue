@@ -8,16 +8,19 @@ import android.util.Log
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.CodePage
 import fr.uge.ugerevevueandroid.page.CreatePage
+import fr.uge.ugerevevueandroid.page.HOME_COLOR
 import fr.uge.ugerevevueandroid.page.HomePage
 import fr.uge.ugerevevueandroid.page.LoginPage
 import fr.uge.ugerevevueandroid.page.Page
@@ -51,7 +54,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Application(viewModel : MainViewModel, application: Application){
-    Column {
+    Column(Modifier.background(HOME_COLOR)) {
         Navbar(application = application, viewModel = viewModel)
         when(viewModel.currentPage){
             Page.HOME -> HomePage(application=application, viewModel = viewModel)

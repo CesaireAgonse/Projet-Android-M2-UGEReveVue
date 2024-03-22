@@ -158,7 +158,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                 )
             )
             Button(onClick = { reviewed=true }) {
-                Text(text = "Post")
+                Text(text = "Review")
             }
         }
     }

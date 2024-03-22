@@ -3,6 +3,7 @@ package fr.uge.ugerevevueandroid.page
 import TokenManager
 import android.app.Application
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,8 @@ suspend fun filter(sortBy: String, query: String, pageNumber:Int):FilterInformat
     }
 }
 
+val HOME_COLOR= Color(241, 241, 241, 255)
+
 @Composable
 fun HomePage(application: Application, viewModel: MainViewModel){
     var sortBy by remember {mutableStateOf(viewModel.currentSortBy)}
@@ -69,7 +72,6 @@ fun HomePage(application: Application, viewModel: MainViewModel){
             pageNumber = posts!!.pageNumber
             maxPageNumber = posts!!.maxPageNumber
         }
-        Log.i("RIKUDAX", viewModel.currentSortBy)
     }
     val scrollState = rememberScrollState()
     if (posts != null){
@@ -87,7 +89,8 @@ fun HomePage(application: Application, viewModel: MainViewModel){
             Column(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .verticalScroll(scrollState),
+                    .verticalScroll(scrollState)
+                    .background(HOME_COLOR),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 posts!!.codes.forEach{
@@ -98,7 +101,7 @@ fun HomePage(application: Application, viewModel: MainViewModel){
                             viewModel.changeCurrentPage(Page.CODE)
                         })
                 }
-                Row{
+                Row (Modifier.background(HOME_COLOR)){
                     if(pageNumber >= 1){
                         Button(onClick = {pageNumber--}) {
                             Text(text = "Previous")
@@ -120,7 +123,7 @@ fun HomePage(application: Application, viewModel: MainViewModel){
 @Composable
 fun FistRow(viewModel: MainViewModel, numberResult: Int, application: Application){
 
-    Column {
+    Column(Modifier.background(HOME_COLOR)) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {

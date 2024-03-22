@@ -1,6 +1,8 @@
 package fr.uge.ugerevevueandroid.visual
 
 import android.app.Application
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -15,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,55 +66,73 @@ fun Code(application: Application, code : CodeInformation,viewModel: MainViewMod
             score = postVoted(application, code.id, voteButtonClicked)
         }
     }
-    Text(
-        text = code.title,
-        fontSize = 30.sp
-    )
-    Row {
-        Text(
-            text = "from : ${code.userInformation.username}",
-            modifier = Modifier.clickable { viewModel.changeCurrentPage(Page.USER)
-            viewModel.changeCurrentUserToDisplay(code.userInformation.username)
+    Surface(
+        shadowElevation = 8.dp,
+        border = BorderStroke(0.dp, Color.Gray),
+        shape = RoundedCornerShape(16.dp),
+        color = Color.White,
+        contentColor = Color.Black,
+        modifier = Modifier.padding(4.dp)
+    ) {
+        Column(Modifier.padding(5.dp)) {
+            Text(
+                text = code.title,
+                fontSize = 30.sp,
+            )
+            Row {
+                Text(
+                    text = "from : ${code.userInformation.username}",
+                    modifier = Modifier.clickable { viewModel.changeCurrentPage(Page.USER)
+                        viewModel.changeCurrentUserToDisplay(code.userInformation.username)
+                    },
+                    fontSize = 15.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = "${code.date}", fontSize = 15.sp)
             }
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = "${code.date}")
-    }
-    Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 4.dp))
+            Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp))
 
-    Row {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(onClick = { voteButtonClicked = "UpVote"},
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.button_color),
-                    contentColor = Color.Black,
-                    disabledContentColor = Color.Black,
-                    disabledContainerColor = colorResource(id = R.color.button_color_2)
-                ),
-                shape = CircleShape
-            ) {
-                Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "UpVote")
-            }
-            Text(text = "$score")
-            Button(onClick = { voteButtonClicked = "DownVote"},
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.button_color),
-                    contentColor = Color.Black,
-                    disabledContentColor = Color.Black,
-                    disabledContainerColor = colorResource(id = R.color.button_color_2)
-                ),
-                shape = CircleShape
-            ) {
-                Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "DownVote")
-            }
-        }
-        Column {
-            Text(text = code.description, textAlign = TextAlign.Justify)
-            Text(text = code.javaContent)
-            if (code.unitContent != null){
-                Text(text = code.unitContent)
+            Row {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Button(
+                        onClick = { voteButtonClicked = "UpVote" },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White, // Fond blanc
+                            contentColor = Color.Black // Texte noir
+                        ),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, Color.Black),
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    ) {
+                        Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "UpVote")
+                    }
+
+                    Text(text = "$score")
+
+                    Button(
+                        onClick = { voteButtonClicked = "DownVote" },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White, // Fond blanc
+                            contentColor = Color.Black // Texte noir
+                        ),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, Color.Black),
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    ) {
+                        Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "DownVote")
+                    }
+                }
+                Column {
+                    Text(text = code.description, textAlign = TextAlign.Justify)
+                    Text(text = code.javaContent)
+                    if (code.unitContent != null){
+                        Text(text = code.unitContent)
+                    }
+                }
             }
         }
     }

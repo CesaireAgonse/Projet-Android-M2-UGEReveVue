@@ -1,18 +1,21 @@
 package fr.uge.ugerevevueandroid.visual
 
 import android.app.Application
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,80 +45,93 @@ fun Review(application: Application, review: ReviewInformation, modifier: Modifi
             score = postVoted(application, review.id, voteButtonClicked)
         }
     }
-    Column (
-        modifier = modifier.padding(2.dp)
-        // mettre un petit background et delimiter chaque component
+    Surface(
+        shadowElevation = 8.dp,
+        border = BorderStroke(0.dp, Color.Gray),
+        shape = RoundedCornerShape(16.dp),
+        color = Color.White,
+        contentColor = Color.Black,
+        modifier = Modifier.padding(4.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Spacer(modifier = Modifier.padding(start = 4.dp))
-            Text(text = "reviews: ${review.reviews}",
-                fontSize = 10.sp)
-            Spacer(modifier = Modifier.padding(start = 4.dp))
-            Text(text = "comments: ${review.comments}",
-                fontSize = 10.sp)
-        }
-        Row {
-            Text(
-                text = "from : ${review.userInformation.username}",
-                modifier = Modifier.clickable {
-                    viewModel.changeCurrentPage(Page.USER)
-                    viewModel.changeCurrentUserToDisplay(review.userInformation.username)
-                }
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Text(text = "${review.date}")
-        }
-        Row {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+        Column(Modifier.padding(5.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(onClick = { voteButtonClicked = "UpVote" },
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.button_color),
-                        contentColor = Color.Black,
-                        disabledContentColor = Color.Black,
-                        disabledContainerColor = colorResource(id = R.color.button_color_2)
-                    ),
-                    shape = CircleShape
-                ) {
-                    Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "UpVote")
-                }
-                Text(text = "$score")
-                Button(onClick = { voteButtonClicked = "DownVote" },
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.button_color),
-                        contentColor = Color.Black,
-                        disabledContentColor = Color.Black,
-                        disabledContainerColor = colorResource(id = R.color.button_color_2)
-                    ),
-                    shape = CircleShape
-                ) {
-                    Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "DownVote")
-                }
+                Spacer(modifier = Modifier.padding(start = 4.dp))
+                Text(
+                    text = "reviews: ${review.reviews}",
+                    fontSize = 15.sp
+                )
+                Spacer(modifier = Modifier.padding(start = 4.dp))
+                Text(
+                    text = "comments: ${review.comments}",
+                    fontSize = 15.sp
+                )
             }
-            Column {
-                Row {
-                    Text(
-                        text = review.title,
-                        fontSize = 20.sp
-                    )
+            Text(
+                text = review.title,
+                fontSize = 30.sp,
+            )
+            Row {
+                Text(
+                    text = "from : ${review.userInformation.username}",
+                    modifier = Modifier.clickable {
+                        viewModel.changeCurrentPage(Page.USER)
+                        viewModel.changeCurrentUserToDisplay(review.userInformation.username)
+                    },
+                    fontSize = 15.sp
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(text = "${review.date}", fontSize = 15.sp)
+            }
+            Row {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Button(
+                        onClick = { voteButtonClicked = "UpVote" },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White, // Fond blanc
+                            contentColor = Color.Black // Texte noir
+                        ),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, Color.Black),
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    ) {
+                        Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "UpVote")
+                    }
+
+                    Text(text = "$score")
+
+                    Button(
+                        onClick = { voteButtonClicked = "DownVote" },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White, // Fond blanc
+                            contentColor = Color.Black // Texte noir
+                        ),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, Color.Black),
+                        modifier = Modifier.padding(horizontal = 4.dp)
+                    ) {
+                        Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "DownVote")
+                    }
                 }
-                Row {
-                    for (content in review.content){
-                        if (content.codeSelection != "" && content.codeSelection != null){
+                Column {
+                    Row {
+                        for (content in review.content) {
+                            if (content.codeSelection != "" && content.codeSelection != null) {
+                                Text(
+                                    text = content.codeSelection,
+                                    textAlign = TextAlign.Justify,
+                                    lineHeight = 15.sp
+                                )
+                            }
                             Text(
-                                text = content.codeSelection,
-                                fontSize = 10.sp,
+                                text = content.content,
                                 textAlign = TextAlign.Justify,
                                 lineHeight = 15.sp
                             )
                         }
-                        Text(
-                            text = content.content,
-                            fontSize = 10.sp,
-                            textAlign = TextAlign.Justify,
-                            lineHeight = 15.sp
-                        )
                     }
                 }
             }
