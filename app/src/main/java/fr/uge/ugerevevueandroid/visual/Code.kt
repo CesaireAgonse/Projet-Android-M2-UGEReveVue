@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.visual
 
+import TokenManager
 import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
@@ -65,7 +66,7 @@ fun Code(application: Application, codeInformation : CodeInformation,viewModel: 
     var voteButtonClicked by remember { mutableStateOf("NotVoted") }
     var score by remember { mutableLongStateOf(code.score) }
     LaunchedEffect(voteButtonClicked) {
-        if (voteButtonClicked != "NotVoted"){
+        if (voteButtonClicked != "NotVoted" && TokenManager(application).getAuth() != null){
             var temp = postVoted(application, code.id, voteButtonClicked)
             if (temp != null){
                 score = temp

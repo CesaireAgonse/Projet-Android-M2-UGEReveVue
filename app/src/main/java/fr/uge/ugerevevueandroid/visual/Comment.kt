@@ -21,9 +21,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.information.CommentInformation
+import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.page.Page
 
 @Composable
-fun Comment(comment: CommentInformation){
+fun Comment(viewModel: MainViewModel, comment: CommentInformation){
     Surface(
         shadowElevation = 8.dp,
         border = BorderStroke(0.dp, Color.Gray),
@@ -40,7 +42,10 @@ fun Comment(comment: CommentInformation){
             Text(
                 text = comment.userInformation.username,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable { /*TODO*/}
+                modifier = Modifier.clickable {
+                    viewModel.changeCurrentPage(Page.USER)
+                    viewModel.changeCurrentUserToDisplay(comment.userInformation.username)
+                },
             )
             Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
                 .fillMaxWidth()

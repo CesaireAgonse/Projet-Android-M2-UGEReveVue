@@ -155,7 +155,7 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             Text(text = "Comments about this post : ${code!!.comments}", fontWeight = FontWeight.Bold)
 
             commentPageInformation!!.comments.forEach{
-                Comment(it)
+                Comment(viewModel, it)
             }
             Row{
                 if(pageNumberComments >= 1){
@@ -190,30 +190,32 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp))
-            OutlinedTextField(
-                value = contentNewComment,
-                onValueChange = { contentNewComment = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp),
-                label = { Text(text = "Your comment here", color = Color.LightGray) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+            if (TokenManager(application).getAuth() != null){
+                OutlinedTextField(
+                    value = contentNewComment,
+                    onValueChange = { contentNewComment = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(25.dp),
+                    label = { Text(text = "Your comment here", color = Color.LightGray) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
                 )
-            )
-            Button(onClick = {commented = true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(52, 152, 219),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.padding(horizontal = 4.dp),
-                shape = RectangleShape,
-            ) {
-                Text(text = "Comment")
+                Button(onClick = {commented = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(52, 152, 219),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    shape = RectangleShape,
+                ) {
+                    Text(text = "Comment")
+                }
+                Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp))
             }
-            Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp))
             Text(text = "Reviews about this post : ${code!!.reviews}", fontWeight = FontWeight.Bold)
             reviewPageInformation!!.reviews.forEach{
                 Review(application=application, review = it, modifier = Modifier.clickable {
@@ -250,36 +252,40 @@ fun CodePage(application: Application, viewModel : MainViewModel){
                     }
                 }
             }
-            OutlinedTextField(
-                value = titleNewReview,
-                onValueChange = { titleNewReview = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp),
-                label = { Text(text = "Your title here", color = Color.LightGray) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+            if (TokenManager(application).getAuth() != null) {
+                OutlinedTextField(
+                    value = titleNewReview,
+                    onValueChange = { titleNewReview = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(25.dp),
+                    label = { Text(text = "Your title here", color = Color.LightGray) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
                 )
-            )
-            OutlinedTextField(
-                value = contentNewReview,
-                onValueChange = { contentNewReview = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp),
-                label = { Text(text = "Your review here", color = Color.LightGray) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+                OutlinedTextField(
+                    value = contentNewReview,
+                    onValueChange = { contentNewReview = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(25.dp),
+                    label = { Text(text = "Your review here", color = Color.LightGray) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
                 )
-            )
-            Button(onClick = { reviewed=true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(52, 152, 219),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.padding(horizontal = 4.dp),
-                shape = RectangleShape,) {
-                Text(text = "Review")
+                Button(
+                    onClick = { reviewed = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(52, 152, 219),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    shape = RectangleShape,
+                ) {
+                    Text(text = "Review")
+                }
             }
         }
     }
