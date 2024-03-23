@@ -3,22 +3,29 @@ package fr.uge.ugerevevueandroid.page
 import TokenManager
 import android.app.Application
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,6 +71,7 @@ fun HomePage(application: Application, viewModel: MainViewModel){
     var query by remember {mutableStateOf(viewModel.currentQuery)}
     var pageNumber by remember { mutableIntStateOf(0) }
     var maxPageNumber by remember { mutableIntStateOf(0) }
+    var resultNumber by remember { mutableIntStateOf(0) }
 
     var posts:FilterInformation? by remember {mutableStateOf( null)}
     LaunchedEffect(true, posts, maxPageNumber, pageNumber, query, sortBy, viewModel.currentQuery, viewModel.currentSortBy) {
@@ -71,13 +81,14 @@ fun HomePage(application: Application, viewModel: MainViewModel){
             query = posts!!.q
             pageNumber = posts!!.pageNumber
             maxPageNumber = posts!!.maxPageNumber
+            resultNumber = posts!!.resultNumber
         }
     }
     val scrollState = rememberScrollState()
     if (posts != null){
         Scaffold(
             topBar = {
-                FistRow(viewModel, 0, application)
+                FistRow(viewModel, resultNumber, application)
             },
             floatingActionButton = {
                 FloatingActionButton(onClick = { viewModel.changeCurrentPage(Page.CREATE) }, contentColor = Color(R.color.button_color_2)) {
@@ -103,12 +114,29 @@ fun HomePage(application: Application, viewModel: MainViewModel){
                 }
                 Row (Modifier.background(HOME_COLOR)){
                     if(pageNumber >= 1){
-                        Button(onClick = {pageNumber--}) {
+                        Button(onClick = {pageNumber--},
+                            colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                            ),
+                            border = BorderStroke(1.dp, Color.Black),
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            shape = RectangleShape,
+                        ) {
                             Text(text = "Previous")
                         }
                     }
                     if(pageNumber < maxPageNumber) {
-                        Button(onClick = { pageNumber++ }) {
+                        Button(onClick = { pageNumber++ },
+                            colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                            ),
+                            border = BorderStroke(1.dp, Color.Black),
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            shape = RectangleShape,
+
+                        ) {
                             Text(text = "Next")
                         }
                     }
@@ -127,7 +155,6 @@ fun FistRow(viewModel: MainViewModel, numberResult: Int, application: Applicatio
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Titre
             Text(
                 text = "All Codes",
                 modifier = Modifier.weight(1f),
@@ -136,26 +163,52 @@ fun FistRow(viewModel: MainViewModel, numberResult: Int, application: Applicatio
 
             // Bouton Admin
             if (TokenManager(application).getAuth()?.role.equals("ADMIN")) {
-                Button(onClick = {viewModel.changeCurrentPage(Page.ADMIN) }) {
+                Button(onClick = {viewModel.changeCurrentPage(Page.ADMIN) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(52, 152, 219),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(4.dp),
+                    shape = CircleShape) {
                     Text(text = "Admin page")
                 }
             }
 
         }
-
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Nombre de résultats et menu déroulant
             var expanded by remember { mutableStateOf(false) }
-            var selectedOption by remember { mutableStateOf("newest") }
+            if (viewModel.currentSortBy == ""){
+                Text(
+                    text = "$numberResult results" ,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            else {
+                Text(
+                    text = "$numberResult results by " +  viewModel.currentSortBy,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+//            IconButton(onClick = {
+//                 }, modifier = Modifier.padding(10.dp)){
+//                Icon(
+//                    imageVector = Icons.Default.Refresh,
+//                    contentDescription = "search button",
+//                    modifier = Modifier.fillMaxSize(),
+//                    tint = Color.Black                )
+//            }
+            Button(onClick = { expanded = true },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = Color.Black
+                ),
+                border = BorderStroke(1.dp, Color.Black),
+                modifier = Modifier.padding(4.dp),
+                shape = CircleShape
 
-            Text(
-                text = "${numberResult} results",
-                modifier = Modifier.weight(1f)
-            )
-
-            Button(onClick = { expanded = true }) {
+                ) {
                 Text(
                     text = "Sort by",
                 )
@@ -165,16 +218,28 @@ fun FistRow(viewModel: MainViewModel, numberResult: Int, application: Applicatio
                 ) {
                     DropdownMenuItem(
                         text = {
-                            Text(text = "Newest",
-                                modifier = Modifier.clickable{ expanded = false; viewModel.changeCurrentSortBy("relevance") })
-                        },
-                        onClick = { expanded = false; viewModel.changeCurrentSortBy("newest") })
+                            Text(text = "Newest")},
+                        onClick = { expanded = false;
+                            if (viewModel.currentSortBy == "newest"){
+                                viewModel.changeCurrentSortBy("")
+                            }
+                            else {
+                                viewModel.changeCurrentSortBy("newest")
+                            }
+
+                        })
                     DropdownMenuItem(
                         text = {
-                            Text(text = "Relevance",
-                                modifier = Modifier.clickable{ expanded = false; viewModel.changeCurrentSortBy("relevance") })
-                        },
-                        onClick = { expanded = false; viewModel.changeCurrentSortBy("relevance") }
+                            Text(text = "Relevance")},
+                        onClick = { expanded = false;
+                            if (viewModel.currentSortBy == "relevance"){
+                                viewModel.changeCurrentSortBy("")
+                            }
+                            else {
+                                viewModel.changeCurrentSortBy("relevance")
+                            }
+
+                        }
                     )
                 }
             }

@@ -23,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,7 +35,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -126,7 +129,7 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
         }
         val user = userState.value
         if (user != null){
-            UserDisplayer(application = application, viewModel = viewModel, user = user, Modifier.weight(4f))
+            UserDisplayer(application = application, viewModel = viewModel, userI = user, Modifier.weight(4f))
             Column(
                 modifier = Modifier
                     .weight(6f)
@@ -143,13 +146,21 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
 }
 
 @Composable
-fun UserDisplayer(application: Application, viewModel : MainViewModel, user : UserInformation, modifier : Modifier = Modifier){
+fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : UserInformation, modifier : Modifier = Modifier){
     var uriUser: Uri? by remember { mutableStateOf(null) }
     var imageManager = ImageManager();
+    var user by remember {
+        mutableStateOf(userI)
+    }
     LaunchedEffect(uriUser){
         if (uriUser != null){
             imageManager.createMultipartFromUri(uriUser!!, application.contentResolver)
                 ?.let { photo(application, it) }
+            var temp = profile(user.username)
+            if (temp != null){
+                user = temp
+                viewModel.changeCurrentUserLogged(temp)
+            }
         }
     }
 
@@ -206,9 +217,13 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, user : Us
                 Button(
                     onClick = { viewModel.changeCurrentPage(Page.ADMIN)
                     },
-                    modifier = Modifier
-                        .padding(top = 160.dp)
-                        .align(Alignment.BottomCenter)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(52, 152, 219),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(top = 160.dp)
+                        .align(Alignment.BottomCenter),
+                    shape = CircleShape
                 ) {
                     Text(text = "Admin page")
                 }
@@ -220,19 +235,44 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, user : Us
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Button(onClick = {
                         selectImageLauncher.launch("image/*")
-                    }) {
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(52, 152, 219),
+                    contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    shape = CircleShape
+                    ) {
                         Text(text = "Change your profile image")
                     }
-                    Button(onClick = {  viewModel.changeCurrentPage(Page.PASSWORD) }) {
+                    Button(onClick = {  viewModel.changeCurrentPage(Page.PASSWORD) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(52, 152, 219),
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        shape = CircleShape) {
                         Text(text = "Change your password")
                     }
                 }
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Button(onClick = { follow(application = application, user.username) }) {
+                    Button(onClick = { follow(application = application, user.username) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(52, 152, 219),
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        shape = CircleShape) {
                         Text(text = "Follow")
                     }
-                    Button(onClick = { unfollow(application = application, user.username) }) {
+                    Button(onClick = { unfollow(application = application, user.username) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(52, 152, 219),
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        shape = CircleShape) {
                         Text(text = "Unfollow")
                     }
                 }
