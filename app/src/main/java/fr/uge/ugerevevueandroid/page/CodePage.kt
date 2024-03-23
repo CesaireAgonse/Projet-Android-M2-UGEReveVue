@@ -155,7 +155,7 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             Text(text = "Comments about this post : ${code!!.comments}", fontWeight = FontWeight.Bold)
 
             commentPageInformation!!.comments.forEach{
-                Comment(it)
+                Comment(application, it)
             }
             Row{
                 if(pageNumberComments >= 1){

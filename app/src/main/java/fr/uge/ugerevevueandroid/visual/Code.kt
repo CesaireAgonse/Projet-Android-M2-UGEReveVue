@@ -1,6 +1,8 @@
 package fr.uge.ugerevevueandroid.visual
 
+import TokenManager
 import android.app.Application
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
@@ -57,13 +60,30 @@ suspend fun postVoted(application: Application, postId: Long, voteType: String):
     }
 }
 
+suspend fun codeDeleted(application: Application, postId: Long) {
+    return withContext(Dispatchers.IO) {
+        var response = ApiService(application).adminPermitService()
+            .codeDeleted(postId)
+            .execute()
+        if (response.isSuccessful){
+            response.body()
+        }
+    }
+}
+
 @Composable
 fun Code(application: Application, code : CodeInformation,viewModel: MainViewModel){
     var voteButtonClicked by remember { mutableStateOf("NotVoted") }
+    var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
     var score by remember { mutableLongStateOf(code.score) }
     LaunchedEffect(voteButtonClicked) {
         if (voteButtonClicked != "NotVoted"){
             score = postVoted(application, code.id, voteButtonClicked)
+        }
+    }
+    LaunchedEffect(deleteButtonClicked) {
+        if (deleteButtonClicked == "Deleted"){
+            codeDeleted(application, code.id)
         }
     }
     Surface(
@@ -125,6 +145,25 @@ fun Code(application: Application, code : CodeInformation,viewModel: MainViewMod
                     ) {
                         Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "DownVote")
                     }
+                    val auth = TokenManager(application).getAuth()
+                    if (auth != null && auth.role == "ADMIN"){
+                        Button(
+                            onClick = {
+                                deleteButtonClicked = "Deleted"
+                                      },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White, // Fond blanc
+                                contentColor = Color.Black // Texte noir
+                            ),
+                            shape = CircleShape,
+                            border = BorderStroke(1.dp, Color.Black),
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
+                            Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                        }
+                    }
+
+
                 }
                 Column {
                     Text(text = code.description, textAlign = TextAlign.Justify)

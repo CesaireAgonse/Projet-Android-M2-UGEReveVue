@@ -34,5 +34,9 @@ class ApiService(application: Application){
     fun authenticateService() :AuthenticateService{
         return retrofitBearer.create(AuthenticateService::class.java)
     }
+
+    fun adminPermitService() :AdminPermitService{
+        return retrofitBearer.create(AdminPermitService::class.java)
+    }
 }
 

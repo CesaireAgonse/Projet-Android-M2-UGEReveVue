@@ -101,7 +101,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             Text(text = "Comments about this post : ${review!!.comments}", fontWeight = FontWeight.Bold)
 
             commentPageInformation!!.comments.forEach{
-                Comment(it)
+                Comment(application, it)
             }
             Row{
                 if(pageNumberComments >= 1){

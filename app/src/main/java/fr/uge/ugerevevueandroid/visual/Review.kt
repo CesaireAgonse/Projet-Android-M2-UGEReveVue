@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.visual
 
+import TokenManager
 import android.app.Application
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
@@ -35,14 +37,34 @@ import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
+import fr.uge.ugerevevueandroid.service.ApiService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+suspend fun reviewDeleted(application: Application, reviewId: Long) {
+    return withContext(Dispatchers.IO) {
+        var response = ApiService(application).adminPermitService()
+            .reviewDeleted(reviewId)
+            .execute()
+        if (response.isSuccessful){
+            response.body()
+        }
+    }
+}
 
 @Composable
 fun Review(application: Application, review: ReviewInformation, modifier: Modifier = Modifier,viewModel: MainViewModel){
     var voteButtonClicked by remember { mutableStateOf("NotVoted") }
+    var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
     var score by remember { mutableLongStateOf(review.score) }
     LaunchedEffect(voteButtonClicked) {
         if (voteButtonClicked != "NotVoted"){
             score = postVoted(application, review.id, voteButtonClicked)
+        }
+    }
+    LaunchedEffect(deleteButtonClicked) {
+        if (deleteButtonClicked == "Deleted"){
+            reviewDeleted(application, review.id)
         }
     }
     Surface(
@@ -114,6 +136,24 @@ fun Review(application: Application, review: ReviewInformation, modifier: Modifi
                         modifier = Modifier.padding(horizontal = 4.dp)
                     ) {
                         Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "DownVote")
+                    }
+
+                    val auth = TokenManager(application).getAuth()
+                    if (auth != null && auth.role == "ADMIN"){
+                        Button(
+                            onClick = {
+                                deleteButtonClicked = "Deleted"
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White, // Fond blanc
+                                contentColor = Color.Black // Texte noir
+                            ),
+                            shape = CircleShape,
+                            border = BorderStroke(1.dp, Color.Black),
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
+                            Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                        }
                     }
                 }
                 Column {
