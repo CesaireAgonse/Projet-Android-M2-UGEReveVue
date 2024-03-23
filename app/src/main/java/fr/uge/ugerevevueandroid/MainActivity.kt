@@ -1,11 +1,9 @@
 package fr.uge.ugerevevueandroid
 
 import AdminPage
-import TokenManager
 import android.app.Application
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -15,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.CodePage
@@ -28,6 +25,7 @@ import fr.uge.ugerevevueandroid.page.PasswordPage
 import fr.uge.ugerevevueandroid.page.ReviewPage
 import fr.uge.ugerevevueandroid.page.SignupPage
 import fr.uge.ugerevevueandroid.page.UserPage
+import fr.uge.ugerevevueandroid.service.CameraCaller
 import fr.uge.ugerevevueandroid.ui.theme.UGEReveVueAndroidTheme
 import fr.uge.ugerevevueandroid.visual.Navbar
 
@@ -49,6 +47,9 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        /* intent = Intent(this, CameraCaller::class.java)
+            startActivity(intent)
+            finish()*/
     }
 }
 
