@@ -151,7 +151,7 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             modifier = Modifier
                 .verticalScroll(scrollState)
         ) {
-            Code(application=application, code = code!!,viewModel)
+            Code(application=application, codeInformation = code!!,viewModel)
             Text(text = "Comments about this post : ${code!!.comments}", fontWeight = FontWeight.Bold)
 
             commentPageInformation!!.comments.forEach{

@@ -3,6 +3,7 @@ package fr.uge.ugerevevueandroid.visual
 import TokenManager
 import android.app.Application
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -63,12 +64,6 @@ fun SearchBar(viewModel: MainViewModel) {
     )
 }
 
-fun logout(application: Application) {
-    //allPermitService.logout().execute()
-}
-
-
-
 @Composable
 fun Navbar(application: Application, viewModel: MainViewModel){
     val manager =  TokenManager(application)
@@ -79,7 +74,6 @@ fun Navbar(application: Application, viewModel: MainViewModel){
     var userPhoto by remember {mutableStateOf("")}
     LaunchedEffect(key1 = logged){
         if(logged){
-            logout(application)
             logged = false
             manager.clearToken("bearer")
             manager.clearToken("refresh")
@@ -114,35 +108,29 @@ fun Navbar(application: Application, viewModel: MainViewModel){
             }
             if (!isConnected){
                 Button(
-                    onClick = {viewModel.changeCurrentPage(Page.SIGNUP) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.button_color),
-                        contentColor = colorResource(id = R.color.button_color_2)
-                    ),
-                    modifier = Modifier
-                        .padding(7.dp)
-                        .clip(RectangleShape)
-                        .background(colorResource(id = R.color.button_color))
-                        .height(42.dp)
-
-                ) {
-                    Text(text = "Sign up", modifier = Modifier.padding(2.dp))
-                }
-                Button(
                     onClick = { viewModel.changeCurrentPage(Page.LOGIN) },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.navbar_color),
-                        contentColor = colorResource(id = R.color.button_login_color)
+                        containerColor = Color.Black,
+                        contentColor = Color.White
                     ),
-                    modifier = Modifier
-                        .padding(7.dp)
-                        .clip(RectangleShape)
-                        .background(colorResource(id = R.color.navbar_color))
-                        .border(2.dp, colorResource(id = R.color.button_login_color))
-                        .height(42.dp)
+                    border = BorderStroke(1.dp, Color.White),
+                    modifier = Modifier.padding(4.dp),
+                    shape = RectangleShape
 
                 ) {
                     Text(text = "Log in", modifier = Modifier.padding(1.dp))
+                }
+                Button(
+                    onClick = {viewModel.changeCurrentPage(Page.SIGNUP) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color.Black
+                    ),
+                    border = BorderStroke(1.dp, Color.Black),
+                    modifier = Modifier.padding(4.dp),
+                    shape = RectangleShape
+                ) {
+                    Text(text = "Sign up", modifier = Modifier.padding(2.dp))
                 }
             }
             else {
@@ -178,14 +166,12 @@ fun Navbar(application: Application, viewModel: MainViewModel){
                         logged = true
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.button_color),
-                        contentColor = colorResource(id = R.color.button_color_2)
+                        containerColor = Color.Black,
+                        contentColor = Color.White
                     ),
-                    modifier = Modifier
-                        .padding(7.dp)
-                        .clip(RectangleShape)
-                        .background(colorResource(id = R.color.button_color))
-                        .height(42.dp)
+                    border = BorderStroke(1.dp, Color.White),
+                    modifier = Modifier.padding(4.dp),
+                    shape = RectangleShape
 
                 ) {
                     Text(text = "Log out", modifier = Modifier.padding(2.dp))

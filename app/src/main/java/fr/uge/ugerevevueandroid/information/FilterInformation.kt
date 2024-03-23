@@ -5,5 +5,6 @@ data class FilterInformation(
     val sortBy:String,
     val q:String,
     val pageNumber: Int,
-    val maxPageNumber: Int
+    val maxPageNumber: Int,
+    val resultNumber: Int
 )

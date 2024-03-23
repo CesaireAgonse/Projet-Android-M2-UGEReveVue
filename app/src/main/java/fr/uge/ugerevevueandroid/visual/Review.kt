@@ -58,8 +58,8 @@ fun Review(application: Application, review: ReviewInformation, modifier: Modifi
     var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
     var score by remember { mutableLongStateOf(review.score) }
     LaunchedEffect(voteButtonClicked) {
-        if (voteButtonClicked != "NotVoted"){
-            score = postVoted(application, review.id, voteButtonClicked)
+        if (voteButtonClicked != "NotVoted") {
+            postVoted(application, review.id, voteButtonClicked)
         }
     }
     LaunchedEffect(deleteButtonClicked) {

@@ -1,8 +1,6 @@
 package fr.uge.ugerevevueandroid.visual
 
-import TokenManager
 import android.app.Application
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
@@ -68,17 +65,23 @@ suspend fun codeDeleted(application: Application, postId: Long) {
         if (response.isSuccessful){
             response.body()
         }
+        response.body()
+
     }
 }
 
 @Composable
-fun Code(application: Application, code : CodeInformation,viewModel: MainViewModel){
+fun Code(application: Application, codeInformation : CodeInformation,viewModel: MainViewModel){
+    var code:CodeInformation by remember { mutableStateOf( codeInformation)}
     var voteButtonClicked by remember { mutableStateOf("NotVoted") }
     var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
     var score by remember { mutableLongStateOf(code.score) }
     LaunchedEffect(voteButtonClicked) {
         if (voteButtonClicked != "NotVoted"){
-            score = postVoted(application, code.id, voteButtonClicked)
+            var temp = postVoted(application, code.id, voteButtonClicked)
+            if (temp != null){
+                score = temp
+            }
         }
     }
     LaunchedEffect(deleteButtonClicked) {
@@ -118,32 +121,66 @@ fun Code(application: Application, code : CodeInformation,viewModel: MainViewMod
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Button(
-                        onClick = { voteButtonClicked = "UpVote" },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White, // Fond blanc
-                            contentColor = Color.Black // Texte noir
-                        ),
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, Color.Black),
-                        modifier = Modifier.padding(horizontal = 4.dp)
-                    ) {
-                        Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "UpVote")
+                    if (code.voteType == "UpVote"){
+                        Button(
+                            onClick = {
+                                voteButtonClicked = "UpVote"
+                                },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Black, // Fond blanc
+                                contentColor = Color.White // Texte noir
+                            ),
+                            shape = CircleShape,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
+                            Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "UpVote")
+                        }
+                    }
+                    else{
+                        Button(
+                            onClick = { voteButtonClicked = "UpVote"
+                                },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White, // Fond blanc
+                                contentColor = Color.Black // Texte noir
+                            ),
+                            shape = CircleShape,
+                            border = BorderStroke(1.dp, Color.Black),
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
+                            Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "UpVote")
+                        }
                     }
 
-                    Text(text = "$score")
-
-                    Button(
-                        onClick = { voteButtonClicked = "DownVote" },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White, // Fond blanc
-                            contentColor = Color.Black // Texte noir
-                        ),
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, Color.Black),
-                        modifier = Modifier.padding(horizontal = 4.dp)
-                    ) {
-                        Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "DownVote")
+                    Text(text = "${score}")
+                    if (code.voteType == "DownVote") {
+                        Button(
+                            onClick = { voteButtonClicked = "DownVote"
+                                },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Black, // Fond blanc
+                                contentColor = Color.White // Texte noir
+                            ),
+                            shape = CircleShape,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
+                            Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "DownVote")
+                        }
+                    }
+                    else {
+                        Button(
+                            onClick = { voteButtonClicked = "DownVote"
+                             },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White, // Fond blanc
+                                contentColor = Color.Black // Texte noir
+                            ),
+                            shape = CircleShape,
+                            border = BorderStroke(1.dp, Color.Black),
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
+                            Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "UpVote")
+                        }
                     }
                     val auth = TokenManager(application).getAuth()
                     if (auth != null && auth.role == "ADMIN"){
