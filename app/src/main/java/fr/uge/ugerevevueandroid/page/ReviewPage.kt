@@ -1,6 +1,5 @@
 package fr.uge.ugerevevueandroid.page
 
-import TokenManager
 import android.app.Application
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -102,7 +101,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             Text(text = "Comments about this post : ${review!!.comments}", fontWeight = FontWeight.Bold)
 
             commentPageInformation!!.comments.forEach{
-                Comment(viewModel, it)
+                Comment(viewModel, application, it)
             }
             Row{
                 if(pageNumberComments >= 1){

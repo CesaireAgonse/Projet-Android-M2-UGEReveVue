@@ -2,7 +2,6 @@ package fr.uge.ugerevevueandroid.visual
 
 import TokenManager
 import android.app.Application
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
@@ -43,7 +43,6 @@ import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
 import fr.uge.ugerevevueandroid.page.postCommented
 import fr.uge.ugerevevueandroid.service.ApiService
-import fr.uge.ugerevevueandroid.service.allPermitService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -54,16 +53,27 @@ suspend fun postVoted(application: Application, postId: Long, voteType: String):
             .postVoted(postId, voteType)
             .execute()
         response.body()
-
     }
 }
 
+suspend fun codeDeleted(application: Application, postId: Long) {
+    return withContext(Dispatchers.IO) {
+        var response = ApiService(application).adminPermitService()
+            .codeDeleted(postId)
+            .execute()
+        if (response.isSuccessful){
+            response.body()
+        }
+        response.body()
 
+    }
+}
 
 @Composable
 fun Code(application: Application, codeInformation : CodeInformation,viewModel: MainViewModel){
     var code:CodeInformation by remember { mutableStateOf( codeInformation)}
     var voteButtonClicked by remember { mutableStateOf("NotVoted") }
+    var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
     var score by remember { mutableLongStateOf(code.score) }
     LaunchedEffect(voteButtonClicked) {
         if (voteButtonClicked != "NotVoted" && TokenManager(application).getAuth() != null){
@@ -73,7 +83,11 @@ fun Code(application: Application, codeInformation : CodeInformation,viewModel: 
             }
         }
     }
-
+    LaunchedEffect(deleteButtonClicked) {
+        if (deleteButtonClicked == "Deleted"){
+            codeDeleted(application, code.id)
+        }
+    }
     Surface(
         shadowElevation = 8.dp,
         border = BorderStroke(0.dp, Color.Gray),
@@ -167,6 +181,25 @@ fun Code(application: Application, codeInformation : CodeInformation,viewModel: 
                             Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "UpVote")
                         }
                     }
+                    val auth = TokenManager(application).getAuth()
+                    if (auth != null && auth.role == "ADMIN"){
+                        Button(
+                            onClick = {
+                                deleteButtonClicked = "Deleted"
+                                      },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White, // Fond blanc
+                                contentColor = Color.Black // Texte noir
+                            ),
+                            shape = CircleShape,
+                            border = BorderStroke(1.dp, Color.Black),
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        ) {
+                            Icon(Icons.Filled.Delete, contentDescription = "Delete")
+                        }
+                    }
+
+
                 }
                 Column {
                     Text(text = code.description, textAlign = TextAlign.Justify)
@@ -178,5 +211,4 @@ fun Code(application: Application, codeInformation : CodeInformation,viewModel: 
             }
         }
     }
-
 }
