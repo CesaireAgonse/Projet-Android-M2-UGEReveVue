@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
@@ -25,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,22 +30,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
-import fr.uge.ugerevevueandroid.service.ApiService
 import fr.uge.ugerevevueandroid.service.ImageManager
-import fr.uge.ugerevevueandroid.service.allPermitService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 @Composable
 fun SearchBar(viewModel: MainViewModel) {
@@ -90,7 +81,11 @@ fun Navbar(application: Application, viewModel: MainViewModel){
         .padding(1.dp)
     ) {
         Row {
-            IconButton(onClick = { viewModel.changeCurrentPage(Page.HOME) }, modifier = Modifier.padding(10.dp)) {
+            IconButton(onClick = {
+                if (viewModel.currentPage == Page.HOME){
+                    viewModel.reloadPage()
+                }
+                viewModel.changeCurrentPage(Page.HOME) }, modifier = Modifier.padding(10.dp)) {
                 Icon(
                     imageVector = Icons.Default.Home,
                     contentDescription = "home button",
@@ -140,6 +135,9 @@ fun Navbar(application: Application, viewModel: MainViewModel){
                         contentDescription = "Profile Image",
                         modifier = Modifier
                             .clickable {
+                                if (viewModel.currentPage == Page.USER){
+                                    viewModel.reloadPage()
+                                }
                                 viewModel.changeCurrentPage(Page.USER)
                                 manager
                                     .getAuth()

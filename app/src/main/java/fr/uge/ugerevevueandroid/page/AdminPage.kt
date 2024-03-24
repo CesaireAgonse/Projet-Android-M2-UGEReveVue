@@ -14,31 +14,64 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
+import fr.uge.ugerevevueandroid.information.UserPageInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
 import fr.uge.ugerevevueandroid.page.follow
+import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.visual.codeDeleted
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-fun delete(username : String){
+suspend fun userDeleted(application: Application, username: String) {
+    return withContext(Dispatchers.IO) {
+        var response = ApiService(application).adminPermitService()
+            .userDeleted(username)
+            .execute()
+        if (response.isSuccessful){
+            response.body()
+        }
+    }
+}
 
+suspend fun getAllUsers(application: Application) : UserPageInformation?{
+    return withContext(Dispatchers.IO) {
+        var response = ApiService(application).adminPermitService()
+            .getAllUsers(0)
+            .execute()
+        if (response.isSuccessful){
+            response.body()
+        } else {
+            null
+        }
+    }
 }
 
 @Composable
 fun AdminPage(application: Application, viewModel : MainViewModel) {
-//    val users = mutableListOf<UserInformation>()
-//    var admin = UserInformation(1, "admin", null,true)
-//    var czer = UserInformation(2, "czer", HashSet<UserInformation>(),false)
-//
-//    users.add(admin)
-//    users.add(czer)
-
+    var userPageInformation: UserPageInformation? by remember {mutableStateOf( null)}
+    var numberOfUser by remember {mutableStateOf(0) }
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(userPageInformation, viewModel.triggerReloadPage){
+        userPageInformation = getAllUsers(application)
+        if (userPageInformation!!.resultNumber != null){
+            numberOfUser = userPageInformation!!.resultNumber
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -46,31 +79,43 @@ fun AdminPage(application: Application, viewModel : MainViewModel) {
             .padding(8.dp)
     ) {
 
-        Row {
+        Row (
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
                 text = "Moderation Page",
-                modifier = Modifier.weight(1f),
                 fontSize = 30.sp
             )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text =   "$numberOfUser users",
+                fontSize = 15.sp
+            )
         }
-
 
         Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp))
 
-//        users.forEach{
-//            UserAdmin(application, viewModel, it)
-//        }
-
+        userPageInformation?.users?.forEach{
+            UserAdmin(application, viewModel, it)
+        }
 
     }
 
 }
 
-@Composable
-fun UserAdmin(application: Application, viewModel : MainViewModel, user : UserInformation){
 
+@Composable
+fun UserAdmin(application: Application, viewModel : MainViewModel, user : UserInformation, modifier: Modifier = Modifier){
+    var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
+
+    LaunchedEffect(deleteButtonClicked) {
+        if (deleteButtonClicked == "Deleted"){
+            userDeleted(application, user.username)
+            viewModel.reloadPage()
+        }
+    }
     Column {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -80,10 +125,11 @@ fun UserAdmin(application: Application, viewModel : MainViewModel, user : UserIn
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable {
                     viewModel.changeCurrentUserToDisplay(user.username)
+                    viewModel.reloadPage()
                     viewModel.changeCurrentPage(Page.USER)
                 })
             Spacer(modifier = Modifier.weight(1f))
-            Button(onClick = { /* deleteUser(application = application, user.username) */ }) {
+            Button(onClick = { deleteButtonClicked = "Deleted" }) {
                 Icon(Icons.Filled.Delete, contentDescription = "DeleteUser")
             }
         }

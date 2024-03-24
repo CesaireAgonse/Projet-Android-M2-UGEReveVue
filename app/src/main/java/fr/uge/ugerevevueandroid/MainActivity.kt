@@ -2,7 +2,6 @@ package fr.uge.ugerevevueandroid
 
 import AdminPage
 import android.app.Application
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -65,6 +64,7 @@ fun Application(viewModel : MainViewModel, application: Application){
             Page.ADMIN -> AdminPage(application= application, viewModel = viewModel)
             Page.PASSWORD -> PasswordPage(application=application, viewModel=viewModel)
         }
+
     }
 }
 

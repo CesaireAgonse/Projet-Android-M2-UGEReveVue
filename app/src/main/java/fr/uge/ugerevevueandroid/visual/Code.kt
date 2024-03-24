@@ -3,7 +3,6 @@ package fr.uge.ugerevevueandroid.visual
 import TokenManager
 import android.app.Application
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,16 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.uge.ugerevevueandroid.R
-import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
-import fr.uge.ugerevevueandroid.page.postCommented
 import fr.uge.ugerevevueandroid.service.ApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -70,7 +65,7 @@ suspend fun codeDeleted(application: Application, postId: Long) {
 }
 
 @Composable
-fun Code(application: Application, codeInformation : CodeInformation,viewModel: MainViewModel){
+fun Code(application: Application, codeInformation : CodeInformation, viewModel: MainViewModel, modifier: Modifier = Modifier){
     var code:CodeInformation by remember { mutableStateOf( codeInformation)}
     var voteButtonClicked by remember { mutableStateOf("NotVoted") }
     var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
@@ -86,6 +81,12 @@ fun Code(application: Application, codeInformation : CodeInformation,viewModel: 
     LaunchedEffect(deleteButtonClicked) {
         if (deleteButtonClicked == "Deleted"){
             codeDeleted(application, code.id)
+            if (viewModel.currentPage == Page.CODE){
+                viewModel.changeCurrentPage(Page.HOME)
+            } else {
+                viewModel.reloadPage()
+            }
+
         }
     }
     Surface(
@@ -184,9 +185,7 @@ fun Code(application: Application, codeInformation : CodeInformation,viewModel: 
                     val auth = TokenManager(application).getAuth()
                     if (auth != null && auth.role == "ADMIN"){
                         Button(
-                            onClick = {
-                                deleteButtonClicked = "Deleted"
-                                      },
+                            onClick = {deleteButtonClicked = "Deleted"},
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.White, // Fond blanc
                                 contentColor = Color.Black // Texte noir

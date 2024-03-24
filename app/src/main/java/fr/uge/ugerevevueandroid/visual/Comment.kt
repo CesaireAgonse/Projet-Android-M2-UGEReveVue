@@ -57,6 +57,7 @@ fun Comment(viewModel: MainViewModel, application: Application, comment: Comment
     LaunchedEffect(deleteButtonClickedd) {
         if (deleteButtonClickedd == "Deleted"){
             commentDeleted(application, comment.id)
+            viewModel.reloadPage()
         }
     }
     Surface(

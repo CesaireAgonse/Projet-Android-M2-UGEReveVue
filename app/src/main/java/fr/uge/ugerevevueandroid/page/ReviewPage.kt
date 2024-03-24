@@ -87,7 +87,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             contentNewReview = ""
         }
     }
-    LaunchedEffect(true, pageNumberComments,pageNumberReviews,commented,reviewed) {
+    LaunchedEffect(true, pageNumberComments,pageNumberReviews,commented,reviewed,viewModel.triggerReloadPage) {
         review = review(id)
         commentPageInformation = comments(id, pageNumberComments)
         reviewPageInformation = reviews(id, pageNumberReviews)
