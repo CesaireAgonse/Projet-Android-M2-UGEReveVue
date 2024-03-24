@@ -71,7 +71,7 @@ fun Code(application: Application, codeInformation : CodeInformation, viewModel:
     var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
     var score by remember { mutableLongStateOf(code.score) }
     LaunchedEffect(voteButtonClicked) {
-        if (voteButtonClicked != "NotVoted"){
+        if (voteButtonClicked != "NotVoted" && TokenManager(application).getAuth() != null){
             var temp = postVoted(application, code.id, voteButtonClicked)
             if (temp != null){
                 score = temp

@@ -1,12 +1,16 @@
 package fr.uge.ugerevevueandroid.page
 
+import TokenManager
 import android.app.Application
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,8 +31,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +57,7 @@ import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.Date
 
 suspend fun code(codeId: Long): CodeInformation? {
     return withContext(Dispatchers.IO) {
@@ -145,7 +155,7 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             Text(text = "Comments about this post : ${code!!.comments}", fontWeight = FontWeight.Bold)
 
             commentPageInformation!!.comments.forEach{
-                Comment(application, it, viewModel)
+                Comment(viewModel, application, it)
             }
             Row{
                 if(pageNumberComments >= 1){
@@ -180,30 +190,32 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp))
-            OutlinedTextField(
-                value = contentNewComment,
-                onValueChange = { contentNewComment = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp),
-                label = { Text(text = "Your comment here", color = Color.LightGray) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+            if (TokenManager(application).getAuth() != null){
+                OutlinedTextField(
+                    value = contentNewComment,
+                    onValueChange = { contentNewComment = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(25.dp),
+                    label = { Text(text = "Your comment here", color = Color.LightGray) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
                 )
-            )
-            Button(onClick = {commented = true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(52, 152, 219),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.padding(horizontal = 4.dp),
-                shape = RectangleShape,
-            ) {
-                Text(text = "Comment")
+                Button(onClick = {commented = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(52, 152, 219),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    shape = RectangleShape,
+                ) {
+                    Text(text = "Comment")
+                }
+                Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp))
             }
-            Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp))
             Text(text = "Reviews about this post : ${code!!.reviews}", fontWeight = FontWeight.Bold)
             reviewPageInformation!!.reviews.forEach{
                 Review(application=application, review = it, modifier = Modifier.clickable {
@@ -240,36 +252,40 @@ fun CodePage(application: Application, viewModel : MainViewModel){
                     }
                 }
             }
-            OutlinedTextField(
-                value = titleNewReview,
-                onValueChange = { titleNewReview = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp),
-                label = { Text(text = "Your title here", color = Color.LightGray) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+            if (TokenManager(application).getAuth() != null) {
+                OutlinedTextField(
+                    value = titleNewReview,
+                    onValueChange = { titleNewReview = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(25.dp),
+                    label = { Text(text = "Your title here", color = Color.LightGray) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
                 )
-            )
-            OutlinedTextField(
-                value = contentNewReview,
-                onValueChange = { contentNewReview = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp),
-                label = { Text(text = "Your review here", color = Color.LightGray) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+                OutlinedTextField(
+                    value = contentNewReview,
+                    onValueChange = { contentNewReview = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(25.dp),
+                    label = { Text(text = "Your review here", color = Color.LightGray) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
                 )
-            )
-            Button(onClick = { reviewed=true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(52, 152, 219),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.padding(horizontal = 4.dp),
-                shape = RectangleShape,) {
-                Text(text = "Review")
+                Button(
+                    onClick = { reviewed = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(52, 152, 219),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    shape = RectangleShape,
+                ) {
+                    Text(text = "Review")
+                }
             }
         }
     }

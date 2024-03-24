@@ -30,11 +30,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.form.ReviewForm
+import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.ReviewPageInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.allPermitService
+import fr.uge.ugerevevueandroid.visual.Code
 import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
 import kotlinx.coroutines.Dispatchers
@@ -99,7 +101,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             Text(text = "Comments about this post : ${review!!.comments}", fontWeight = FontWeight.Bold)
 
             commentPageInformation!!.comments.forEach{
-                Comment(application, it, viewModel)
+                Comment(viewModel, application, it)
             }
             Row{
                 if(pageNumberComments >= 1){
@@ -134,31 +136,34 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp))
-            OutlinedTextField(
-                value = contentNewComment,
-                onValueChange = { contentNewComment = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp),
-                label = { Text(text = "Your comment here", color = Color.LightGray) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+            if (TokenManager(application).getAuth() != null) {
+                OutlinedTextField(
+                    value = contentNewComment,
+                    onValueChange = { contentNewComment = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(25.dp),
+                    label = { Text(text = "Your comment here", color = Color.LightGray) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
                 )
-            )
-            Button(onClick = {commented = true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(52, 152, 219),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.padding(horizontal = 4.dp),
-                shape = RectangleShape,
-            ) {
-                Text(text = "Comment")
-            }
 
-            Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp))
+                Button(
+                    onClick = { commented = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(52, 152, 219),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    shape = RectangleShape,
+                ) {
+                    Text(text = "Comment")
+                }
+                Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp))
+            }
             Text(text = "Reviews about this post : ${review!!.reviews}")
 
             reviewPageInformation!!.reviews.forEach{
@@ -197,36 +202,40 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                     }
                 }
             }
-            OutlinedTextField(
-                value = titleNewReview,
-                onValueChange = { titleNewReview = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp),
-                label = { Text(text = "Your title here", color = Color.LightGray) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+            if (TokenManager(application).getAuth() != null) {
+                OutlinedTextField(
+                    value = titleNewReview,
+                    onValueChange = { titleNewReview = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(25.dp),
+                    label = { Text(text = "Your title here", color = Color.LightGray) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
                 )
-            )
-            OutlinedTextField(
-                value = contentNewReview,
-                onValueChange = { contentNewReview = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(25.dp),
-                label = { Text(text = "Your review here", color = Color.LightGray) },
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+                OutlinedTextField(
+                    value = contentNewReview,
+                    onValueChange = { contentNewReview = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(25.dp),
+                    label = { Text(text = "Your review here", color = Color.LightGray) },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    )
                 )
-            )
-            Button(onClick = { reviewed=true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(52, 152, 219),
-                    contentColor = Color.White
-                ),
-                modifier = Modifier.padding(horizontal = 4.dp),
-                shape = RectangleShape,) {
-                Text(text = "Review")
+                Button(
+                    onClick = { reviewed = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(52, 152, 219),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    shape = RectangleShape,
+                ) {
+                    Text(text = "Review")
+                }
             }
         }
     }
