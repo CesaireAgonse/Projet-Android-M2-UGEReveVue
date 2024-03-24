@@ -3,7 +3,6 @@ package fr.uge.ugerevevueandroid.visual
 import TokenManager
 import android.app.Application
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,16 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.uge.ugerevevueandroid.R
-import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
-import fr.uge.ugerevevueandroid.page.postCommented
 import fr.uge.ugerevevueandroid.service.ApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

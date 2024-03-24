@@ -30,13 +30,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.form.ReviewForm
-import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.ReviewPageInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.allPermitService
-import fr.uge.ugerevevueandroid.visual.Code
 import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
 import kotlinx.coroutines.Dispatchers

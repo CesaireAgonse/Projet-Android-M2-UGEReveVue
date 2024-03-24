@@ -136,8 +136,6 @@ fun CodePage(application: Application, viewModel : MainViewModel){
         commentPageInformation = comments(viewModel.currentCodeToDisplay, pageNumberComments)
         reviewPageInformation = reviews(viewModel.currentCodeToDisplay, pageNumberReviews)
     }
-
-
     if (code != null && commentPageInformation != null && reviewPageInformation != null){
         Column(
             modifier = Modifier

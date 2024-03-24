@@ -29,7 +29,7 @@ class MainViewModel : ViewModel() {
 
     fun changeCurrentPage(page : Page){ currentPage = page }
 
-    fun reloadPage(){ triggerReloadPage = !triggerReloadPage}
+    fun reloadPage(){ triggerReloadPage = !triggerReloadPage }
 
     fun changeCurrentUserToDisplay(username : String){ currentUserToDisplay = username }
 
