@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.information.CommentInformation
+import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
 import fr.uge.ugerevevueandroid.service.ApiService
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +52,7 @@ suspend fun commentDeleted(application: Application, commentId: Long) {
 }
 
 @Composable
-fun Comment(application: Application, comment: CommentInformation, viewModel: MainViewModel){
+fun Comment(viewModel: MainViewModel, application: Application, comment: CommentInformation){
     var deleteButtonClickedd by remember { mutableStateOf("NotDeleted") }
     LaunchedEffect(deleteButtonClickedd) {
         if (deleteButtonClickedd == "Deleted"){

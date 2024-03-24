@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.page
 
+import TokenManager
 import android.app.Application
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
