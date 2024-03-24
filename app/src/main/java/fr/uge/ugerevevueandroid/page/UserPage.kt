@@ -48,17 +48,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
 import fr.uge.ugerevevueandroid.R
+import fr.uge.ugerevevueandroid.information.CodePageInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.ReviewPageInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
+import fr.uge.ugerevevueandroid.information.UserPageInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.ApiService
 import fr.uge.ugerevevueandroid.service.CameraCaller
 import fr.uge.ugerevevueandroid.service.ImageManager
 import fr.uge.ugerevevueandroid.service.allPermitService
-import fr.uge.ugerevevueandroid.visual.Code
 import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
+import fr.uge.ugerevevueandroid.visual.Code
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
@@ -201,6 +203,7 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
                 Text(text = "Codes:" + user.nbCode)
                 if (codesFromUser != null) {
                     codesFromUser!!.codes.forEach{
+
                         Code(application=application, codeInformation = it, modifier = Modifier.clickable {
                             viewModel.changeCurrentCodeToDisplay(it.id)
                             viewModel.changeCurrentPage(Page.CODE)
