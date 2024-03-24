@@ -65,7 +65,7 @@ suspend fun codeDeleted(application: Application, postId: Long) {
 }
 
 @Composable
-fun Code(application: Application, codeInformation : CodeInformation, viewModel: MainViewModel){
+fun Code(application: Application, codeInformation : CodeInformation, viewModel: MainViewModel, modifier: Modifier = Modifier){
     var code:CodeInformation by remember { mutableStateOf( codeInformation)}
     var voteButtonClicked by remember { mutableStateOf("NotVoted") }
     var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
@@ -81,7 +81,12 @@ fun Code(application: Application, codeInformation : CodeInformation, viewModel:
     LaunchedEffect(deleteButtonClicked) {
         if (deleteButtonClicked == "Deleted"){
             codeDeleted(application, code.id)
-            viewModel.changeCurrentPage(Page.HOME)
+            if (viewModel.currentPage == Page.CODE){
+                viewModel.changeCurrentPage(Page.HOME)
+            } else {
+                viewModel.reloadPage()
+            }
+
         }
     }
     Surface(

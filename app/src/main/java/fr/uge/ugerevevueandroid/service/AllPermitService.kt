@@ -4,6 +4,7 @@ import fr.uge.ugerevevueandroid.form.LoginForm
 import fr.uge.ugerevevueandroid.form.SignupForm
 import fr.uge.ugerevevueandroid.form.TokenForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
+import fr.uge.ugerevevueandroid.information.CodePageInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.FilterInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
@@ -57,4 +58,13 @@ interface AllPermitService {
     // UserController
     @GET("users/{username}")
     fun information(@Path("username") username: String): Call<UserInformation>
+
+    @GET("users/reviews/{username}")
+    fun reviewsFromUser(@Path("username") username: String, @Query("pageNumber") pageNumber: Int?): Call<ReviewPageInformation>
+
+    @GET("users/comments/{username}")
+    fun commentsFromUser(@Path("username") username: String, @Query("pageNumber") pageNumber: Int?): Call<CommentPageInformation>
+
+    @GET("users/codes/{username}")
+    fun codesFromUser(@Path("username") username: String, @Query("pageNumber") pageNumber: Int?): Call<CodePageInformation>
 }

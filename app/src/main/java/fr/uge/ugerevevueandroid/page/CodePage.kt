@@ -119,12 +119,8 @@ fun CodePage(application: Application, viewModel : MainViewModel){
     var reviewPageInformation: ReviewPageInformation? by remember {mutableStateOf( null)}
     var commented by remember { mutableStateOf(false) }
     var reviewed by remember { mutableStateOf(false) }
-    var pageNumberComments by remember {
-        mutableIntStateOf(0)
-    }
-    var pageNumberReviews by remember {
-        mutableIntStateOf(0)
-    }
+    var pageNumberComments by remember { mutableIntStateOf(0) }
+    var pageNumberReviews by remember { mutableIntStateOf(0) }
     LaunchedEffect(commented) {
         if (commented){
             postCommented(application, viewModel.currentCodeToDisplay, CommentForm(contentNewComment, ""))
