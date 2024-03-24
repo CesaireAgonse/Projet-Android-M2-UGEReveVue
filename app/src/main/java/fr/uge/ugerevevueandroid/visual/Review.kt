@@ -65,6 +65,7 @@ fun Review(application: Application, review: ReviewInformation, modifier: Modifi
     LaunchedEffect(deleteButtonClicked) {
         if (deleteButtonClicked == "Deleted"){
             reviewDeleted(application, review.id)
+            viewModel.reloadPage()
         }
     }
     Surface(

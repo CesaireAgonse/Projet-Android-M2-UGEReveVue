@@ -50,6 +50,7 @@ import fr.uge.ugerevevueandroid.information.FilterInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.allPermitService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 
 suspend fun filter(sortBy: String, query: String, pageNumber:Int):FilterInformation ?{
@@ -74,7 +75,7 @@ fun HomePage(application: Application, viewModel: MainViewModel){
     var resultNumber by remember { mutableIntStateOf(0) }
 
     var posts:FilterInformation? by remember {mutableStateOf( null)}
-    LaunchedEffect(true, posts, maxPageNumber, pageNumber, query, sortBy, viewModel.currentQuery, viewModel.currentSortBy) {
+    LaunchedEffect(true, posts, maxPageNumber, pageNumber, query, sortBy, viewModel.currentQuery, viewModel.currentSortBy, viewModel.triggerReloadPage) {
         posts = filter(viewModel.currentSortBy, viewModel.currentQuery, pageNumber)
         if (posts != null){
             sortBy = posts!!.sortBy

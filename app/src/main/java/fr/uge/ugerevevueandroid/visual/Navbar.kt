@@ -90,7 +90,11 @@ fun Navbar(application: Application, viewModel: MainViewModel){
         .padding(1.dp)
     ) {
         Row {
-            IconButton(onClick = { viewModel.changeCurrentPage(Page.HOME) }, modifier = Modifier.padding(10.dp)) {
+            IconButton(onClick = {
+                if (viewModel.currentPage == Page.HOME){
+                    viewModel.reloadPage()
+                }
+                viewModel.changeCurrentPage(Page.HOME) }, modifier = Modifier.padding(10.dp)) {
                 Icon(
                     imageVector = Icons.Default.Home,
                     contentDescription = "home button",
@@ -140,6 +144,9 @@ fun Navbar(application: Application, viewModel: MainViewModel){
                         contentDescription = "Profile Image",
                         modifier = Modifier
                             .clickable {
+                                if (viewModel.currentPage == Page.USER){
+                                    viewModel.reloadPage()
+                                }
                                 viewModel.changeCurrentPage(Page.USER)
                                 manager
                                     .getAuth()

@@ -5,13 +5,13 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import fr.uge.ugerevevueandroid.information.CodeInformation
-import fr.uge.ugerevevueandroid.information.SimpleUserInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.page.Page
 
 class MainViewModel : ViewModel() {
     var currentPage by mutableStateOf(Page.HOME)
+        private set
+    var triggerReloadPage by mutableStateOf(false)
         private set
 
     var currentUserLogged by mutableStateOf<UserInformation>(UserInformation("", "",   0, 0,0, 0,false))
@@ -27,7 +27,9 @@ class MainViewModel : ViewModel() {
     var currentSortBy by mutableStateOf("")
         private set
 
-    fun changeCurrentPage(page : Page){currentPage = page }
+    fun changeCurrentPage(page : Page){ currentPage = page }
+
+    fun reloadPage(){ triggerReloadPage = !triggerReloadPage}
 
     fun changeCurrentUserToDisplay(username : String){ currentUserToDisplay = username }
 

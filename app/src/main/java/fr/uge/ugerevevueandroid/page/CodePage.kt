@@ -1,16 +1,12 @@
 package fr.uge.ugerevevueandroid.page
 
-import TokenManager
 import android.app.Application
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,13 +27,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -57,7 +48,6 @@ import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.Date
 
 suspend fun code(codeId: Long): CodeInformation? {
     return withContext(Dispatchers.IO) {
@@ -141,11 +131,13 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             titleNewReview = ""
         }
     }
-    LaunchedEffect(true, commented,reviewed,pageNumberComments,pageNumberReviews) {
+    LaunchedEffect(true, commented,reviewed,pageNumberComments,pageNumberReviews,viewModel.triggerReloadPage) {
         code = code(viewModel.currentCodeToDisplay)
         commentPageInformation = comments(viewModel.currentCodeToDisplay, pageNumberComments)
         reviewPageInformation = reviews(viewModel.currentCodeToDisplay, pageNumberReviews)
     }
+
+
     if (code != null && commentPageInformation != null && reviewPageInformation != null){
         Column(
             modifier = Modifier
@@ -155,7 +147,7 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             Text(text = "Comments about this post : ${code!!.comments}", fontWeight = FontWeight.Bold)
 
             commentPageInformation!!.comments.forEach{
-                Comment(application, it)
+                Comment(application, it, viewModel)
             }
             Row{
                 if(pageNumberComments >= 1){

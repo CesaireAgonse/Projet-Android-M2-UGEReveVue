@@ -86,7 +86,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             contentNewReview = ""
         }
     }
-    LaunchedEffect(true, pageNumberComments,pageNumberReviews,commented,reviewed) {
+    LaunchedEffect(true, pageNumberComments,pageNumberReviews,commented,reviewed,viewModel.triggerReloadPage) {
         review = review(id)
         commentPageInformation = comments(id, pageNumberComments)
         reviewPageInformation = reviews(id, pageNumberReviews)
@@ -101,7 +101,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
             Text(text = "Comments about this post : ${review!!.comments}", fontWeight = FontWeight.Bold)
 
             commentPageInformation!!.comments.forEach{
-                Comment(application, it)
+                Comment(application, it, viewModel)
             }
             Row{
                 if(pageNumberComments >= 1){
