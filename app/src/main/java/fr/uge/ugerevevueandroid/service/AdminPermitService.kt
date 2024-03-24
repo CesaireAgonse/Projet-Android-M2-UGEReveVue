@@ -9,6 +9,7 @@ import fr.uge.ugerevevueandroid.information.FilterInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.ReviewPageInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
+import fr.uge.ugerevevueandroid.information.UserPageInformation
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -33,7 +34,9 @@ interface AdminPermitService {
     fun commentDeleted(@Path("commentId") commentId: Long): Call<Void>
 
     // UserController
+    @DELETE("users/{username}")
+    fun userDeleted(@Path("username") username: String): Call<Void>
 
-
-
+    @GET("users/all")
+    fun getAllUsers(@Query("pageNumber") pageNumber: Int?): Call<UserPageInformation>
 }

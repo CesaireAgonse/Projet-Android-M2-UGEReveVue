@@ -213,21 +213,6 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
                     fontSize = 18.sp
                 )
             }
-            if (TokenManager(application).getAuth()?.role.equals("ADMIN")) {
-                Button(
-                    onClick = { viewModel.changeCurrentPage(Page.ADMIN)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(52, 152, 219),
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.padding(top = 160.dp)
-                        .align(Alignment.BottomCenter),
-                    shape = CircleShape
-                ) {
-                    Text(text = "Admin page")
-                }
-            }
         }
         val auth = TokenManager(application).getAuth()
         if (auth != null) {

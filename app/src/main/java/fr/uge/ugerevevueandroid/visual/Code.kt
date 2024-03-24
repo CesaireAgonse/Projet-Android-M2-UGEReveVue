@@ -180,9 +180,7 @@ fun Code(application: Application, codeInformation : CodeInformation, viewModel:
                     val auth = TokenManager(application).getAuth()
                     if (auth != null && auth.role == "ADMIN"){
                         Button(
-                            onClick = {
-                                deleteButtonClicked = "Deleted"
-                                      },
+                            onClick = {deleteButtonClicked = "Deleted"},
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.White, // Fond blanc
                                 contentColor = Color.Black // Texte noir
