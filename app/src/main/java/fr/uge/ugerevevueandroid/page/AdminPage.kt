@@ -107,7 +107,7 @@ fun AdminPage(application: Application, viewModel : MainViewModel) {
 
 
 @Composable
-fun UserAdmin(application: Application, viewModel : MainViewModel, user : UserInformation){
+fun UserAdmin(application: Application, viewModel : MainViewModel, user : UserInformation, modifier: Modifier = Modifier){
     var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
 
     LaunchedEffect(deleteButtonClicked) {
@@ -125,6 +125,7 @@ fun UserAdmin(application: Application, viewModel : MainViewModel, user : UserIn
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable {
                     viewModel.changeCurrentUserToDisplay(user.username)
+                    viewModel.reloadPage()
                     viewModel.changeCurrentPage(Page.USER)
                 })
             Spacer(modifier = Modifier.weight(1f))

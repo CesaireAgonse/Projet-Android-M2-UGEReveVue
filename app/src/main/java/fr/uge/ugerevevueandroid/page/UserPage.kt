@@ -1,9 +1,8 @@
 package fr.uge.ugerevevueandroid.page
 
 import TokenManager
+import UserAdmin
 import android.app.Application
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -36,19 +35,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.R
-import fr.uge.ugerevevueandroid.form.UpdatePasswordInformation
-import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.information.CodePageInformation
-import fr.uge.ugerevevueandroid.information.CommentInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
-import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.ReviewPageInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.information.UserPageInformation
@@ -81,6 +73,18 @@ suspend fun profile(username: String): UserInformation? {
         }
     }
 }
+
+suspend fun followedsFromUser(username: String, pageNumber: Int): UserPageInformation? {
+    return withContext(Dispatchers.IO) {
+        val response = allPermitService.followedsFromUser(username, pageNumber).execute()
+        if (response.isSuccessful) {
+            response.body()
+        } else {
+            null
+        }
+    }
+}
+
 suspend fun codesFromUser(username: String, pageNumber: Int): CodePageInformation? {
     return withContext(Dispatchers.IO) {
         val response = allPermitService.codesFromUser(username, pageNumber).execute()
@@ -151,25 +155,28 @@ fun unfollow(application: Application, username: String) {
 fun UserPage(application: Application, viewModel : MainViewModel) {
     val scrollState = rememberScrollState()
     var username = viewModel.currentUserToDisplay
-    var codesFromUsers: CodePageInformation? by remember {mutableStateOf( null)}
-    var reviewsFromUsers: ReviewPageInformation? by remember {mutableStateOf( null)}
-    var commentsFromUsers: CommentPageInformation? by remember {mutableStateOf(null) }
+    var followedsFromUser: UserPageInformation? by remember {mutableStateOf( null)}
+    var codesFromUser: CodePageInformation? by remember {mutableStateOf( null)}
+    var reviewsFromUser: ReviewPageInformation? by remember {mutableStateOf( null)}
+    var commentsFromUser: CommentPageInformation? by remember {mutableStateOf(null) }
+    var pageNumberFolloweds by remember { mutableIntStateOf(0) }
     var pageNumberCodes by remember { mutableIntStateOf(0) }
     var pageNumberReviews by remember { mutableIntStateOf(0) }
     var pageNumberComments by remember { mutableIntStateOf(0) }
     Column (
         modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max)
     ){
-        val userState = remember { mutableStateOf<UserInformation?>(null) }
+        var userState = remember { mutableStateOf<UserInformation?>(null) }
 
         LaunchedEffect(username, viewModel.triggerReloadPage) {
-            val user = profile(username)
+            var user = profile(username)
             userState.value = user
-            codesFromUsers = codesFromUser(user!!.username, pageNumberCodes)
-            reviewsFromUsers = reviewsFromUser(user!!.username, pageNumberReviews)
-            commentsFromUsers = commentsFromUser(user!!.username, pageNumberComments)
+            followedsFromUser = followedsFromUser(user!!.username, pageNumberFolloweds)
+            codesFromUser = codesFromUser(user!!.username, pageNumberCodes)
+            reviewsFromUser = reviewsFromUser(user!!.username, pageNumberReviews)
+            commentsFromUser = commentsFromUser(user!!.username, pageNumberComments)
         }
-        val user = userState.value
+        var user = userState.value
         if (user != null){
             UserDisplayer(application = application, viewModel = viewModel, userI = user, Modifier.weight(4f))
             Column(
@@ -178,9 +185,14 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
                     .verticalScroll(scrollState)
             ) {
                 Text(text = "Followed:" + user.nbFollowed)
+                if (followedsFromUser != null) {
+                    followedsFromUser!!.users.forEach{
+                        UserAdmin(application=application, user = it, viewModel =  viewModel)
+                    }
+                }
                 Text(text = "Codes:" + user.nbCode)
-                if (codesFromUsers != null) {
-                    codesFromUsers!!.codes.forEach{
+                if (codesFromUser != null) {
+                    codesFromUser!!.codes.forEach{
                         Code(application=application, codeInformation = it, modifier = Modifier.clickable {
                             viewModel.changeCurrentCodeToDisplay(it.id)
                             viewModel.changeCurrentPage(Page.CODE)
@@ -188,8 +200,8 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
                     }
                 }
                 Text(text = "Reviews:" + user.nbReview)
-                if (reviewsFromUsers != null) {
-                    reviewsFromUsers!!.reviews.forEach{
+                if (reviewsFromUser != null) {
+                    reviewsFromUser!!.reviews.forEach{
                         Review(application=application, review = it, modifier = Modifier.clickable {
                             viewModel.changeCurrentCodeToDisplay(it.id)
                             viewModel.changeCurrentPage(Page.REVIEW)
@@ -197,8 +209,8 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
                     }
                 }
                 Text(text = "Comments:" + user.nbComment)
-                if (commentsFromUsers != null) {
-                    commentsFromUsers!!.comments.forEach{
+                if (commentsFromUser != null) {
+                    commentsFromUser!!.comments.forEach{
                         Comment(viewModel, application, it)
                     }
                 }
@@ -215,6 +227,10 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
     var user by remember {
         mutableStateOf(userI)
     }
+    LaunchedEffect(viewModel.triggerReloadPage){
+        user = profile(viewModel.currentUserToDisplay)!!
+    }
+
     LaunchedEffect(uriUser){
         if (uriUser != null){
             imageManager.createMultipartFromUri(uriUser!!, application.contentResolver)

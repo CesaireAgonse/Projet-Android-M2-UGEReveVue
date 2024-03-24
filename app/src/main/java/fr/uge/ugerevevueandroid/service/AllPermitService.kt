@@ -10,6 +10,7 @@ import fr.uge.ugerevevueandroid.information.FilterInformation
 import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.ReviewPageInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
+import fr.uge.ugerevevueandroid.information.UserPageInformation
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -67,4 +68,7 @@ interface AllPermitService {
 
     @GET("users/codes/{username}")
     fun codesFromUser(@Path("username") username: String, @Query("pageNumber") pageNumber: Int?): Call<CodePageInformation>
+
+    @GET("users/followed/{username}")
+    fun followedsFromUser(@Path("username") username: String, @Query("pageNumber") pageNumber: Int?): Call<UserPageInformation>
 }
