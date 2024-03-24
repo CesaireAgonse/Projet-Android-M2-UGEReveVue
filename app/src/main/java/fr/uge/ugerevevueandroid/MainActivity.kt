@@ -47,9 +47,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        /* intent = Intent(this, CameraCaller::class.java)
-            startActivity(intent)
-            finish()*/
     }
 }
 

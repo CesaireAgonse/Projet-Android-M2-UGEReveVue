@@ -10,10 +10,4 @@
         android:text="Request Picture"
         android:onClick="requestPicture"/>
 
-    <Button
-        android:id="@+id/button_request_video"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Request Video"
-        android:onClick="requestVideo"/>
 </LinearLayout>

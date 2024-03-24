@@ -2,10 +2,12 @@ package fr.uge.ugerevevueandroid.page
 
 import TokenManager
 import android.app.Application
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -39,9 +41,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.form.UpdatePasswordInformation
 import fr.uge.ugerevevueandroid.information.CodeInformation
@@ -50,6 +54,7 @@ import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.service.CameraCaller
 import fr.uge.ugerevevueandroid.service.ImageManager
 import fr.uge.ugerevevueandroid.service.allPermitService
 import fr.uge.ugerevevueandroid.visual.Comment
@@ -148,15 +153,28 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
 @Composable
 fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : UserInformation, modifier : Modifier = Modifier){
     var uriUser: Uri? by remember { mutableStateOf(null) }
+    var photo: MultipartBody.Part? by remember { mutableStateOf(null) }
     var imageManager = ImageManager();
     var user by remember {
         mutableStateOf(userI)
     }
+    val context = LocalContext.current
     LaunchedEffect(uriUser){
         if (uriUser != null){
             imageManager.createMultipartFromUri(uriUser!!, application.contentResolver)
                 ?.let { photo(application, it) }
             var temp = profile(user.username)
+            if (temp != null){
+                user = temp
+                viewModel.changeCurrentUserLogged(temp)
+            }
+        }
+    }
+
+    LaunchedEffect(photo){
+        if (photo != null){
+            photo(application, photo!!)
+            val temp = profile(user.username)
             if (temp != null){
                 user = temp
                 viewModel.changeCurrentUserLogged(temp)
@@ -221,7 +239,8 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
                         containerColor = Color(52, 152, 219),
                         contentColor = Color.White
                     ),
-                    modifier = Modifier.padding(top = 160.dp)
+                    modifier = Modifier
+                        .padding(top = 160.dp)
                         .align(Alignment.BottomCenter),
                     shape = CircleShape
                 ) {
@@ -233,17 +252,34 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
         if (auth != null) {
             if (auth.username == user.username) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Button(onClick = {
-                        selectImageLauncher.launch("image/*")
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(52, 152, 219),
-                    contentColor = Color.White
-                    ),
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    shape = CircleShape
-                    ) {
-                        Text(text = "Change your profile image")
+                    Column {
+                        Button(onClick = {
+                            selectImageLauncher.launch("image/*")
+                        },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(52, 152, 219),
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            shape = CircleShape
+                        ) {
+                            Text(text = "Change your profile image")
+                        }
+                        Button(onClick = {
+
+                            startCameraActivity(context)
+
+                            photo = CameraCaller().photo
+                        },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(52, 152, 219),
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            shape = CircleShape
+                        ) {
+                            Text(text = "Take a picture for your profile image ")
+                        }
                     }
                     Button(onClick = {  viewModel.changeCurrentPage(Page.PASSWORD) },
                         colors = ButtonDefaults.buttonColors(
@@ -251,7 +287,7 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
                             contentColor = Color.White
                         ),
                         modifier = Modifier.padding(horizontal = 4.dp),
-                        shape = CircleShape) {
+                        shape = RectangleShape) {
                         Text(text = "Change your password")
                     }
                 }
@@ -280,3 +316,9 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
         }
     }
 }
+
+fun startCameraActivity(context: android.content.Context) {
+    val intent = Intent(context, CameraCaller::class.java)
+    startActivity(context, intent, null)
+}
+
