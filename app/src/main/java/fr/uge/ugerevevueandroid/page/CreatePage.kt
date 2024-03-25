@@ -65,21 +65,25 @@ fun CreatePage(viewModel : MainViewModel,application:Application){
     var contentDescription by remember { mutableStateOf("") }
     var selectedJavaFileUri by remember { mutableStateOf<Uri?>(null) }
     var selectedUnitFileUri by remember { mutableStateOf<Uri?>(null) }
-    var isJavaFileSelected by remember { mutableStateOf(false) }
     var create by remember { mutableStateOf(false) }
+    var isJavaFileSelected by remember { mutableStateOf(false) }
+    var isButtonEnabled by remember { mutableStateOf(false) }
+
     LaunchedEffect(create){
         if(create){
             var javafile = selectedJavaFileUri?.let { createMultipartFromUri( it, application.contentResolver, "javaFile") }
             var unitfile = selectedUnitFileUri?.let { createMultipartFromUri(it, application.contentResolver, "unitFile") }
-            if (javafile != null && unitfile != null) {
-                create(contentTitle,contentDescription, javafile,unitfile,application)
-            }
+            create(contentTitle,contentDescription, javafile,unitfile,application)
+            viewModel.changeCurrentPage(Page.HOME)
         }
         create = false
     }
     val javaFilePickerLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             selectedJavaFileUri = it
+        }
+        if (selectedJavaFileUri != null) {
+            isJavaFileSelected = true
         }
     }
 
@@ -121,9 +125,6 @@ fun CreatePage(viewModel : MainViewModel,application:Application){
         Row {
             Button(onClick = {
                 javaFilePickerLauncher.launch("*/*");
-                if (selectedJavaFileUri != null) {
-                    isJavaFileSelected = true
-                }
             }) {
                 Text(text = "Upload Java File")
             }
@@ -134,13 +135,11 @@ fun CreatePage(viewModel : MainViewModel,application:Application){
                 Text(text = "Upload Unit File")
             }
         }
-
         Button(
             onClick = {
                 create = true
-                //viewModel.changeCurrentPage(Page.HOME)
             },
-            enabled = isJavaFileSelected && !contentTitle.equals("") && !contentDescription.equals("")// Grisé pour rester visible
+            enabled = isJavaFileSelected && contentTitle.isNotBlank() && contentDescription.isNotBlank()// Grisé pour rester visible
         ) {
             Text(text = "Post File")
         }

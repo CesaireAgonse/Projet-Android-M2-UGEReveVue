@@ -19,7 +19,7 @@ val allPermitService: AllPermitService = retrofit.create(AllPermitService::class
 class ApiService(application: Application){
     val manager = TokenManager(application)
     val authToken = manager.getToken("bearer")
-    val authInterceptor = authToken?.let { AuthInterceptor(it) }
+    val authInterceptor = authToken?.let { AuthInterceptor(it, application) }
     val client = authInterceptor?.let {
         OkHttpClient.Builder()
         .addInterceptor(it)

@@ -74,11 +74,6 @@ fun Comment(viewModel: MainViewModel, application: Application, comment: Comment
                 .widthIn(max = 300.dp),
         ) {
             Row {
-                Text(
-                    text = comment.userInformation.username,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable { /*TODO*/}
-                )
                 val auth = TokenManager(application).getAuth()
                 if (auth != null && auth.role == "ADMIN"){
                     Button(

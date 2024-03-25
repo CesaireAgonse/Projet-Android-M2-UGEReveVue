@@ -48,6 +48,6 @@ interface AuthenticateService {
     @POST("codes/create")
 fun create(@Part("title") title: String,
                    @Part("description") description: String,
-                   @Part javaFile: MultipartBody.Part,
-                   @Part unitFile: MultipartBody.Part): Call<Void>
+                   @Part javaFile: MultipartBody.Part?,
+                   @Part unitFile: MultipartBody.Part?): Call<Void>
 }
