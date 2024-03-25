@@ -28,7 +28,7 @@ import fr.uge.ugerevevueandroid.page.PasswordPage
 import fr.uge.ugerevevueandroid.page.ReviewPage
 import fr.uge.ugerevevueandroid.page.SignupPage
 import fr.uge.ugerevevueandroid.page.UserPage
-import fr.uge.ugerevevueandroid.service.CameraCaller
+import fr.uge.ugerevevueandroid.activity.CameraCaller
 import fr.uge.ugerevevueandroid.ui.theme.UGEReveVueAndroidTheme
 import fr.uge.ugerevevueandroid.visual.Navbar
 
@@ -38,11 +38,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            // Initialisation du ViewModel
             viewModel.activity = this
-
             UGEReveVueAndroidTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -65,7 +62,7 @@ fun Application(viewModel : MainViewModel, application: Application){
             Page.SIGNUP -> SignupPage(application=application, viewModel = viewModel)
             Page.USER -> UserPage(application=application, viewModel = viewModel)
             Page.CODE -> CodePage(application= application, viewModel = viewModel)
-            Page.CREATE -> CreatePage(viewModel = viewModel,application)
+            Page.CREATE -> CreatePage(application= application, viewModel = viewModel)
             Page.ADMIN -> AdminPage(application= application, viewModel = viewModel)
             Page.PASSWORD -> PasswordPage(application=application, viewModel=viewModel)
         }

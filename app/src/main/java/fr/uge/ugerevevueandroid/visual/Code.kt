@@ -38,31 +38,11 @@ import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
 import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.service.codeDeleted
+import fr.uge.ugerevevueandroid.service.postVoted
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-
-suspend fun postVoted(application: Application, postId: Long, voteType: String):Long? {
-    return withContext(Dispatchers.IO) {
-        var response = ApiService(application).authenticateService()
-            .postVoted(postId, voteType)
-            .execute()
-        response.body()
-    }
-}
-
-suspend fun codeDeleted(application: Application, postId: Long) {
-    return withContext(Dispatchers.IO) {
-        var response = ApiService(application).adminPermitService()
-            .codeDeleted(postId)
-            .execute()
-        if (response.isSuccessful){
-            response.body()
-        }
-        response.body()
-
-    }
-}
 
 @Composable
 fun Code(application: Application, codeInformation : CodeInformation, viewModel: MainViewModel, modifier: Modifier = Modifier){

@@ -29,7 +29,7 @@ interface AllPermitService {
     fun login(@Body loginForm: LoginForm): Call<TokenForm>
 
     @POST("refresh")
-    fun refresh(@Header("Authorization") token: String): Call<TokenForm>
+    fun refresh(@Body token: String): Call<TokenForm>
 
     @POST("logout")
     fun logout(): Call<String>

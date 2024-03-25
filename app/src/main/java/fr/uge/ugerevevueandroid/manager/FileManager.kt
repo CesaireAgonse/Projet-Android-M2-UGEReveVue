@@ -1,5 +1,4 @@
-package fr.uge.ugerevevueandroid.service
-
+package fr.uge.ugerevevueandroid.manager
 
 import android.content.ContentResolver
 import android.graphics.BitmapFactory
@@ -13,16 +12,15 @@ import java.io.FileOutputStream
 import android.util.Base64
 import androidx.compose.ui.graphics.asImageBitmap
 
-class ImageManager {
+class FileManager {
 
-    // interface pour la gestion d'image
     fun base64ToImageBitMap(data: String) : ImageBitmap {
         val decodedBytes = Base64.decode(data, Base64.DEFAULT)
         val bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
         return bitmap.asImageBitmap();
     }
 
-    fun createMultipartFromUri(uri: Uri, contentResolver: ContentResolver): MultipartBody.Part? {
+    fun createMultipartFromUri(uri: Uri, contentResolver: ContentResolver, name:String): MultipartBody.Part? {
         try {
             val inputStream = contentResolver.openInputStream(uri)
             if (inputStream != null) {
@@ -35,7 +33,7 @@ class ImageManager {
                 }
                 val mediaType = contentResolver.getType(uri)?.toMediaTypeOrNull()
                 val requestBody = file.asRequestBody(mediaType)
-                return MultipartBody.Part.createFormData("photo", file.name, requestBody)
+                return MultipartBody.Part.createFormData(name, file.name, requestBody)
             }
         } catch (e: Exception) {
             e.printStackTrace()

@@ -1,8 +1,6 @@
 package fr.uge.ugerevevueandroid.page
 
-import TokenManager
 import android.app.Application
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,47 +30,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.uge.ugerevevueandroid.form.LoginForm
-import fr.uge.ugerevevueandroid.form.TokenForm
-import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.service.allPermitService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import retrofit2.Call
-
-suspend fun login(application: Application, username: String, password: String) : UserInformation? {
-    withContext(Dispatchers.IO){
-        val response = allPermitService.login(LoginForm(username,password)).execute()
-        if(response.isSuccessful){
-            val userResponse = response.body()
-            val manager = TokenManager(application)
-            if(userResponse != null){
-                manager.saveToken("bearer",userResponse.bearer)
-                manager.saveToken("refresh",userResponse.refresh)
-            }
-        }
-    }
-    return withContext(Dispatchers.IO) {
-        val response = allPermitService.information(username).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
-            null
-        }
-    }
-}
-
-suspend fun changeLoggedUser(username: String): UserInformation? {
-    return withContext(Dispatchers.IO) {
-        val response = allPermitService.information(username).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
-            null
-        }
-    }
-}
+import fr.uge.ugerevevueandroid.service.login
 
 @Composable
 fun LoginPage(application: Application, viewModel: MainViewModel){
@@ -80,9 +39,9 @@ fun LoginPage(application: Application, viewModel: MainViewModel){
     var password by remember { mutableStateOf("") }
     var isPasswordVisible by remember { mutableStateOf(false) }
     var logged by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = logged ){
+    LaunchedEffect(logged){
         if(logged){
-            val user = login(application,username,password)
+            val user = login(application, username, password)
             logged = false
             if (user != null){
                 viewModel.changeCurrentUserLogged(user)

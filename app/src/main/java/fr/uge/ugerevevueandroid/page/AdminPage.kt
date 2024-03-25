@@ -25,40 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.uge.ugerevevueandroid.information.CommentPageInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.information.UserPageInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
-import fr.uge.ugerevevueandroid.page.follow
-import fr.uge.ugerevevueandroid.service.ApiService
-import fr.uge.ugerevevueandroid.visual.codeDeleted
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
-suspend fun userDeleted(application: Application, username: String) {
-    return withContext(Dispatchers.IO) {
-        var response = ApiService(application).adminPermitService()
-            .userDeleted(username)
-            .execute()
-        if (response.isSuccessful){
-            response.body()
-        }
-    }
-}
-
-suspend fun getAllUsers(application: Application) : UserPageInformation?{
-    return withContext(Dispatchers.IO) {
-        var response = ApiService(application).adminPermitService()
-            .getAllUsers(0)
-            .execute()
-        if (response.isSuccessful){
-            response.body()
-        } else {
-            null
-        }
-    }
-}
+import fr.uge.ugerevevueandroid.service.getAllUsers
+import fr.uge.ugerevevueandroid.service.userDeleted
 
 @Composable
 fun AdminPage(application: Application, viewModel : MainViewModel) {
@@ -72,13 +44,11 @@ fun AdminPage(application: Application, viewModel : MainViewModel) {
             numberOfUser = userPageInformation!!.resultNumber
         }
     }
-
     Column(
         modifier = Modifier
             .verticalScroll(scrollState)
             .padding(8.dp)
     ) {
-
         Row (
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -92,7 +62,6 @@ fun AdminPage(application: Application, viewModel : MainViewModel) {
                 fontSize = 15.sp
             )
         }
-
         Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp))
@@ -100,16 +69,12 @@ fun AdminPage(application: Application, viewModel : MainViewModel) {
         userPageInformation?.users?.forEach{
             UserAdmin(application, viewModel, it)
         }
-
     }
-
 }
-
 
 @Composable
 fun UserAdmin(application: Application, viewModel : MainViewModel, user : UserInformation, modifier: Modifier = Modifier){
     var deleteButtonClicked by remember { mutableStateOf("NotDeleted") }
-
     LaunchedEffect(deleteButtonClicked) {
         if (deleteButtonClicked == "Deleted"){
             userDeleted(application, user.username)
@@ -129,13 +94,11 @@ fun UserAdmin(application: Application, viewModel : MainViewModel, user : UserIn
                     viewModel.changeCurrentPage(Page.USER)
                 })
             Spacer(modifier = Modifier.weight(1f))
-            Button(onClick = { deleteButtonClicked = "Deleted" }) {
-                Icon(Icons.Filled.Delete, contentDescription = "DeleteUser")
+            if (TokenManager(application).getAuth()?.role.equals("ADMIN")){
+                Button(onClick = { deleteButtonClicked = "Deleted" }) {
+                    Icon(Icons.Filled.Delete, contentDescription = "DeleteUser")
+                }
             }
         }
     }
-
-
-
-
 }

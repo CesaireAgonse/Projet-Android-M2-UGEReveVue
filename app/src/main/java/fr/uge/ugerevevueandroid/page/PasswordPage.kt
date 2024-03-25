@@ -32,24 +32,9 @@ import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.form.UpdatePasswordInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.service.password
 import retrofit2.Call
 
-fun password(application: Application, currentPassword: String, newPassword: String, confirmPassword:String) {
-    val call = ApiService(application).authenticateService()
-        .password(UpdatePasswordInformation(currentPassword, newPassword))
-    call.enqueue(object : retrofit2.Callback<Void> {
-        override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
-            if (response.isSuccessful){
-                Log.i("isSuccessful", "isSuccessful")
-            } else {
-                Log.i("isNotSuccessful", "isNotSuccessful")
-            }
-        }
-        override fun onFailure(call: Call<Void>, t: Throwable) {
-            Log.i("onFailure", t.message.orEmpty())
-        }
-    })
-}
 @Composable
 fun PasswordPage(application: Application, viewModel: MainViewModel){
     var currentPassword by remember { mutableStateOf("") }

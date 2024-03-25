@@ -5,11 +5,8 @@ import UserAdmin
 import android.app.Activity
 import android.app.Application
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -40,15 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContextCompat.startActivity
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.CodePageInformation
 import fr.uge.ugerevevueandroid.information.CommentPageInformation
@@ -56,116 +49,20 @@ import fr.uge.ugerevevueandroid.information.ReviewPageInformation
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.information.UserPageInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.service.ApiService
-import fr.uge.ugerevevueandroid.service.CameraCaller
-import fr.uge.ugerevevueandroid.service.ImageManager
-import fr.uge.ugerevevueandroid.service.allPermitService
+import fr.uge.ugerevevueandroid.activity.CameraCaller
+import fr.uge.ugerevevueandroid.manager.FileManager
+import fr.uge.ugerevevueandroid.service.codesFromUser
+import fr.uge.ugerevevueandroid.service.commentsFromUser
+import fr.uge.ugerevevueandroid.service.follow
+import fr.uge.ugerevevueandroid.service.followedsFromUser
+import fr.uge.ugerevevueandroid.service.photo
+import fr.uge.ugerevevueandroid.service.profile
+import fr.uge.ugerevevueandroid.service.reviewsFromUser
+import fr.uge.ugerevevueandroid.service.unfollow
 import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
 import fr.uge.ugerevevueandroid.visual.Code
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.Call
 import java.io.File
-
-
-suspend fun photo(application: Application, photo: MultipartBody.Part) {
-    return withContext(Dispatchers.IO) {
-        ApiService(application).authenticateService().photo(photo).execute();
-    }
-}
-
-suspend fun profile(username: String): UserInformation? {
-    return withContext(Dispatchers.IO) {
-        val response = allPermitService.information(username).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
-            null
-        }
-    }
-}
-
-suspend fun followedsFromUser(username: String, pageNumber: Int): UserPageInformation? {
-    return withContext(Dispatchers.IO) {
-        val response = allPermitService.followedsFromUser(username, pageNumber).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
-            null
-        }
-    }
-}
-
-suspend fun codesFromUser(username: String, pageNumber: Int): CodePageInformation? {
-    return withContext(Dispatchers.IO) {
-        val response = allPermitService.codesFromUser(username, pageNumber).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
-            null
-        }
-    }
-}
-suspend fun reviewsFromUser(username: String, pageNumber: Int): ReviewPageInformation? {
-    return withContext(Dispatchers.IO) {
-        val response = allPermitService.reviewsFromUser(username, pageNumber).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
-            null
-        }
-    }
-}
-
-suspend fun commentsFromUser(username: String, pageNumber: Int): CommentPageInformation? {
-    return withContext(Dispatchers.IO) {
-        val response = allPermitService.commentsFromUser(username, pageNumber).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
-            null
-        }
-    }
-}
-
-fun follow(application: Application, username: String) {
-    val call = ApiService(application).authenticateService()
-        .follow(username)
-    call.enqueue(object : retrofit2.Callback<Void> {
-        override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
-            if (response.isSuccessful){
-                Log.i("isSuccessful", "isSuccessful")
-            } else {
-                Log.i("isNotSuccessful", "isNotSuccessful")
-            }
-        }
-        override fun onFailure(call: Call<Void>, t: Throwable) {
-            Log.i("onFailure", t.message.orEmpty())
-        }
-    })
-}
-
-fun unfollow(application: Application, username: String) {
-    val call = ApiService(application).authenticateService()
-        .unfollow(username)
-    call.enqueue(object : retrofit2.Callback<Void> {
-        override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
-            if (response.isSuccessful){
-                Log.i("isSuccessful", "isSuccessful")
-            } else {
-                Log.i("isNotSuccessful", "isNotSuccessful")
-            }
-        }
-        override fun onFailure(call: Call<Void>, t: Throwable) {
-            Log.i("onFailure", t.message.orEmpty())
-        }
-    })
-}
 
 @Composable
 fun UserPage(application: Application, viewModel : MainViewModel) {
@@ -209,7 +106,6 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
                 Text(text = "Codes:" + user.nbCode)
                 if (codesFromUser != null) {
                     codesFromUser!!.codes.forEach{
-
                         Code(application=application, codeInformation = it, modifier = Modifier.clickable {
                             viewModel.changeCurrentCodeToDisplay(it.id)
                             viewModel.changeCurrentPage(Page.CODE)
@@ -240,7 +136,7 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
 @Composable
 fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : UserInformation, modifier : Modifier = Modifier){
     var uriUser: Uri? by remember { mutableStateOf(null) }
-    var imageManager = ImageManager();
+    var imageManager = FileManager();
     var user by remember { mutableStateOf(userI) }
 
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -251,15 +147,13 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
             }
         }
     }
-
     LaunchedEffect(viewModel.triggerReloadPage){
         user = profile(viewModel.currentUserToDisplay)!!
     }
-
     val context = LocalContext.current
     LaunchedEffect(uriUser){
         if (uriUser != null){
-            imageManager.createMultipartFromUri(uriUser!!, application.contentResolver)
+            imageManager.createMultipartFromUri(uriUser!!, application.contentResolver, "photo")
                 ?.let { photo(application, it) }
             var temp = profile(user.username)
             if (temp != null){
@@ -268,10 +162,8 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
             }
         }
     }
-
     val selectImageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
-            Log.i("image", "l'uri de la nouvelle image est : ${uri}")
             uriUser = uri
         }
     }
@@ -291,20 +183,19 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
 
                 if (user.profilePhoto != null) {
                     Image(
-                        bitmap = ImageManager().base64ToImageBitMap(user.profilePhoto),
+                        bitmap = FileManager().base64ToImageBitMap(user.profilePhoto),
                         contentDescription = "Profile Image",
                         modifier = Modifier
                             .size(75.dp)
-                            .clip(CircleShape) // Forme ronde
+                            .clip(CircleShape)
                     )
                 } else {
-                    // Afficher une image par défaut si le profilePhoto est null ou vide
                     Image(
                         painter = painterResource(id = R.drawable.default_profile_image),
                         contentDescription = "Default Profile Image",
                         modifier = Modifier
                             .size(75.dp)
-                            .clip(CircleShape) // Forme ronde
+                            .clip(CircleShape)
                     )
                 }
                 Text(
@@ -379,15 +270,6 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
                 }
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Button(onClick = { follow(application = application, user.username) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(52, 152, 219),
-                            contentColor = Color.White
-                        ),
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        shape = CircleShape) {
-                        Text(text = "Follow")
-                    }
                     Button(onClick = { unfollow(application = application, user.username) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(52, 152, 219),
@@ -396,6 +278,15 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
                         modifier = Modifier.padding(horizontal = 4.dp),
                         shape = CircleShape) {
                         Text(text = "Unfollow")
+                    }
+                    Button(onClick = { follow(application = application, user.username) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(52, 152, 219),
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        shape = CircleShape) {
+                        Text(text = "Follow")
                     }
                 }
             }

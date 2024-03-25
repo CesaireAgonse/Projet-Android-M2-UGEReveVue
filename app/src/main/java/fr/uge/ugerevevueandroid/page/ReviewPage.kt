@@ -37,23 +37,17 @@ import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.information.ReviewPageInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.allPermitService
+import fr.uge.ugerevevueandroid.service.comments
+import fr.uge.ugerevevueandroid.service.postCommented
+import fr.uge.ugerevevueandroid.service.postReviewed
+import fr.uge.ugerevevueandroid.service.review
+import fr.uge.ugerevevueandroid.service.reviews
 import fr.uge.ugerevevueandroid.visual.Code
 import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-
-suspend fun review(reviewId: Long): ReviewInformation? {
-    return withContext(Dispatchers.IO) {
-        val response = allPermitService.review(reviewId).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
-            null
-        }
-    }
-}
 @Composable
 fun ReviewPage(application: Application, viewModel : MainViewModel){
     val scrollState = rememberScrollState()

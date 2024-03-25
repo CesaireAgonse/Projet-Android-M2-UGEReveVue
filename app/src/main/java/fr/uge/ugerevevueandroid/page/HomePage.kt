@@ -40,19 +40,11 @@ import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.FilterInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.allPermitService
+import fr.uge.ugerevevueandroid.service.filter
+import fr.uge.ugerevevueandroid.visual.CodePreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-suspend fun filter(sortBy: String, query: String, pageNumber:Int):FilterInformation ?{
-    return withContext(Dispatchers.IO) {
-        val response = allPermitService.filter(sortBy, query, pageNumber).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
-            null
-        }
-    }
-}
 
 val HOME_COLOR= Color(241, 241, 241, 255)
 
@@ -182,14 +174,6 @@ fun FistRow(viewModel: MainViewModel, numberResult: Int, application: Applicatio
                     modifier = Modifier.weight(1f)
                 )
             }
-//            IconButton(onClick = {
-//                 }, modifier = Modifier.padding(10.dp)){
-//                Icon(
-//                    imageVector = Icons.Default.Refresh,
-//                    contentDescription = "search button",
-//                    modifier = Modifier.fillMaxSize(),
-//                    tint = Color.Black                )
-//            }
             Button(onClick = { expanded = true },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,

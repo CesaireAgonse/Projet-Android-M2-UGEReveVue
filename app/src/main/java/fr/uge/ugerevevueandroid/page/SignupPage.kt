@@ -1,8 +1,6 @@
 package fr.uge.ugerevevueandroid.page
 
-import TokenManager
 import android.app.Application
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,28 +30,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.uge.ugerevevueandroid.form.LoginForm
-import fr.uge.ugerevevueandroid.form.SignupForm
-import fr.uge.ugerevevueandroid.form.TokenForm
-import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.service.allPermitService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import retrofit2.Call
 
-suspend fun signup(application: Application, username: String, password: String, confirmPassword:String) {
-    return withContext(Dispatchers.IO){
-        val response = allPermitService.signup(SignupForm(username,password)).execute()
-        if(response.isSuccessful){
-            val userResponse = response.body()
-            val manager = TokenManager(application)
-            if(userResponse != null){
-                manager.saveToken("bearer",userResponse.bearer)
-                manager.saveToken("refresh",userResponse.refresh)
-            }
-        }
-    }
-}
+import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.service.signup
 
 @Composable
 fun SignupPage(application: Application, viewModel: MainViewModel){
@@ -65,7 +44,7 @@ fun SignupPage(application: Application, viewModel: MainViewModel){
     var logged by remember { mutableStateOf(false) }
     LaunchedEffect(key1 = logged ){
         if(logged){
-            signup(application,username,password,confirmPassword)
+            signup(application, username, password, confirmPassword)
             logged = false
             viewModel.changeCurrentPage(Page.HOME)
         }
@@ -128,10 +107,7 @@ fun SignupPage(application: Application, viewModel: MainViewModel){
             )
         )
         Button(
-            onClick = {
-                logged = true
-                },
-            modifier = Modifier
+            onClick = { logged = true }
         ){
             Text(text = "Sign up")
         }

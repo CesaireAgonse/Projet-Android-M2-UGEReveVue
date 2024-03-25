@@ -36,19 +36,10 @@ import fr.uge.ugerevevueandroid.information.ReviewInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
 import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.service.postVoted
+import fr.uge.ugerevevueandroid.service.reviewDeleted
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
-suspend fun reviewDeleted(application: Application, reviewId: Long) {
-    return withContext(Dispatchers.IO) {
-        var response = ApiService(application).adminPermitService()
-            .reviewDeleted(reviewId)
-            .execute()
-        if (response.isSuccessful){
-            response.body()
-        }
-    }
-}
 
 @Composable
 fun Review(application: Application, review: ReviewInformation, modifier: Modifier = Modifier,viewModel: MainViewModel){

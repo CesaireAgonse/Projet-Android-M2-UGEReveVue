@@ -1,11 +1,7 @@
 package fr.uge.ugerevevueandroid.page
 
 import android.app.Application
-import android.content.ContentResolver
-import android.database.Cursor
 import android.net.Uri
-import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -28,52 +24,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.model.MainViewModel
-import fr.uge.ugerevevueandroid.service.ImageManager
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.io.FileOutputStream
-
-
-fun createMultipartFromUri(uri: Uri, contentResolver: ContentResolver, name:String): MultipartBody.Part? {
-    try {
-        val inputStream = contentResolver.openInputStream(uri)
-        if (inputStream != null) {
-            val file = File.createTempFile("temp", null)
-            val outputStream = FileOutputStream(file)
-            inputStream.use { input ->
-                outputStream.use { output ->
-                    input.copyTo(output)
-                }
-            }
-            val mediaType = contentResolver.getType(uri)?.toMediaTypeOrNull()
-            val requestBody = file.asRequestBody(mediaType)
-            return MultipartBody.Part.createFormData(name, file.name, requestBody)
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-    return null
-}
+import fr.uge.ugerevevueandroid.manager.FileManager
+import fr.uge.ugerevevueandroid.service.create
 
 @Composable
-fun CreatePage(viewModel : MainViewModel,application:Application){
+fun CreatePage(application:Application, viewModel : MainViewModel){
     var contentTitle by remember { mutableStateOf("") }
     var contentDescription by remember { mutableStateOf("") }
     var selectedJavaFileUri by remember { mutableStateOf<Uri?>(null) }
     var selectedUnitFileUri by remember { mutableStateOf<Uri?>(null) }
     var create by remember { mutableStateOf(false) }
     var isJavaFileSelected by remember { mutableStateOf(false) }
-    var isButtonEnabled by remember { mutableStateOf(false) }
 
     LaunchedEffect(create){
         if(create){
-            var javafile = selectedJavaFileUri?.let { createMultipartFromUri( it, application.contentResolver, "javaFile") }
-            var unitfile = selectedUnitFileUri?.let { createMultipartFromUri(it, application.contentResolver, "unitFile") }
-            create(contentTitle,contentDescription, javafile,unitfile,application)
+            var javafile = selectedJavaFileUri?.let { FileManager().createMultipartFromUri( it, application.contentResolver, "javaFile") }
+            var unitfile = selectedUnitFileUri?.let { FileManager().createMultipartFromUri(it, application.contentResolver, "unitFile") }
+            create(application, contentTitle,contentDescription, javafile,unitfile)
             viewModel.changeCurrentPage(Page.HOME)
         }
         create = false
@@ -92,7 +59,6 @@ fun CreatePage(viewModel : MainViewModel,application:Application){
             selectedUnitFileUri = it
         }
     }
-
     Column(
         modifier = Modifier.padding(8.dp),
         verticalArrangement = Arrangement.Center,
@@ -101,10 +67,8 @@ fun CreatePage(viewModel : MainViewModel,application:Application){
 
         Text(
             text = "Post your code",
-            //modifier = Modifier.weight(1f),
             fontSize = 30.sp
         )
-
         OutlinedTextField(
             value = contentTitle,
             onValueChange = { contentTitle = it },

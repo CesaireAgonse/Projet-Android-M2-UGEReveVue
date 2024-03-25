@@ -37,19 +37,10 @@ import fr.uge.ugerevevueandroid.information.CommentInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
 import fr.uge.ugerevevueandroid.service.ApiService
+import fr.uge.ugerevevueandroid.service.commentDeleted
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-suspend fun commentDeleted(application: Application, commentId: Long) {
-    return withContext(Dispatchers.IO) {
-        var response = ApiService(application).adminPermitService()
-            .commentDeleted(commentId)
-            .execute()
-        if (response.isSuccessful){
-            response.body()
-        }
-    }
-}
 
 @Composable
 fun Comment(viewModel: MainViewModel, application: Application, comment: CommentInformation){

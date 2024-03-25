@@ -2,7 +2,6 @@ package fr.uge.ugerevevueandroid.visual
 
 import TokenManager
 import android.app.Application
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -40,7 +39,7 @@ import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
-import fr.uge.ugerevevueandroid.service.ImageManager
+import fr.uge.ugerevevueandroid.manager.FileManager
 
 @Composable
 fun SearchBar(viewModel: MainViewModel) {
@@ -134,7 +133,7 @@ fun Navbar(application: Application, viewModel: MainViewModel){
             else {
                 if (userPhoto != null && userPhoto != "") {
                     Image(
-                        bitmap = ImageManager().base64ToImageBitMap(userPhoto),
+                        bitmap = FileManager().base64ToImageBitMap(userPhoto),
                         contentDescription = "Profile Image",
                         modifier = Modifier
                             .clickable {
