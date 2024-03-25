@@ -3,43 +3,37 @@ package fr.uge.ugerevevueandroid.service
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.FileProvider
-import java.io.File
-import fr.uge.ugerevevueandroid.R.layout
+import fr.uge.ugerevevueandroid.MainActivity
+import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 
 class CameraCaller : Activity() {
 
     private val CAMERA_PERMISSION_REQUEST_CODE = 101
     private lateinit var capturedImageFile: File
-    var photo:MultipartBody.Part? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(layout.activity_camera_caller)
+        Log.d("CameraCaller", "onCreate")
         requestPicture()
-        capturedImageFile.let { file ->
-            if (file.exists()) {
-                // Convertir le fichier en RequestBody
-                val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
 
-                // Créer un MultipartBody.Part à partir du RequestBody
-                photo = MultipartBody.Part.createFormData("image", file.name, requestBody)
-
-                // Utilisez imagePart comme vous le souhaitez, par exemple, envoyez-le via Retrofit
-            }
-        }
-        finish()
     }
 
     fun startCameraActivity() {
@@ -54,6 +48,7 @@ class CameraCaller : Activity() {
     }
 
     private fun launchCamera() {
+        Log.d("CameraCaller", "launchCamera")
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val pictDir = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
@@ -63,10 +58,8 @@ class CameraCaller : Activity() {
         val timestamp = "image.jpg"
         val dest = File(pictDir, timestamp) // Destination file
         capturedImageFile = dest
-        val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", dest)
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
         try {
-            startActivityForResult(intent,IMAGE_CAPTURE_REQUEST_CODE)
+            startActivityForResult(intent, IMAGE_CAPTURE_REQUEST_CODE)
         } catch (e: ActivityNotFoundException) {
             Log.e(javaClass.name, "Cannot start the activity due to an exception", e)
             Toast.makeText(this, "An exception encountered: $e", Toast.LENGTH_SHORT).show()
@@ -89,34 +82,30 @@ class CameraCaller : Activity() {
         startCameraActivity()
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        when (requestCode) {
-            IMAGE_CAPTURE_REQUEST_CODE -> when (resultCode) {
-                RESULT_OK -> {
-                    capturedImageFile.let { file ->
-                        if (file.exists()) {
-                            // Convertir le fichier en RequestBody
-                            val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
-
-                            // Créer un MultipartBody.Part à partir du RequestBody
-                            photo = MultipartBody.Part.createFormData("image", file.name, requestBody)
-
-                            // Utilisez imagePart comme vous le souhaitez, par exemple, envoyez-le via Retrofit
-                        }
-                    }
-                }
-                RESULT_CANCELED -> Toast.makeText(
-                    this,
-                    "Capture of image failed",
-                    Toast.LENGTH_SHORT
-                ).show()
-                else -> Toast.makeText(this, "Capture of image failed", Toast.LENGTH_SHORT).show()
-            }
-
-        }
-    }
 
     companion object {
         private const val IMAGE_CAPTURE_REQUEST_CODE = 1
     }
+
+    // Mettez à jour la méthode onActivityResult pour appeler la lambda de rappel
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.d("CameraCaller", "onActivityResult: requestCode=$requestCode, resultCode=$resultCode")
+
+        if (requestCode == IMAGE_CAPTURE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Log.d("CameraCaller", "Image captured successfully")
+            // Notify the listener if set
+
+            val d = Intent().apply {
+                putExtra("photo", capturedImageFile.path) // Remplacez "key" par la clé pour les données que vous souhaitez retourner
+            }
+            setResult(Activity.RESULT_OK, d)
+
+        }else{
+            Log.e("CameraCaller", "Image capture failed")
+        }
+        finish()
+    }
 }
+
+

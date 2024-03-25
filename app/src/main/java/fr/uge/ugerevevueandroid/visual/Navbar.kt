@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.R
+import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
 import fr.uge.ugerevevueandroid.service.ImageManager
@@ -68,6 +69,8 @@ fun Navbar(application: Application, viewModel: MainViewModel){
             logged = false
             manager.clearToken("bearer")
             manager.clearToken("refresh")
+            viewModel.photoURL = null;
+            viewModel.changeCurrentUserLogged(UserInformation("", "",   0, 0,0, 0,false))
             viewModel.changeCurrentPage(Page.HOME)
         }
     }

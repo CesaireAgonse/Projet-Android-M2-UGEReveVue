@@ -1,5 +1,6 @@
 package fr.uge.ugerevevueandroid.model
 
+import android.app.Activity
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +18,10 @@ class MainViewModel : ViewModel() {
     var currentUserLogged by mutableStateOf<UserInformation>(UserInformation("", "",   0, 0,0, 0,false))
         private set
     var currentUserToDisplay by mutableStateOf<String>("")
+
+    var activity:Activity? by mutableStateOf(null)
+
+    var photoURL:String? by mutableStateOf(null)
 
     var currentCodeToDisplay by mutableLongStateOf(0)
         private set

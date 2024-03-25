@@ -2,6 +2,7 @@ package fr.uge.ugerevevueandroid.page
 
 import TokenManager
 import UserAdmin
+import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.graphics.Bitmap
@@ -46,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat.startActivity
 import fr.uge.ugerevevueandroid.R
 import fr.uge.ugerevevueandroid.information.CodePageInformation
@@ -63,8 +65,12 @@ import fr.uge.ugerevevueandroid.visual.Review
 import fr.uge.ugerevevueandroid.visual.Code
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Call
+import java.io.File
 
 
 suspend fun photo(application: Application, photo: MultipartBody.Part) {
@@ -234,11 +240,18 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
 @Composable
 fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : UserInformation, modifier : Modifier = Modifier){
     var uriUser: Uri? by remember { mutableStateOf(null) }
-    var photo: MultipartBody.Part? by remember { mutableStateOf(null) }
     var imageManager = ImageManager();
-    var user by remember {
-        mutableStateOf(userI)
+    var user by remember { mutableStateOf(userI) }
+
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val photoPath = result.data?.getStringExtra("photo")
+            if (photoPath != null) {
+                uriUser = Uri.fromFile(File(photoPath))
+            }
+        }
     }
+
     LaunchedEffect(viewModel.triggerReloadPage){
         user = profile(viewModel.currentUserToDisplay)!!
     }
@@ -249,17 +262,6 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
             imageManager.createMultipartFromUri(uriUser!!, application.contentResolver)
                 ?.let { photo(application, it) }
             var temp = profile(user.username)
-            if (temp != null){
-                user = temp
-                viewModel.changeCurrentUserLogged(temp)
-            }
-        }
-    }
-
-    LaunchedEffect(photo){
-        if (photo != null){
-            photo(application, photo!!)
-            val temp = profile(user.username)
             if (temp != null){
                 user = temp
                 viewModel.changeCurrentUserLogged(temp)
@@ -352,9 +354,8 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
                         }
                         Button(onClick = {
 
-                            startCameraActivity(context)
+                            cameraLauncher.launch(Intent(context, CameraCaller::class.java))
 
-                            photo = CameraCaller().photo
                         },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(52, 152, 219),
@@ -401,9 +402,3 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
         }
     }
 }
-
-fun startCameraActivity(context: android.content.Context) {
-    val intent = Intent(context, CameraCaller::class.java)
-    startActivity(context, intent, null)
-}
-

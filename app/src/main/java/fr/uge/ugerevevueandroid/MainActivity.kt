@@ -1,10 +1,14 @@
 package fr.uge.ugerevevueandroid
 
 import AdminPage
+import android.app.Activity
 import android.app.Application
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,11 +34,12 @@ import fr.uge.ugerevevueandroid.visual.Navbar
 
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             // Initialisation du ViewModel
-            val viewModel = viewModel<MainViewModel>()
+            viewModel.activity = this
 
             UGEReveVueAndroidTheme {
                 // A surface container using the 'background' color from the theme
