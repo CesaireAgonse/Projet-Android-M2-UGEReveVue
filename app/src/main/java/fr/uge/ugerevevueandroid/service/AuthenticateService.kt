@@ -1,6 +1,7 @@
 package fr.uge.ugerevevueandroid.service
 
 import android.graphics.Bitmap
+import fr.uge.ugerevevueandroid.form.CodeForm
 import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.form.UpdatePasswordInformation
 import fr.uge.ugerevevueandroid.form.ReviewForm
@@ -42,4 +43,8 @@ interface AuthenticateService {
     @Multipart
     @POST("users/photo")
     fun photo(@Part photo: MultipartBody.Part): Call<Void>
+
+    @Multipart
+    @POST("codes/create")
+    fun create(@Body codeForm: CodeForm): Call<Void>
 }

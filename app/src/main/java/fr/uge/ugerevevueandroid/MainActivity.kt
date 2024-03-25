@@ -65,7 +65,7 @@ fun Application(viewModel : MainViewModel, application: Application){
             Page.SIGNUP -> SignupPage(application=application, viewModel = viewModel)
             Page.USER -> UserPage(application=application, viewModel = viewModel)
             Page.CODE -> CodePage(application= application, viewModel = viewModel)
-            Page.CREATE -> CreatePage(viewModel = viewModel)
+            Page.CREATE -> CreatePage(viewModel = viewModel,application)
             Page.ADMIN -> AdminPage(application= application, viewModel = viewModel)
             Page.PASSWORD -> PasswordPage(application=application, viewModel=viewModel)
         }

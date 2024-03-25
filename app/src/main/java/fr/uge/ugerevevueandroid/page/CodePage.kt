@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.uge.ugerevevueandroid.form.CodeForm
 import fr.uge.ugerevevueandroid.form.CommentForm
 import fr.uge.ugerevevueandroid.form.ReviewForm
 import fr.uge.ugerevevueandroid.information.CodeInformation
@@ -57,8 +58,16 @@ import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MultipartBody
+import retrofit2.http.Part
 import java.util.Date
 
+suspend fun create(title: String,desciption : String,  javaFile: MultipartBody.Part, unitFile: MultipartBody.Part,application: Application){
+    val codeform = CodeForm(title,desciption,javaFile,unitFile)
+    return withContext(Dispatchers.IO){
+        ApiService(application = application).authenticateService().create(codeform).execute()
+    }
+}
 suspend fun code(codeId: Long): CodeInformation? {
     return withContext(Dispatchers.IO) {
         val response = allPermitService.code(codeId).execute()
