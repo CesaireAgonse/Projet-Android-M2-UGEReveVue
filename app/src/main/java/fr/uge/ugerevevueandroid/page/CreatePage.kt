@@ -1,7 +1,11 @@
 package fr.uge.ugerevevueandroid.page
 
 import android.app.Application
+import android.content.ContentResolver
+import android.database.Cursor
 import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +29,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.service.ImageManager
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.io.FileOutputStream
+
+
+fun createMultipartFromUri(uri: Uri, contentResolver: ContentResolver, name:String): MultipartBody.Part? {
+    try {
+        val inputStream = contentResolver.openInputStream(uri)
+        if (inputStream != null) {
+            val file = File.createTempFile("temp", null)
+            val outputStream = FileOutputStream(file)
+            inputStream.use { input ->
+                outputStream.use { output ->
+                    input.copyTo(output)
+                }
+            }
+            val mediaType = contentResolver.getType(uri)?.toMediaTypeOrNull()
+            val requestBody = file.asRequestBody(mediaType)
+            return MultipartBody.Part.createFormData(name, file.name, requestBody)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return null
+}
 
 @Composable
 fun CreatePage(viewModel : MainViewModel,application:Application){
@@ -34,14 +67,12 @@ fun CreatePage(viewModel : MainViewModel,application:Application){
     var selectedUnitFileUri by remember { mutableStateOf<Uri?>(null) }
     var isJavaFileSelected by remember { mutableStateOf(false) }
     var create by remember { mutableStateOf(false) }
-    LaunchedEffect(key1 = create){
+    LaunchedEffect(create){
         if(create){
-            var javafile = ImageManager().createMultipartFromUri(selectedJavaFileUri!!, application.contentResolver)
-            var unitfile = ImageManager().createMultipartFromUri(selectedUnitFileUri!!, application.contentResolver)
-            if (javafile != null) {
-                if (unitfile != null) {
-                    create(contentTitle,contentDescription,javafile,unitfile,application)
-                }
+            var javafile = selectedJavaFileUri?.let { createMultipartFromUri( it, application.contentResolver, "javaFile") }
+            var unitfile = selectedUnitFileUri?.let { createMultipartFromUri(it, application.contentResolver, "unitFile") }
+            if (javafile != null && unitfile != null) {
+                create(contentTitle,contentDescription, javafile,unitfile,application)
             }
         }
         create = false
@@ -89,7 +120,7 @@ fun CreatePage(viewModel : MainViewModel,application:Application){
 
         Row {
             Button(onClick = {
-                javaFilePickerLauncher.launch("text/plain")
+                javaFilePickerLauncher.launch("*/*");
                 if (selectedJavaFileUri != null) {
                     isJavaFileSelected = true
                 }
@@ -98,7 +129,7 @@ fun CreatePage(viewModel : MainViewModel,application:Application){
             }
 
             Button(onClick = {
-                unitFilePickerLauncher.launch("text/plain")
+                unitFilePickerLauncher.launch("*/*");
             }) {
                 Text(text = "Upload Unit File")
             }
@@ -107,7 +138,7 @@ fun CreatePage(viewModel : MainViewModel,application:Application){
         Button(
             onClick = {
                 create = true
-                viewModel.changeCurrentPage(Page.HOME)
+                //viewModel.changeCurrentPage(Page.HOME)
             },
             enabled = isJavaFileSelected && !contentTitle.equals("") && !contentDescription.equals("")// Grisé pour rester visible
         ) {

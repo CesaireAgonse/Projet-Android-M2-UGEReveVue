@@ -46,5 +46,8 @@ interface AuthenticateService {
 
     @Multipart
     @POST("codes/create")
-    fun create(@Body codeForm: CodeForm): Call<Void>
+fun create(@Part("title") title: String,
+                   @Part("description") description: String,
+                   @Part javaFile: MultipartBody.Part,
+                   @Part unitFile: MultipartBody.Part): Call<Void>
 }
