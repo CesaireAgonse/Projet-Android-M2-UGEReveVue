@@ -74,8 +74,10 @@ fun HomePage(application: Application, viewModel: MainViewModel){
                 FistRow(viewModel, resultNumber, application)
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = { viewModel.changeCurrentPage(Page.CREATE) }, contentColor = Color(R.color.button_color_2)) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add a new Post")
+                if (TokenManager(application).getAuth() != null){
+                    FloatingActionButton(onClick = { viewModel.changeCurrentPage(Page.CREATE) }, contentColor = Color(R.color.button_color_2)) {
+                        Icon(Icons.Filled.Add, contentDescription = "Add a new Post")
+                    }
                 }
             }
         ) {

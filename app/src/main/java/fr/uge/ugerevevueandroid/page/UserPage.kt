@@ -6,7 +6,6 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -72,6 +71,7 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
     var codesFromUser: CodePageInformation? by remember {mutableStateOf( null)}
     var reviewsFromUser: ReviewPageInformation? by remember {mutableStateOf( null)}
     var commentsFromUser: CommentPageInformation? by remember {mutableStateOf(null) }
+    var user:UserInformation? by remember {mutableStateOf(null) }
     var pageNumberFolloweds by remember { mutableIntStateOf(0) }
     var pageNumberCodes by remember { mutableIntStateOf(0) }
     var pageNumberReviews by remember { mutableIntStateOf(0) }
@@ -79,31 +79,28 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
     Column (
         modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max)
     ){
-        var userState = remember { mutableStateOf<UserInformation?>(null) }
 
         LaunchedEffect(username, viewModel.triggerReloadPage) {
-            var user = profile(username)
-            userState.value = user
+            user = profile(username)
             followedsFromUser = followedsFromUser(user!!.username, pageNumberFolloweds)
             codesFromUser = codesFromUser(user!!.username, pageNumberCodes)
             reviewsFromUser = reviewsFromUser(user!!.username, pageNumberReviews)
             commentsFromUser = commentsFromUser(user!!.username, pageNumberComments)
         }
-        var user = userState.value
         if (user != null){
-            UserDisplayer(application = application, viewModel = viewModel, userI = user, Modifier.weight(4f))
+            UserDisplayer(application = application, viewModel = viewModel, userI = user!!, Modifier.weight(4f))
             Column(
                 modifier = Modifier
                     .weight(6f)
                     .verticalScroll(scrollState)
             ) {
-                Text(text = "Followed:" + user.nbFollowed)
+                Text(text = "Followed:" + user!!.nbFollowed)
                 if (followedsFromUser != null) {
                     followedsFromUser!!.users.forEach{
                         UserAdmin(application=application, user = it, viewModel =  viewModel)
                     }
                 }
-                Text(text = "Codes:" + user.nbCode)
+                Text(text = "Codes:" + user!!.nbCode)
                 if (codesFromUser != null) {
                     codesFromUser!!.codes.forEach{
                         Code(application=application, codeInformation = it, modifier = Modifier.clickable {
@@ -112,7 +109,7 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
                         }, viewModel =  viewModel)
                     }
                 }
-                Text(text = "Reviews:" + user.nbReview)
+                Text(text = "Reviews:" + user!!.nbReview)
                 if (reviewsFromUser != null) {
                     reviewsFromUser!!.reviews.forEach{
                         Review(application=application, review = it, modifier = Modifier.clickable {
@@ -121,7 +118,7 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
                         }, viewModel)
                     }
                 }
-                Text(text = "Comments:" + user.nbComment)
+                Text(text = "Comments:" + user!!.nbComments)
                 if (commentsFromUser != null) {
                     commentsFromUser!!.comments.forEach{
                         Comment(viewModel, application, it)
@@ -288,6 +285,7 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
                         shape = CircleShape) {
                         Text(text = "Follow")
                     }
+
                 }
             }
         }

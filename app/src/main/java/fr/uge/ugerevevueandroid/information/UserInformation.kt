@@ -6,6 +6,6 @@ data class UserInformation(
     val nbFollowed: Int,
     val nbCode:Int,
     val nbReview:Int,
-    val nbComment:Int,
+    val nbComments:Int,
     val isFollowed:Boolean
 ) {}

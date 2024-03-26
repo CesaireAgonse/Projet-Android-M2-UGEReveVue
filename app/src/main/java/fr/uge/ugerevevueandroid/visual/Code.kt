@@ -37,11 +37,8 @@ import androidx.compose.ui.unit.sp
 import fr.uge.ugerevevueandroid.information.CodeInformation
 import fr.uge.ugerevevueandroid.model.MainViewModel
 import fr.uge.ugerevevueandroid.page.Page
-import fr.uge.ugerevevueandroid.service.ApiService
 import fr.uge.ugerevevueandroid.service.codeDeleted
 import fr.uge.ugerevevueandroid.service.postVoted
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -105,10 +102,10 @@ fun Code(application: Application, codeInformation : CodeInformation, viewModel:
                         Button(
                             onClick = {
                                 voteButtonClicked = "UpVote"
-                                },
+                            },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Black, // Fond blanc
-                                contentColor = Color.White // Texte noir
+                                containerColor = Color.Black,
+                                contentColor = Color.White
                             ),
                             shape = CircleShape,
                             modifier = Modifier.padding(horizontal = 4.dp)
@@ -119,7 +116,7 @@ fun Code(application: Application, codeInformation : CodeInformation, viewModel:
                     else{
                         Button(
                             onClick = { voteButtonClicked = "UpVote"
-                                },
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.White, // Fond blanc
                                 contentColor = Color.Black // Texte noir
@@ -136,7 +133,7 @@ fun Code(application: Application, codeInformation : CodeInformation, viewModel:
                     if (code.voteType == "DownVote") {
                         Button(
                             onClick = { voteButtonClicked = "DownVote"
-                                },
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Black, // Fond blanc
                                 contentColor = Color.White // Texte noir
@@ -150,7 +147,7 @@ fun Code(application: Application, codeInformation : CodeInformation, viewModel:
                     else {
                         Button(
                             onClick = { voteButtonClicked = "DownVote"
-                             },
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.White, // Fond blanc
                                 contentColor = Color.Black // Texte noir
@@ -167,8 +164,8 @@ fun Code(application: Application, codeInformation : CodeInformation, viewModel:
                         Button(
                             onClick = {deleteButtonClicked = "Deleted"},
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.White, // Fond blanc
-                                contentColor = Color.Black // Texte noir
+                                containerColor = Color.White,
+                                contentColor = Color.Black
                             ),
                             shape = CircleShape,
                             border = BorderStroke(1.dp, Color.Black),
@@ -183,9 +180,6 @@ fun Code(application: Application, codeInformation : CodeInformation, viewModel:
                 Column {
                     Text(text = code.description, textAlign = TextAlign.Justify)
                     Text(text = code.javaContent)
-                    if (code.unitContent != null){
-                        Text(text = code.unitContent)
-                    }
                 }
             }
         }

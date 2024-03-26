@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import fr.uge.ugerevevueandroid.model.MainViewModel
+import fr.uge.ugerevevueandroid.service.NotificationService
 import fr.uge.ugerevevueandroid.service.signup
 
 @Composable

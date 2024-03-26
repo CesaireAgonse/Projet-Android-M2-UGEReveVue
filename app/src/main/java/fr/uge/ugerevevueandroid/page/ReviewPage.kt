@@ -79,6 +79,7 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
                 CommentForm(contentNewReview, ""))))
             reviewed = false;
             contentNewReview = ""
+            titleNewReview = ""
         }
     }
     LaunchedEffect(true, pageNumberComments,pageNumberReviews,commented,reviewed,viewModel.triggerReloadPage) {

@@ -2,9 +2,13 @@ package fr.uge.ugerevevueandroid
 
 import AdminPage
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Application
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,6 +33,7 @@ import fr.uge.ugerevevueandroid.page.ReviewPage
 import fr.uge.ugerevevueandroid.page.SignupPage
 import fr.uge.ugerevevueandroid.page.UserPage
 import fr.uge.ugerevevueandroid.activity.CameraCaller
+import fr.uge.ugerevevueandroid.service.NotificationService
 import fr.uge.ugerevevueandroid.ui.theme.UGEReveVueAndroidTheme
 import fr.uge.ugerevevueandroid.visual.Navbar
 
@@ -48,8 +53,39 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        showDynamicNotification("Bienvenue sur UGEReveVue", "Je te présente notre application mobile.")
     }
+
+    private fun showDynamicNotification(title: String, content: String) {
+        val serviceIntent = Intent(this, NotificationService::class.java)
+        serviceIntent.putExtra("title", title)
+        serviceIntent.putExtra("content", content)
+        startService(serviceIntent)
+    }
+
+//    private fun showNotificationEnableDialog() {
+//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+//        val notificationsEnabled = sharedPreferences.getBoolean("notificationsEnabled", false)
+//
+//        if (!notificationsEnabled) {
+//            AlertDialog.Builder(this)
+//                .setTitle("Enable Notifications")
+//                .setMessage("Would you like to enable notifications?")
+//                .setPositiveButton("Yes") { dialog, _ ->
+//                    sharedPreferences.edit().putBoolean("notificationsEnabled", true).apply()
+//                    dialog.dismiss()
+//                }
+//                .setNegativeButton("No") { dialog, _ ->
+//                    sharedPreferences.edit().putBoolean("notificationsEnabled", false).apply()
+//                    dialog.dismiss()
+//                }
+//                .setCancelable(false)
+//                .show()
+//        }
+//    }
 }
+
+
 
 @Composable
 fun Application(viewModel : MainViewModel, application: Application){
@@ -68,6 +104,8 @@ fun Application(viewModel : MainViewModel, application: Application){
         }
 
     }
+
 }
+
 
 

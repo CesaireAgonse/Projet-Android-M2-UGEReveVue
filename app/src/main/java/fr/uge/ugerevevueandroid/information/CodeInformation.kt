@@ -10,7 +10,7 @@ data class CodeInformation(
     val description: String,
     val javaContent: String,
     val unitContent: String,
-    val unitTestResultInformation: UnitTestResultInformation,
+    val testResultsInformation: UnitTestResultInformation,
     val score: Long,
     val date: Date,
     val comments: Int,

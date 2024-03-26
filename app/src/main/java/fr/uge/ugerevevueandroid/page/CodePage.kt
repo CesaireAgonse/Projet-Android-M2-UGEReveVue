@@ -41,6 +41,7 @@ import fr.uge.ugerevevueandroid.service.postCommented
 import fr.uge.ugerevevueandroid.service.postReviewed
 import fr.uge.ugerevevueandroid.service.reviews
 import fr.uge.ugerevevueandroid.visual.Code
+import fr.uge.ugerevevueandroid.visual.CodeTest
 import fr.uge.ugerevevueandroid.visual.Comment
 import fr.uge.ugerevevueandroid.visual.Review
 
@@ -83,7 +84,10 @@ fun CodePage(application: Application, viewModel : MainViewModel){
             modifier = Modifier
                 .verticalScroll(scrollState)
         ) {
-            Code(application=application, codeInformation = code!!,viewModel)
+            Code(application=application, codeInformation = code!!, viewModel)
+            if (code!!.unitContent != null) {
+                CodeTest(codeInformation = code!!)
+            }
             Text(text = "Comments about this post : ${code!!.comments}", fontWeight = FontWeight.Bold)
 
             commentPageInformation!!.comments.forEach{
