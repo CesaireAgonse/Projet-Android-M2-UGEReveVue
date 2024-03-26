@@ -53,14 +53,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        showDynamicNotification("Bienvenue sur UGEReveVue", "Je te présente notre application mobile.")
-    }
-
-    private fun showDynamicNotification(title: String, content: String) {
-        val serviceIntent = Intent(this, NotificationService::class.java)
-        serviceIntent.putExtra("title", title)
-        serviceIntent.putExtra("content", content)
-        startService(serviceIntent)
+        viewModel.showDynamicNotification("Bienvenue sur UGEReveVue", "Je te présente notre application mobile.", this)
     }
 
 //    private fun showNotificationEnableDialog() {

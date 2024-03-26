@@ -1,6 +1,8 @@
 package fr.uge.ugerevevueandroid.model
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import fr.uge.ugerevevueandroid.information.UserInformation
 import fr.uge.ugerevevueandroid.page.Page
+import fr.uge.ugerevevueandroid.service.NotificationService
 
 class MainViewModel : ViewModel() {
     var currentPage by mutableStateOf(Page.HOME)
@@ -45,5 +48,13 @@ class MainViewModel : ViewModel() {
     fun changeCurrentQuery(query : String){ currentQuery = query }
 
     fun changeCurrentSortBy(sortBy : String){ currentSortBy = sortBy }
+
+
+    fun showDynamicNotification(title: String, content: String, context: Context) {
+        val serviceIntent = Intent(context, NotificationService::class.java)
+        serviceIntent.putExtra("title", title)
+        serviceIntent.putExtra("content", content)
+        context.startService(serviceIntent)
+    }
 
 }

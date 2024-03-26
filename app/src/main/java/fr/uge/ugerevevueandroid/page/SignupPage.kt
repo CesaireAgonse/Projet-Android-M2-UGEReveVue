@@ -47,6 +47,10 @@ fun SignupPage(application: Application, viewModel: MainViewModel){
         if(logged){
             signup(application, username, password, confirmPassword)
             logged = false
+            viewModel.showDynamicNotification(
+                "Bienvenue " + username + " !",
+                "Merci de d'être inscrit sur UGEReveVue",
+                application)
             viewModel.changeCurrentPage(Page.HOME)
         }
     }
