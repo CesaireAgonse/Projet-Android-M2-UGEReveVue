@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -140,6 +141,7 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
         if (result.resultCode == Activity.RESULT_OK) {
             val photoPath = result.data?.getStringExtra("photo")
             if (photoPath != null) {
+                Log.i("PHOTO PATH", photoPath)
                 uriUser = Uri.fromFile(File(photoPath))
             }
         }
@@ -150,6 +152,7 @@ fun UserDisplayer(application: Application, viewModel : MainViewModel, userI : U
     val context = LocalContext.current
     LaunchedEffect(uriUser){
         if (uriUser != null){
+            Log.i("TEST", uriUser.toString())
             imageManager.createMultipartFromUri(uriUser!!, application.contentResolver, "photo")
                 ?.let { photo(application, it) }
             var temp = profile(user.username)

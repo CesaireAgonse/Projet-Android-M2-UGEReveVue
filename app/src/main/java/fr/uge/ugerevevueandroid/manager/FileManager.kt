@@ -10,6 +10,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import android.util.Base64
+import android.util.Log
 import androidx.compose.ui.graphics.asImageBitmap
 
 class FileManager {
@@ -22,6 +23,7 @@ class FileManager {
 
     fun createMultipartFromUri(uri: Uri, contentResolver: ContentResolver, name:String): MultipartBody.Part? {
         try {
+            Log.i("TEST2", "^^")
             val inputStream = contentResolver.openInputStream(uri)
             if (inputStream != null) {
                 val file = File.createTempFile("temp", null)
