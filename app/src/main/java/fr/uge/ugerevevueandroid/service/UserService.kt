@@ -15,10 +15,15 @@ import retrofit2.Call
 
 suspend fun profile(username: String): UserInformation? {
     return withContext(Dispatchers.IO) {
-        val response = allPermitService.information(username).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
+        try {
+            val response = allPermitService.information(username).execute()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
             null
         }
     }
@@ -77,10 +82,15 @@ fun unfollow(application: Application, username: String) {
 
 suspend fun codesFromUser(username: String, pageNumber: Int): CodePageInformation? {
     return withContext(Dispatchers.IO) {
-        val response = allPermitService.codesFromUser(username, pageNumber).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
+        try {
+            val response = allPermitService.codesFromUser(username, pageNumber).execute()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
             null
         }
     }
@@ -88,10 +98,15 @@ suspend fun codesFromUser(username: String, pageNumber: Int): CodePageInformatio
 
 suspend fun reviewsFromUser(username: String, pageNumber: Int): ReviewPageInformation? {
     return withContext(Dispatchers.IO) {
-        val response = allPermitService.reviewsFromUser(username, pageNumber).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
+        try {
+            val response = allPermitService.reviewsFromUser(username, pageNumber).execute()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
             null
         }
     }
@@ -99,10 +114,15 @@ suspend fun reviewsFromUser(username: String, pageNumber: Int): ReviewPageInform
 
 suspend fun commentsFromUser(username: String, pageNumber: Int): CommentPageInformation? {
     return withContext(Dispatchers.IO) {
-        val response = allPermitService.commentsFromUser(username, pageNumber).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
+        try {
+            val response = allPermitService.commentsFromUser(username, pageNumber).execute()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
             null
         }
     }
@@ -110,10 +130,15 @@ suspend fun commentsFromUser(username: String, pageNumber: Int): CommentPageInfo
 
 suspend fun followedsFromUser(username: String, pageNumber: Int): UserPageInformation? {
     return withContext(Dispatchers.IO) {
-        val response = allPermitService.followedsFromUser(username, pageNumber).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
+        try {
+            val response = allPermitService.followedsFromUser(username, pageNumber).execute()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
             null
         }
     }
@@ -121,18 +146,27 @@ suspend fun followedsFromUser(username: String, pageNumber: Int): UserPageInform
 
 suspend fun photo(application: Application, photo: MultipartBody.Part) {
     return withContext(Dispatchers.IO) {
-        ApiService(application).authenticateService().photo(photo).execute();
+        try {
+            ApiService(application).authenticateService().photo(photo).execute()
+        }
+        catch (e: Exception) {
+        }
     }
 }
 
 suspend fun getAllUsers(application: Application) : UserPageInformation?{
     return withContext(Dispatchers.IO) {
-        var response = ApiService(application).adminPermitService()
-            .getAllUsers(0)
-            .execute()
-        if (response.isSuccessful){
-            response.body()
-        } else {
+        try {
+            var response = ApiService(application).adminPermitService()
+                .getAllUsers(0)
+                .execute()
+            if (response.isSuccessful){
+                response.body()
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
             null
         }
     }
@@ -140,11 +174,15 @@ suspend fun getAllUsers(application: Application) : UserPageInformation?{
 
 suspend fun userDeleted(application: Application, username: String) {
     return withContext(Dispatchers.IO) {
-        var response = ApiService(application).adminPermitService()
-            .userDeleted(username)
-            .execute()
-        if (response.isSuccessful){
-            response.body()
+        try {
+            var response = ApiService(application).adminPermitService()
+                .userDeleted(username)
+                .execute()
+            if (response.isSuccessful){
+                response.body()
+            }
+        }
+        catch (e: Exception) {
         }
     }
 }

@@ -7,10 +7,15 @@ import kotlinx.coroutines.withContext
 
 suspend fun review(reviewId: Long): ReviewInformation? {
     return withContext(Dispatchers.IO) {
-        val response = allPermitService.review(reviewId).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
+        try {
+            val response = allPermitService.review(reviewId).execute()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
             null
         }
     }
@@ -18,11 +23,15 @@ suspend fun review(reviewId: Long): ReviewInformation? {
 
 suspend fun reviewDeleted(application: Application, reviewId: Long) {
     return withContext(Dispatchers.IO) {
-        var response = ApiService(application).adminPermitService()
-            .reviewDeleted(reviewId)
-            .execute()
-        if (response.isSuccessful){
-            response.body()
+        try {
+            var response = ApiService(application).adminPermitService()
+                .reviewDeleted(reviewId)
+                .execute()
+            if (response.isSuccessful){
+                response.body()
+            }
+        }
+        catch (e: Exception) {
         }
     }
 }

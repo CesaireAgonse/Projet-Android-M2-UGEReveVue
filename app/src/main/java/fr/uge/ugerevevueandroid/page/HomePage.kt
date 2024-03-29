@@ -66,6 +66,9 @@ fun HomePage(application: Application, viewModel: MainViewModel){
             maxPageNumber = posts!!.maxPageNumber
             resultNumber = posts!!.resultNumber
         }
+        else {
+            Log.i("TEST CONNEXION 2", "IS NULL")
+        }
     }
     val scrollState = rememberScrollState()
     if (posts != null){

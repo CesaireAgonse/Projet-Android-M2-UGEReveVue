@@ -26,10 +26,15 @@ suspend fun code(codeId: Long): CodeInformation? {
 
 suspend fun filter(sortBy: String, query: String, pageNumber:Int): FilterInformation?{
     return withContext(Dispatchers.IO) {
-        val response = allPermitService.filter(sortBy, query, pageNumber).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
+        try {
+            val response = allPermitService.filter(sortBy, query, pageNumber).execute()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
             null
         }
     }
@@ -37,9 +42,13 @@ suspend fun filter(sortBy: String, query: String, pageNumber:Int): FilterInforma
 
 suspend fun codeDeleted(application: Application, postId: Long) {
     return withContext(Dispatchers.IO) {
-        val response = ApiService(application).adminPermitService()
-            .codeDeleted(postId)
-            .execute()
-        response.body()
+        try {
+            val response = ApiService(application).adminPermitService()
+                .codeDeleted(postId)
+                .execute()
+            response.body()
+        }
+        catch (e: Exception) {
+        }
     }
 }

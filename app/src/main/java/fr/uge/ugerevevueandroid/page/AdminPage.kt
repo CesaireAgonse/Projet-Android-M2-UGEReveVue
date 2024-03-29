@@ -40,7 +40,7 @@ fun AdminPage(application: Application, viewModel : MainViewModel) {
 
     LaunchedEffect(userPageInformation, viewModel.triggerReloadPage){
         userPageInformation = getAllUsers(application)
-        if (userPageInformation!!.resultNumber != null){
+        if (userPageInformation != null && userPageInformation!!.resultNumber != null) {
             numberOfUser = userPageInformation!!.resultNumber
         }
     }

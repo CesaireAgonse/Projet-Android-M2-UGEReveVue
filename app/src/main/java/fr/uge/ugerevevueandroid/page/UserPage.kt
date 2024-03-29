@@ -83,10 +83,10 @@ fun UserPage(application: Application, viewModel : MainViewModel) {
 
         LaunchedEffect(username, viewModel.triggerReloadPage) {
             user = profile(username)
-            followedsFromUser = followedsFromUser(user!!.username, pageNumberFolloweds)
-            codesFromUser = codesFromUser(user!!.username, pageNumberCodes)
-            reviewsFromUser = reviewsFromUser(user!!.username, pageNumberReviews)
-            commentsFromUser = commentsFromUser(user!!.username, pageNumberComments)
+            followedsFromUser = user?.let { followedsFromUser(it.username, pageNumberFolloweds) }
+            codesFromUser = user?.let { codesFromUser(it.username, pageNumberCodes) }
+            reviewsFromUser = user?.let { reviewsFromUser(it.username, pageNumberReviews) }
+            commentsFromUser = user?.let { commentsFromUser(it.username, pageNumberComments) }
         }
         if (user != null){
             UserDisplayer(application = application, viewModel = viewModel, userI = user!!, Modifier.weight(4f))

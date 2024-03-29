@@ -2,6 +2,7 @@ package fr.uge.ugerevevueandroid.page
 
 import TokenManager
 import android.app.Application
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -76,8 +77,14 @@ fun CodePage(application: Application, viewModel : MainViewModel){
     }
     LaunchedEffect(true, commented,reviewed,pageNumberComments,pageNumberReviews,viewModel.triggerReloadPage) {
         code = code(viewModel.currentCodeToDisplay)
-        commentPageInformation = comments(viewModel.currentCodeToDisplay, pageNumberComments)
-        reviewPageInformation = reviews(viewModel.currentCodeToDisplay, pageNumberReviews)
+        val commentValueFromRequest = comments(viewModel.currentCodeToDisplay, pageNumberComments)
+        val reviewValueFromRequest = reviews(viewModel.currentCodeToDisplay, pageNumberReviews)
+        if(commentValueFromRequest != null) {
+            commentPageInformation = commentValueFromRequest
+        }
+        if(reviewPageInformation != null) {
+            reviewPageInformation = reviewValueFromRequest
+        }
     }
     if (code != null && commentPageInformation != null && reviewPageInformation != null){
         Column(

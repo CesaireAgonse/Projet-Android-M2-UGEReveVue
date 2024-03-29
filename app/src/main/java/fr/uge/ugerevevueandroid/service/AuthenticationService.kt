@@ -11,28 +11,36 @@ import kotlinx.coroutines.withContext
 
 suspend fun signup(application: Application, username: String, password: String, confirmPassword:String) {
     return withContext(Dispatchers.IO){
-        val response = allPermitService.signup(SignupForm(username,password)).execute()
-        if(response.isSuccessful){
-            val userResponse = response.body()
-            val manager = TokenManager(application)
-            if(userResponse != null){
-                manager.saveToken("bearer",userResponse.bearer)
-                manager.saveToken("refresh",userResponse.refresh)
+        try {
+            val response = allPermitService.signup(SignupForm(username,password)).execute()
+            if(response.isSuccessful){
+                val userResponse = response.body()
+                val manager = TokenManager(application)
+                if(userResponse != null){
+                    manager.saveToken("bearer",userResponse.bearer)
+                    manager.saveToken("refresh",userResponse.refresh)
+                }
             }
+        }
+        catch (e: Exception) {
         }
     }
 }
 
 suspend fun login(application: Application, username: String, password: String) : UserInformation? {
     withContext(Dispatchers.IO){
-        val response = allPermitService.login(LoginForm(username,password)).execute()
-        if(response.isSuccessful){
-            val userResponse = response.body()
-            val manager = TokenManager(application)
-            if(userResponse != null){
-                manager.saveToken("bearer",userResponse.bearer)
-                manager.saveToken("refresh",userResponse.refresh)
+        try {
+            val response = allPermitService.login(LoginForm(username,password)).execute()
+            if(response.isSuccessful){
+                val userResponse = response.body()
+                val manager = TokenManager(application)
+                if(userResponse != null){
+                    manager.saveToken("bearer",userResponse.bearer)
+                    manager.saveToken("refresh",userResponse.refresh)
+                }
             }
+        }
+        catch (e: Exception) {
         }
     }
     return withContext(Dispatchers.IO) {

@@ -83,9 +83,18 @@ fun ReviewPage(application: Application, viewModel : MainViewModel){
         }
     }
     LaunchedEffect(true, pageNumberComments,pageNumberReviews,commented,reviewed,viewModel.triggerReloadPage) {
-        review = review(id)
-        commentPageInformation = comments(id, pageNumberComments)
-        reviewPageInformation = reviews(id, pageNumberReviews)
+        val reviewValueFromRequest = review(id)
+        if(reviewValueFromRequest != null) {
+            review = reviewValueFromRequest
+            val commentPageValueFromRequest = comments(id, pageNumberComments)
+            val reviewPageValueFromRequest = reviews(id, pageNumberReviews)
+            if(commentPageValueFromRequest != null) {
+                commentPageInformation = commentPageValueFromRequest
+            }
+            if(reviewPageValueFromRequest != null) {
+                reviewPageInformation = reviewPageValueFromRequest
+            }
+        }
     }
     if (review != null && commentPageInformation != null && reviewPageInformation != null){
         Column(
