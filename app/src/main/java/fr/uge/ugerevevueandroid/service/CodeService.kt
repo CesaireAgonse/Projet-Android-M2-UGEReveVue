@@ -15,10 +15,15 @@ suspend fun create(application: Application, title: String, desciption : String,
 
 suspend fun code(codeId: Long): CodeInformation? {
     return withContext(Dispatchers.IO) {
-        val response = allPermitService.code(codeId).execute()
-        if (response.isSuccessful) {
-            response.body()
-        } else {
+        try {
+            val response = allPermitService.code(codeId).execute()
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        }
+        catch (e: Exception) {
             null
         }
     }

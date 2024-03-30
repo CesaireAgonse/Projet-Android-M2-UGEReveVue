@@ -76,14 +76,23 @@ fun CodePage(application: Application, viewModel : MainViewModel){
         }
     }
     LaunchedEffect(true, commented,reviewed,pageNumberComments,pageNumberReviews,viewModel.triggerReloadPage) {
-        code = code(viewModel.currentCodeToDisplay)
+        val codeValueFromRequest = code(viewModel.currentCodeToDisplay)
+        if (codeValueFromRequest != null){
+            code = codeValueFromRequest
+        } else {
+            println("code est null")
+        }
         val commentValueFromRequest = comments(viewModel.currentCodeToDisplay, pageNumberComments)
         val reviewValueFromRequest = reviews(viewModel.currentCodeToDisplay, pageNumberReviews)
         if(commentValueFromRequest != null) {
             commentPageInformation = commentValueFromRequest
+        } else {
+            println("comment est null")
         }
-        if(reviewPageInformation != null) {
+        if(reviewValueFromRequest != null) {
             reviewPageInformation = reviewValueFromRequest
+        } else {
+            println("review est null")
         }
     }
     if (code != null && commentPageInformation != null && reviewPageInformation != null){
